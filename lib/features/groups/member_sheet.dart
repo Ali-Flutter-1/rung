@@ -1,0 +1,269 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../app/providers.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
+import 'pod_models.dart';
+
+/// WhatsApp-style member detail sheet. Honours the privacy lock, and (when
+/// opened from a real cloud message) wires real Block + Report via Supabase.
+Future<void> showMemberSheet(
+  BuildContext context,
+  Member member, {
+  String? userId,
+  String? messageId,
+  String? groupId,
+  void Function(String userId)? onBlocked,
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (_) => _MemberSheet(
+      member: member,
+      userId: userId,
+      messageId: messageId,
+      groupId: groupId,
+      onBlocked: onBlocked,
+    ),
+  );
+}
+
+const _reportReasons = [
+  'Harassment or bullying',
+  'Hate or harmful language',
+  'Spam or scam',
+  'Makes me feel unsafe',
+  'Something else',
+];
+
+class _MemberSheet extends ConsumerWidget {
+  const _MemberSheet({
+    required this.member,
+    this.userId,
+    this.messageId,
+    this.groupId,
+    this.onBlocked,
+  });
+  final Member member;
+  final String? userId;
+  final String? messageId;
+  final String? groupId;
+  final void Function(String userId)? onBlocked;
+
+  bool get _cloudActions => userId != null;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = Theme.of(context).textTheme;
+    final cloud = ref.watch(cloudEnabledProvider);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+              child: member.locked
+                  ? const Icon(Icons.lock_outline_rounded,
+                      color: AppColors.primaryDeep, size: 32)
+                  : Text(member.initial,
+                      style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primaryDeep)),
+            ),
+            const SizedBox(height: Insets.md),
+            if (member.locked) ...[
+              Text('Private profile', style: t.titleLarge),
+              const SizedBox(height: Insets.sm),
+              Text(
+                'This member keeps their profile private. You can still chat '
+                'with them — and report or block if needed.',
+                textAlign: TextAlign.center,
+                style: t.bodyMedium,
+              ),
+            ] else ...[
+              Text(member.name, style: t.headlineSmall),
+              if (member.bio.isNotEmpty) ...[
+                const SizedBox(height: Insets.sm),
+                Text(member.bio,
+                    textAlign: TextAlign.center, style: t.bodyLarge),
+              ],
+              const SizedBox(height: Insets.md),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _Chip(
+                      icon: Icons.local_fire_department_rounded,
+                      text: '${member.streak}-day streak'),
+                  const SizedBox(width: Insets.sm),
+                  _Chip(
+                      icon: Icons.done_all_rounded,
+                      text: '${member.challenges} challenges'),
+                ],
+              ),
+              if (member.climbing.isNotEmpty) ...[
+                const SizedBox(height: Insets.sm),
+                _Chip(
+                    icon: Icons.stairs_rounded,
+                    text: 'Climbing: ${member.climbing}'),
+              ],
+            ],
+            const SizedBox(height: Insets.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _report(context, ref, cloud),
+                    icon: const Icon(Icons.flag_outlined, size: 18),
+                    label: const Text('Report'),
+                  ),
+                ),
+                const SizedBox(width: Insets.md),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.intensityHigh),
+                    onPressed: () => _block(context, ref, cloud),
+                    icon: const Icon(Icons.block_rounded, size: 18),
+                    label: const Text('Block'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _report(BuildContext context, WidgetRef ref, bool cloud) async {
+    if (!_cloudActions || !cloud) {
+      _soon(context, 'Reporting');
+      return;
+    }
+    final reason = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => _ReasonPicker(),
+    );
+    if (reason == null) return;
+    final repo = ref.read(cloudRepositoryProvider);
+    try {
+      if (messageId != null) {
+        await repo.reportMessage(messageId!, reason);
+      } else if (groupId != null) {
+        await repo.reportUser(userId!, groupId!, reason);
+      }
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        _toast(context,
+            'Thanks — our team will review this. Consider blocking too.');
+      }
+    } catch (_) {
+      if (context.mounted) _toast(context, 'Could not send report. Try again.');
+    }
+  }
+
+  Future<void> _block(BuildContext context, WidgetRef ref, bool cloud) async {
+    if (!_cloudActions || !cloud) {
+      _soon(context, 'Blocking');
+      return;
+    }
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Block this member?'),
+        content: const Text(
+            "You won't see each other's messages. You can undo this later."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(true),
+              child: const Text('Block')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    final repo = ref.read(cloudRepositoryProvider);
+    try {
+      await repo.blockUser(userId!);
+      onBlocked?.call(userId!);
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        _toast(context, 'Blocked. You won\'t see their messages.');
+      }
+    } catch (_) {
+      if (context.mounted) _toast(context, 'Could not block. Try again.');
+    }
+  }
+
+  void _soon(BuildContext context, String what) {
+    Navigator.of(context).pop();
+    _toast(context, '$what goes live in moderated pods (sign in to use it).');
+  }
+
+  void _toast(BuildContext context, String msg) =>
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
+      );
+}
+
+class _ReasonPicker extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.sm),
+            child: Text("What's wrong?", style: t.titleLarge),
+          ),
+          for (final r in _reportReasons)
+            ListTile(
+              title: Text(r),
+              onTap: () => Navigator.of(context).pop(r),
+            ),
+          const SizedBox(height: Insets.sm),
+        ],
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({required this.text, this.icon = Icons.stairs_rounded});
+  final String text;
+  final IconData icon;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(horizontal: Insets.md, vertical: Insets.sm),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.10),
+        borderRadius: Radii.pill,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: AppColors.primaryDeep),
+          const SizedBox(width: 6),
+          Text(text,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppColors.primaryDeep)),
+        ],
+      ),
+    );
+  }
+}
