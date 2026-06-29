@@ -1,4 +1,4 @@
-package com.example.rung
+package com.rung.app
 
 import io.flutter.embedding.android.FlutterActivity
 

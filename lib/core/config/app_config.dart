@@ -27,7 +27,7 @@ class AppConfig {
 
   // ── Analytics (PostHog) — optional; events no-op until a key is present ────
   static const _envPosthogKey = String.fromEnvironment('POSTHOG_KEY');
-  static const _inlinePosthogKey = ''; // paste your PostHog project API key
+  static const _inlinePosthogKey = 'phc_xFbsFwfgtpUpq88Ev96BnX2jQkYUYAkYWNjr2WFH7uNF'; // paste your PostHog project API key
   static const _inlinePosthogHost = 'https://us.i.posthog.com';
 
   static String get posthogKey =>
