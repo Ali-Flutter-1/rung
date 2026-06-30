@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'core/analytics/analytics_bootstrap.dart';
+import 'core/push/push_bootstrap.dart';
 import 'data/local/app_database.dart';
 import 'data/notifications/notification_service.dart';
 import 'data/remote/supabase_bootstrap.dart';
@@ -12,8 +14,13 @@ import 'data/repositories/prefs_settings_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Portrait-only — block landscape on every screen (native config in
+  // Info.plist + AndroidManifest enforces it too; this is the belt-and-braces).
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   // Cloud + analytics + notifications are optional and self-guarding (§2.2).
   await initSupabase();
+  await initFirebase();
   await initAnalytics();
   await NotificationService.instance.init();
 

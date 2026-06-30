@@ -52,6 +52,8 @@ dependencies:
   timezone: ^0.11.0
   fl_chart: ^1.2.0
   flutter_timezone: ^5.1.0
+  firebase_core: ^4.11.0
+  firebase_messaging: ^16.4.1
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +65,20 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+# App launcher icon — generated from the logo onto the brand paper colour
+# (iOS icons must be opaque, so the transparent logo is flattened).
+# Regenerate after changing the logo: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/rang_logo.png"
+  remove_alpha_ios: true
+  background_color_ios: "#F7F4EF"
+  min_sdk_android: 21
+  adaptive_icon_background: "#F7F4EF"
+  adaptive_icon_foreground: "assets/images/rang_logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

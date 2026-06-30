@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ── Secrets — never commit these ─────────────────────────────────────────────
+# Backend secrets live in `supabase secrets`, NOT in the repo.
+.env
+.env.*
+!.env.example
+*.p8
+service-account*.json
+serviceAccount*.json
+*-adminsdk-*.json
+supabase/.env

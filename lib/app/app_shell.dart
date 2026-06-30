@@ -31,6 +31,7 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(contentSyncProvider); // refresh global content on sign-in/startup
     ref.watch(progressSyncProvider); // auto-restore/sync progress on start/switch
+    ref.watch(pushRegistrationProvider); // register FCM token when signed in
     final surface = Theme.of(context).colorScheme.surface;
     return Scaffold(
       body: shell,

@@ -201,8 +201,10 @@ class ProfileScreen extends ConsumerWidget {
                   content: Text('Logging out…'),
                 ));
                 // Flush any unsaved progress to the cloud BEFORE logging out, so
-                // it can be restored next sign-in (no lost rungs on switch).
+                // it can be restored next sign-in (no lost rungs on switch), and
+                // remove this device's push token so it stops getting pushes.
                 await ref.read(syncServiceProvider).backupNow();
+                await ref.read(pushServiceProvider).unregister();
                 ref.read(analyticsProvider).reset();
                 await ref.read(authRepositoryProvider).signOut();
               },

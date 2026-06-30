@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "679728768976",
+    "project_id": "rung-1c1b1",
+    "storage_bucket": "rung-1c1b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679728768976:android:a646661334b1a717e37bd5",
+        "android_client_info": {
+          "package_name": "com.rung.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATphoRpdAZUUZiSS8Bu4T8uUd4T-8_Od8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

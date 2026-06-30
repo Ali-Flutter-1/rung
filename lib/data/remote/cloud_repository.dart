@@ -128,6 +128,23 @@ class CloudRepository {
   /// (cascades from auth.users). Irreversible.
   Future<void> deleteAccount() => supabase.rpc('delete_my_account');
 
+  // ── Push tokens ──────────────────────────────────────────────────────────
+  /// Registers this device's FCM token for the signed-in user (upsert by token,
+  /// so switching accounts on one device reassigns it).
+  Future<void> upsertDeviceToken(String token, String platform) async {
+    final uid = _uid;
+    if (uid == null) return;
+    await supabase.from('device_tokens').upsert({
+      'token': token,
+      'user_id': uid,
+      'platform': platform,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    }, onConflict: 'token');
+  }
+
+  Future<void> deleteDeviceToken(String token) =>
+      supabase.from('device_tokens').delete().eq('token', token);
+
   /// User ids in a pod. (Locked members still appear here; their profile is
   /// just hidden by RLS when fetched.)
   Future<List<String>> podMemberIds(String groupId) async {

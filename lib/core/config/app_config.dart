@@ -35,3 +35,4 @@ class AppConfig {
   static String get posthogHost => _inlinePosthogHost;
   static bool get hasPosthog => posthogKey.isNotEmpty;
 }
+

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/analytics/analytics.dart';
 import '../core/analytics/posthog_analytics.dart';
 import '../core/config/app_config.dart';
+import '../core/push/push_service.dart';
 import '../data/local/app_database.dart';
 import '../data/remote/auth_repository.dart';
 import '../data/remote/cloud_repository.dart';
@@ -67,6 +68,23 @@ final syncServiceProvider = Provider<SyncService>(
     ref.watch(settingsRepositoryProvider),
   ),
 );
+
+/// Push-notification token lifecycle (FCM). No-ops until Firebase is ready.
+final pushServiceProvider = Provider<PushService>((ref) => PushService(
+      onRegister: (token, platform) =>
+          ref.read(cloudRepositoryProvider).upsertDeviceToken(token, platform),
+      onDelete: (token) =>
+          ref.read(cloudRepositoryProvider).deleteDeviceToken(token),
+    ));
+
+/// Registers this device's push token whenever someone is signed in (and on
+/// account switch). Watched in the shell; result ignored.
+final pushRegistrationProvider = FutureProvider<void>((ref) async {
+  if (!ref.watch(cloudEnabledProvider)) return;
+  final signedIn = ref.watch(authUserProvider).asData?.value != null;
+  if (!signedIn) return;
+  await ref.read(pushServiceProvider).registerForUser();
+});
 
 /// Pulls global content (tracks + rungs) from Supabase into the local cache
 /// whenever the signed-in user changes (sign-in / switch / startup). Watch it
