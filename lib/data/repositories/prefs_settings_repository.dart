@@ -26,8 +26,12 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kBackup = 'backup_enabled';
   static const _kLastBackup = 'last_backup_at';
   static const _kLastContentSync = 'last_content_sync_at';
+  static const _kPush = 'push_enabled';
+  static const _kPodAlerts = 'pod_alerts_enabled';
   static const _kLastUser = 'last_user_id';
   static const _kReminder = 'reminder_time';
+  static const _kCheckIn = 'last_check_in_date';
+  static const _kAvatar = 'avatar_id';
 
   static Future<PrefsSettingsRepository> create() async =>
       PrefsSettingsRepository(await SharedPreferences.getInstance());
@@ -195,6 +199,36 @@ class PrefsSettingsRepository implements SettingsRepository {
   Future<void> setLastContentSyncAt(int ms) async {
     await _prefs.setInt(_kLastContentSync, ms);
   }
+
+  @override
+  bool get pushEnabled => _prefs.getBool(_kPush) ?? true;
+
+  @override
+  Future<void> setPushEnabled(bool value) async {
+    await _prefs.setBool(_kPush, value);
+    _bump();
+  }
+
+  @override
+  bool get podAlertsEnabled => _prefs.getBool(_kPodAlerts) ?? true;
+
+  @override
+  Future<void> setPodAlertsEnabled(bool value) async {
+    await _prefs.setBool(_kPodAlerts, value);
+    _bump();
+  }
+
+  @override
+  String? get lastCheckInDate => _str(_kCheckIn);
+
+  @override
+  Future<void> setLastCheckInDate(String ymd) => _setStr(_kCheckIn, ymd);
+
+  @override
+  String? get avatarId => _str(_kAvatar);
+
+  @override
+  Future<void> setAvatarId(String? id) => _setStr(_kAvatar, id);
 
   @override
   String? get lastUserId => _str(_kLastUser);

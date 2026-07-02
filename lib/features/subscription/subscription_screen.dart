@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../app/providers.dart';
 import '../../core/analytics/analytics.dart';
+import '../../core/purchases/purchase_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/subscription.dart';
 import '../profile/profile_sync.dart';
 
-/// Tab 4 — premium plans. Real in-app purchases (RevenueCat / StoreKit / Play
-/// Billing) are wired in the monetization phase; for now selecting a plan sets
-/// a local tier flag so the pod rules are testable end-to-end. The core
-/// therapeutic loop always stays free (§1.10).
+/// Tab 4 — premium plans. Uses RevenueCat for real in-app purchases (live
+/// localized prices, purchase, restore) when a key is configured; otherwise it
+/// falls back to a simulated local tier so pod rules stay testable end-to-end.
+/// The core therapeutic loop always stays free (§1.10).
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
 
@@ -21,20 +23,117 @@ class SubscriptionScreen extends ConsumerStatefulWidget {
 
 class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   bool _yearly = true;
+  bool _busy = false;
+  Offering? _offering; // live store packages (null until loaded / no keys)
 
   @override
   void initState() {
     super.initState();
     ref.read(analyticsProvider).capture(Ev.paywallViewed);
+    _loadOffering();
   }
 
+  Future<void> _loadOffering() async {
+    if (!purchasesReady) return;
+    final o = await ref.read(purchaseServiceProvider).currentOffering();
+    if (mounted) setState(() => _offering = o);
+  }
+
+  Package? get _selectedPackage =>
+      _yearly ? _offering?.annual : _offering?.monthly;
+
+  /// Live localized price when the store gave us one; the marketing price
+  /// otherwise (dev / offering not loaded yet).
+  String _priceLabel(bool yearly) {
+    final pkg = yearly ? _offering?.annual : _offering?.monthly;
+    return pkg?.storeProduct.priceString ?? (yearly ? '\$39.99' : '\$4.99');
+  }
+
+  Future<void> _onSubscribe() async {
+    ref.read(analyticsProvider).capture(
+        Ev.subscribeTapped, {'plan': _yearly ? 'yearly' : 'monthly'});
+    final settings = ref.read(settingsRepositoryProvider);
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Dev / no-keys fallback: simulate the tier so pod rules stay testable.
+    if (!purchasesReady) {
+      await settings.setSubscriptionTier(
+          _yearly ? SubscriptionTier.yearly : SubscriptionTier.monthly);
+      await pushIdentityToCloud(ref);
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+            'Premium active (simulated — add RevenueCat keys for real purchases).'),
+      ));
+      return;
+    }
+
+    final pkg = _selectedPackage;
+    if (pkg == null) {
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("That plan isn't available right now. Try again shortly."),
+      ));
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      final tier = await ref.read(purchaseServiceProvider).buy(pkg);
+      await settings.setSubscriptionTier(tier);
+      await pushIdentityToCloud(ref);
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Premium active — thank you. 🌱'),
+      ));
+    } on PurchaseCancelled {
+      // User backed out — nothing to say.
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("The purchase didn't complete. You haven't been charged."),
+      ));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _onRestore() async {
+    final settings = ref.read(settingsRepositoryProvider);
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _busy = true);
+    try {
+      final tier = await ref.read(purchaseServiceProvider).restore();
+      await settings.setSubscriptionTier(tier);
+      await pushIdentityToCloud(ref);
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(tier.isPremium
+            ? 'Purchases restored.'
+            : 'No previous purchases found on this account.'),
+      ));
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("Couldn't restore right now. Try again shortly."),
+      ));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  // Honest value lines — these reflect what the tiers actually unlock. Ordered
+  // to lead with belonging (the pods), which is what keeps people coming back.
   static const _benefits = [
-    (Icons.all_inclusive_rounded, 'Every rung on all 6 tracks'),
-    (Icons.auto_awesome_outlined, 'AI Co-pilot — scripts, drafts & rehearsals'),
-    (Icons.menu_book_outlined, 'The full Lessons library'),
-    (Icons.groups_2_outlined, 'Priority access to new pods'),
-    (Icons.insights_rounded, 'Advanced insights & data export'),
-    (Icons.notifications_active_outlined, 'Smart, gentle reminders'),
+    (Icons.diversity_3_rounded,
+        "You're not doing this alone — join more support pods (3 on monthly, unlimited on yearly)"),
+    (Icons.groups_2_outlined,
+        'Bigger, warmer pods — up to 50 people who genuinely get it'),
+    (Icons.stairs_rounded,
+        "Go deeper when you're ready — up to 40 steps a track (free has 5)"),
+    (Icons.add_circle_outline_rounded,
+        'Build your own steps, shaped around the fears that are yours'),
+    (Icons.lock_outline_rounded,
+        'Always private, always ad-free — your practice stays yours'),
   ];
 
   @override
@@ -77,12 +176,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const Icon(Icons.workspace_premium_outlined,
                     color: Colors.white, size: 32),
                 const SizedBox(height: Insets.sm),
-                Text('Go further, gently.',
+                Text("You don't have to face it alone.",
                     style: t.headlineSmall?.copyWith(color: Colors.white)),
                 const SizedBox(height: Insets.xs),
                 Text(
-                  'The core loop is always free. Premium unlocks the rest when '
-                  'you\'re ready for more.',
+                  'The daily practice is always free. Premium opens up the '
+                  'community — more pods, more people beside you — for when '
+                  "you're ready to go further.",
                   style: t.bodyLarge?.copyWith(
                       color: Colors.white.withValues(alpha: 0.9)),
                 ),
@@ -120,7 +220,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Expanded(
                 child: _PlanCard(
                   title: 'Yearly',
-                  price: '\$39.99',
+                  price: _priceLabel(true),
                   per: 'per year · best value',
                   highlight: _yearly,
                   badge: 'Save 33%',
@@ -131,7 +231,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Expanded(
                 child: _PlanCard(
                   title: 'Monthly',
-                  price: '\$4.99',
+                  price: _priceLabel(false),
                   per: 'per month',
                   highlight: !_yearly,
                   onTap: () => setState(() => _yearly = false),
@@ -141,27 +241,29 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ),
           const SizedBox(height: Insets.lg),
           FilledButton(
-            onPressed: () async {
-              ref.read(analyticsProvider).capture(
-                  Ev.subscribeTapped, {'plan': _yearly ? 'yearly' : 'monthly'});
-              final messenger = ScaffoldMessenger.of(context);
-              await settings.setSubscriptionTier(
-                  _yearly ? SubscriptionTier.yearly : SubscriptionTier.monthly);
-              // Sync the tier to the cloud profile so the server's pod limits
-              // (free 1 / monthly 3 / yearly ∞) actually apply when joining.
-              await pushIdentityToCloud(ref);
-              messenger.showSnackBar(
-                const SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(
-                      'Premium active (simulated — real purchases come later).'),
-                ),
-              );
-            },
-            child: Text(tier.isPremium
-                ? (_yearly ? 'Switch to yearly' : 'Switch to monthly')
-                : (_yearly ? 'Start yearly — \$39.99' : 'Start monthly — \$4.99')),
+            onPressed: _busy ? null : _onSubscribe,
+            child: _busy
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : Text(tier.isPremium
+                    ? (_yearly ? 'Switch to yearly' : 'Switch to monthly')
+                    : (_yearly
+                        ? 'Start yearly — ${_priceLabel(true)}'
+                        : 'Start monthly — ${_priceLabel(false)}')),
           ),
+          if (purchasesReady) ...[
+            const SizedBox(height: Insets.xs),
+            Center(
+              child: TextButton(
+                onPressed: _busy ? null : _onRestore,
+                child: const Text('Restore purchases'),
+              ),
+            ),
+          ],
           const SizedBox(height: Insets.sm),
           Center(
             child: Text(

@@ -17,6 +17,7 @@ Future<void> pushIdentityToCloud(WidgetRef ref) async {
       bio: s.bio,
       isLocked: s.profileLocked,
       tier: s.subscriptionTier,
+      avatarId: s.avatarId,
     );
   } catch (e) {
     if (kDebugMode) debugPrint('[profile] identity push failed: $e');
@@ -40,6 +41,7 @@ Future<void> pushProfileToCloud(WidgetRef ref) async {
       bio: s.bio,
       isLocked: s.profileLocked,
       tier: s.subscriptionTier,
+      avatarId: s.avatarId,
       currentStreak: streak,
       bestStreak: best,
       totalChallenges: challenges,

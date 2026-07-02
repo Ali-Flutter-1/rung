@@ -166,7 +166,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         child: AutofillGroup(
           child: Form(
             key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                   Insets.lg, Insets.lg, Insets.lg, Insets.xl),
@@ -207,6 +206,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   autocorrect: false,
                   enableSuggestions: false,
                   autofillHints: const [AutofillHints.email],
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validateEmail,
                   onEditingComplete: () => _passwordFocus.requestFocus(),
                   decoration: const InputDecoration(
@@ -225,6 +225,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   autofillHints: [
                     _signUp ? AutofillHints.newPassword : AutofillHints.password
                   ],
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validatePassword,
                   onEditingComplete: () => _signUp
                       ? _confirmFocus.requestFocus()
@@ -251,6 +252,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     obscureText: _obscure,
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.newPassword],
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: _validateConfirm,
                     onEditingComplete: _submit,
                     decoration: const InputDecoration(

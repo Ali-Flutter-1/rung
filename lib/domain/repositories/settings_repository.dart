@@ -55,6 +55,16 @@ abstract interface class SettingsRepository {
   int get lastContentSyncAt;
   Future<void> setLastContentSyncAt(int ms);
 
+  /// Master push switch — when off, the device's push token is removed so no
+  /// cloud notifications arrive at all.
+  bool get pushEnabled;
+  Future<void> setPushEnabled(bool value);
+
+  /// Whether new pod-message notifications are wanted (mirrors the cloud
+  /// `profiles.pod_alerts` flag the notify function checks).
+  bool get podAlertsEnabled;
+  Future<void> setPodAlertsEnabled(bool value);
+
   /// The account (auth user id) whose data is currently on this device. Used to
   /// detect an account switch on sign-in and reset local data accordingly.
   String? get lastUserId;
@@ -63,6 +73,15 @@ abstract interface class SettingsRepository {
   /// Opt-in daily reminder time; null = reminders off.
   TimeOfDay? get reminderTime;
   Future<void> setReminderTime(TimeOfDay? value);
+
+  /// `yyyy-MM-dd` of the last daily check-in — gates the once-a-day prompt.
+  String? get lastCheckInDate;
+  Future<void> setLastCheckInDate(String ymd);
+
+  /// Chosen avatar id (see [Avatars]); null = use the name's initial. Synced to
+  /// the cloud profile so pod-mates see it.
+  String? get avatarId;
+  Future<void> setAvatarId(String? id);
 
   /// Notifies listeners (the app shell) when settings change.
   Stream<void> get changes;

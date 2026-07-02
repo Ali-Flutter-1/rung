@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../shared/avatars.dart';
 import 'pod_models.dart';
 
 /// WhatsApp-style member detail sheet. Honours the privacy lock, and (when
@@ -19,6 +20,11 @@ Future<void> showMemberSheet(
   return showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
+    // Present on the ROOT navigator, not the tab's branch navigator. A sheet on
+    // the branch navigator shares the semantics tree with the always-mounted
+    // sibling tabs, and dismissing it mid-frame trips '!semantics.parentDataDirty'
+    // (blank screen). Root presentation isolates it above the whole shell.
+    useRootNavigator: true,
     builder: (_) => _MemberSheet(
       member: member,
       userId: userId,
@@ -63,17 +69,11 @@ class _MemberSheet extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
+            UserAvatar(
               radius: 40,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-              child: member.locked
-                  ? const Icon(Icons.lock_outline_rounded,
-                      color: AppColors.primaryDeep, size: 32)
-                  : Text(member.initial,
-                      style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primaryDeep)),
+              locked: member.locked,
+              avatarId: member.avatarId,
+              name: member.name,
             ),
             const SizedBox(height: Insets.md),
             if (member.locked) ...[
@@ -148,6 +148,7 @@ class _MemberSheet extends ConsumerWidget {
     final reason = await showModalBottomSheet<String>(
       context: context,
       showDragHandle: true,
+      useRootNavigator: true,
       builder: (_) => _ReasonPicker(),
     );
     if (reason == null) return;
@@ -159,9 +160,31 @@ class _MemberSheet extends ConsumerWidget {
         await repo.reportUser(userId!, groupId!, reason);
       }
       if (context.mounted) {
-        Navigator.of(context).pop();
-        _toast(context,
-            'Thanks — our team will review this. Consider blocking too.');
+        final messenger = ScaffoldMessenger.of(context);
+        Navigator.of(context).pop(); // close the member sheet
+        messenger.showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          content: const Text("Thanks — we'll review this."),
+          action: SnackBarAction(
+            label: 'Block too',
+            onPressed: () async {
+              try {
+                await repo.blockUser(userId!);
+                onBlocked?.call(userId!);
+                messenger.showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("Blocked. You won't see their messages."),
+                ));
+              } catch (_) {
+                messenger.showSnackBar(const SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  content: Text('Could not block. Try again.'),
+                ));
+              }
+            },
+          ),
+        ));
       }
     } catch (_) {
       if (context.mounted) _toast(context, 'Could not send report. Try again.');
@@ -175,6 +198,7 @@ class _MemberSheet extends ConsumerWidget {
     }
     final ok = await showDialog<bool>(
       context: context,
+      useRootNavigator: true,
       builder: (dialogCtx) => AlertDialog(
         title: const Text('Block this member?'),
         content: const Text(
@@ -189,17 +213,25 @@ class _MemberSheet extends ConsumerWidget {
         ],
       ),
     );
-    if (ok != true) return;
+    if (ok != true || !context.mounted) return;
     final repo = ref.read(cloudRepositoryProvider);
+    // Capture messenger + navigator BEFORE popping — after pop the sheet's
+    // context is deactivated and looking either up would throw.
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     try {
       await repo.blockUser(userId!);
       onBlocked?.call(userId!);
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        _toast(context, 'Blocked. You won\'t see their messages.');
-      }
+      navigator.pop();
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("Blocked. You won't see their messages."),
+      ));
     } catch (_) {
-      if (context.mounted) _toast(context, 'Could not block. Try again.');
+      messenger.showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Could not block. Try again.'),
+      ));
     }
   }
 

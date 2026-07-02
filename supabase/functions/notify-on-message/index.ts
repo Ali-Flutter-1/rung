@@ -115,6 +115,16 @@ Deno.serve(async (req) => {
     recipientIds = recipientIds.filter((id) => !blockedSet.has(id));
     if (recipientIds.length === 0) return new Response("all blocked", { status: 200 });
 
+    // Drop anyone who muted pod-message notifications.
+    const { data: muted } = await sb
+      .from("profiles")
+      .select("id")
+      .in("id", recipientIds)
+      .eq("pod_alerts", false);
+    const mutedSet = new Set((muted ?? []).map((m) => m.id as string));
+    recipientIds = recipientIds.filter((id) => !mutedSet.has(id));
+    if (recipientIds.length === 0) return new Response("all muted", { status: 200 });
+
     // Their device tokens.
     const { data: tokens } = await sb
       .from("device_tokens")

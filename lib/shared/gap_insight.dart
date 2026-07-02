@@ -143,64 +143,111 @@ class _GapChart extends StatelessWidget {
       actual.add(FlSpot(i.toDouble(), (items[i].actualSuds ?? 0).toDouble()));
     }
 
+    final t = Theme.of(context).textTheme;
     LineChartBarData bar(List<FlSpot> spots, Color color, {bool dashed = false}) =>
         LineChartBarData(
           spots: spots,
           isCurved: true,
-          curveSmoothness: 0.25,
+          curveSmoothness: 0.3,
+          preventCurveOverShooting: true,
           color: color,
-          barWidth: 3,
+          barWidth: dashed ? 2 : 3.5,
           dashArray: dashed ? [5, 4] : null,
+          // Dots only on the "reality" line — white core with a coloured ring.
           dotData: FlDotData(
+            show: !dashed,
             getDotPainter: (s, _, _, _) => FlDotCirclePainter(
-                radius: 3, color: color, strokeWidth: 0),
+                radius: 3.5,
+                color: Colors.white,
+                strokeWidth: 2,
+                strokeColor: color),
           ),
           belowBarData: BarAreaData(
             show: !dashed,
-            color: color.withValues(alpha: 0.10),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                color.withValues(alpha: 0.28),
+                color.withValues(alpha: 0.0),
+              ],
+            ),
           ),
         );
 
-    return SizedBox(
-      height: 150,
-      child: LineChart(
-        LineChartData(
-          minY: 0,
-          maxY: 10,
-          minX: 0,
-          maxX: (items.length - 1).toDouble().clamp(1, double.infinity),
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            horizontalInterval: 5,
-            getDrawingHorizontalLine: (_) =>
-                FlLine(color: AppColors.border, strokeWidth: 1),
-          ),
-          borderData: FlBorderData(show: false),
-          titlesData: FlTitlesData(
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 5,
-                reservedSize: 24,
-                getTitlesWidget: (v, _) => Text('${v.toInt()}',
-                    style: Theme.of(context).textTheme.bodyMedium),
-              ),
-            ),
-          ),
-          lineTouchData: const LineTouchData(enabled: false),
-          lineBarsData: [
-            bar(predicted, AppColors.inkFaint, dashed: true),
-            bar(actual, AppColors.primary),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            _legend(AppColors.inkFaint, 'Fear', t),
+            const SizedBox(width: Insets.md),
+            _legend(AppColors.primary, 'Reality', t),
           ],
         ),
-      ),
+        const SizedBox(height: Insets.md),
+        SizedBox(
+          height: 156,
+          child: LineChart(
+            LineChartData(
+              minY: 0,
+              maxY: 10,
+              minX: 0,
+              maxX: (items.length - 1).toDouble().clamp(1, double.infinity),
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: 5,
+                getDrawingHorizontalLine: (_) => FlLine(
+                    color: AppColors.border.withValues(alpha: 0.6),
+                    strokeWidth: 1,
+                    dashArray: [4, 4]),
+              ),
+              borderData: FlBorderData(show: false),
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 5,
+                    reservedSize: 22,
+                    getTitlesWidget: (v, _) => Text('${v.toInt()}',
+                        style: t.bodySmall?.copyWith(color: AppColors.inkMuted)),
+                  ),
+                ),
+              ),
+              lineTouchData: const LineTouchData(enabled: false),
+              lineBarsData: [
+                bar(predicted, AppColors.inkFaint, dashed: true),
+                bar(actual, AppColors.primary),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _legend(Color color, String label, TextTheme t) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 16,
+          height: 4,
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.circular(2)),
+        ),
+        const SizedBox(width: 6),
+        Text(label,
+            style: t.bodySmall
+                ?.copyWith(color: AppColors.inkMuted, fontWeight: FontWeight.w600)),
+      ],
     );
   }
 }

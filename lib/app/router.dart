@@ -98,8 +98,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.auth,
         builder: (_, _) => const SignInScreen(),
       ),
-      StatefulShellRoute.indexedStack(
+      StatefulShellRoute(
         builder: (_, _, shell) => AppShell(shell: shell),
+        // Keep all 5 tabs alive (IndexedStack) BUT freeze the tickers on the
+        // ones that aren't visible. Otherwise a repeating animation on an
+        // offstage tab (e.g. the Home "evidence is coming" pulse) keeps its
+        // render subtree perpetually dirty; when a route pushed on a branch
+        // navigator later rebuilds, the shared semantics flush walks that dirty
+        // node and throws '!semantics.parentDataDirty' → blank screen. Freezing
+        // offstage tickers removes the dirty node (and saves battery).
+        navigatorContainerBuilder: (context, shell, children) => IndexedStack(
+          index: shell.currentIndex,
+          children: [
+            for (var i = 0; i < children.length; i++)
+              TickerMode(enabled: i == shell.currentIndex, child: children[i]),
+          ],
+        ),
         branches: [
           StatefulShellBranch(routes: [
             GoRoute(

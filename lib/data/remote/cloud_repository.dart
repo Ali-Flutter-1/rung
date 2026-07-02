@@ -21,6 +21,7 @@ class CloudRepository {
     String? bio,
     required bool isLocked,
     required SubscriptionTier tier,
+    String? avatarId,
     int? currentStreak,
     int? bestStreak,
     int? totalChallenges,
@@ -33,6 +34,7 @@ class CloudRepository {
       bio: bio,
       isLocked: isLocked,
       tier: tier,
+      avatarId: avatarId,
       updatedAt: DateTime.now().toUtc().toIso8601String(),
       currentStreak: currentStreak,
       bestStreak: bestStreak,
@@ -51,6 +53,7 @@ class CloudRepository {
     required bool isLocked,
     required SubscriptionTier tier,
     required String updatedAt,
+    String? avatarId,
     int? currentStreak,
     int? bestStreak,
     int? totalChallenges,
@@ -61,6 +64,7 @@ class CloudRepository {
       'bio': bio,
       'is_locked': isLocked,
       'subscription_tier': tier.id,
+      'avatar': avatarId, // identity field — always written (null = initial)
       'updated_at': updatedAt,
     };
     if (currentStreak != null) row['current_streak'] = currentStreak;
@@ -145,6 +149,14 @@ class CloudRepository {
   Future<void> deleteDeviceToken(String token) =>
       supabase.from('device_tokens').delete().eq('token', token);
 
+  /// Sets whether the user wants pod-message notifications (the notify function
+  /// skips users with this false).
+  Future<void> setPodAlerts(bool enabled) async {
+    final uid = _uid;
+    if (uid == null) return;
+    await supabase.from('profiles').update({'pod_alerts': enabled}).eq('id', uid);
+  }
+
   /// User ids in a pod. (Locked members still appear here; their profile is
   /// just hidden by RLS when fetched.)
   Future<List<String>> podMemberIds(String groupId) async {
@@ -179,7 +191,7 @@ class CloudRepository {
         .map((rows) => rows.map(CloudMessage.fromRow).toList());
   }
 
-  Future<void> sendMessage(String groupId, String body) async {
+  Future<void> sendMessage(String groupId, String body, {String? replyTo}) async {
     final uid = _uid;
     if (uid == null) return;
     try {
@@ -187,6 +199,7 @@ class CloudRepository {
         'group_id': groupId,
         'user_id': uid,
         'body': body,
+        'reply_to': ?replyTo,
       });
     } catch (e) {
       final msg = e.toString();
@@ -203,12 +216,83 @@ class CloudRepository {
     }
   }
 
+  /// Edits the body of the user's own message (RLS enforces ownership).
+  Future<void> editMessage(String messageId, String newBody) async {
+    try {
+      await supabase.from('messages').update({
+        'body': newBody,
+        'edited_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', messageId);
+    } catch (_) {
+      throw const CloudActionException('Could not edit. Try again.');
+    }
+  }
+
+  /// Soft-deletes the user's own message (row kept so replies still resolve).
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await supabase.from('messages').update({
+        'deleted_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', messageId);
+    } catch (_) {
+      throw const CloudActionException('Could not delete. Try again.');
+    }
+  }
+
+  // ── Reactions ("cheers") ─────────────────────────────────────────────────
+  /// Realtime stream of ALL reactions in a pod (pods are small); the chat
+  /// aggregates them per message. Filtered to the pod via `group_id`.
+  Stream<List<CloudReaction>> watchReactions(String groupId) {
+    return supabase
+        .from('message_reactions')
+        .stream(primaryKey: ['message_id', 'user_id', 'emoji'])
+        .eq('group_id', groupId)
+        .map((rows) => rows.map(CloudReaction.fromRow).toList());
+  }
+
+  /// Adds the current user's reaction (idempotent — the PK dedupes).
+  Future<void> addReaction(String messageId, String groupId, String emoji) async {
+    final uid = _uid;
+    if (uid == null) return;
+    try {
+      await supabase.from('message_reactions').insert({
+        'message_id': messageId,
+        'user_id': uid,
+        'emoji': emoji,
+        'group_id': groupId,
+      });
+    } catch (_) {/* already reacted / offline — harmless */}
+  }
+
+  /// Removes the current user's reaction of [emoji] from a message.
+  Future<void> removeReaction(String messageId, String emoji) async {
+    final uid = _uid;
+    if (uid == null) return;
+    try {
+      await supabase
+          .from('message_reactions')
+          .delete()
+          .eq('message_id', messageId)
+          .eq('user_id', uid)
+          .eq('emoji', emoji);
+    } catch (_) {/* offline — harmless */}
+  }
+
   // ── Moderation (Phase 2 safety) ─────────────────────────────────────────
   Future<void> blockUser(String userId) =>
       supabase.rpc('block_user', params: {'target': userId});
 
   Future<void> unblockUser(String userId) =>
       supabase.rpc('unblock_user', params: {'target': userId});
+
+  /// User ids the signed-in user has blocked (for the "Blocked members" screen).
+  Future<List<String>> blockedUserIds() async {
+    final uid = _uid;
+    if (uid == null) return [];
+    final rows =
+        await supabase.from('blocks').select('blocked_id').eq('blocker_id', uid);
+    return rows.map((r) => r['blocked_id'] as String).toList();
+  }
 
   Future<void> reportMessage(String messageId, String reason) =>
       supabase.rpc('report_message', params: {'mid': messageId, 'why': reason});

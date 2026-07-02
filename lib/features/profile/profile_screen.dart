@@ -11,6 +11,8 @@ import '../../core/analytics/analytics.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../domain/entities/subscription.dart';
 import '../../domain/repositories/settings_repository.dart';
+import '../../shared/avatars.dart';
+import '../groups/blocked_members_screen.dart';
 import '../legal/legal_screens.dart';
 import 'edit_profile_sheet.dart';
 import 'profile_sync.dart';
@@ -35,7 +37,12 @@ class ProfileScreen extends ConsumerWidget {
           // ── Identity header ────────────────────────────────────────────
           Row(
             children: [
-              _Avatar(name: name, locked: settings.profileLocked),
+              _Avatar(
+                name: name,
+                locked: settings.profileLocked,
+                avatarId: settings.avatarId,
+                onTap: () => showAvatarPickerSheet(context, ref),
+              ),
               const SizedBox(width: Insets.md),
               Expanded(
                 child: Column(
@@ -136,16 +143,27 @@ class ProfileScreen extends ConsumerWidget {
             onSelectionChanged: (s) => settings.setThemeMode(s.first),
           ),
           const SizedBox(height: Insets.xl),
+          const _NotificationControls(),
+          const SizedBox(height: Insets.lg),
           const _ReminderControl(),
           const Divider(height: Insets.lg),
           _Tile(
             icon: Icons.health_and_safety_outlined,
             title: 'Is this right for me?',
             subtitle: 'How Rung fits — and when to seek more',
-            onTap: () => Navigator.of(context).push(
+            onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const SafetyScreen()),
             ),
           ),
+          if (ref.watch(cloudEnabledProvider))
+            _Tile(
+              icon: Icons.block_rounded,
+              title: 'Blocked members',
+              subtitle: "See and unblock people you've blocked",
+              onTap: () => Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(builder: (_) => const BlockedMembersScreen()),
+              ),
+            ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(
               icon: Icons.cloud_sync_rounded,
@@ -205,6 +223,7 @@ class ProfileScreen extends ConsumerWidget {
                 // remove this device's push token so it stops getting pushes.
                 await ref.read(syncServiceProvider).backupNow();
                 await ref.read(pushServiceProvider).unregister();
+                await ref.read(purchaseServiceProvider).logOut();
                 ref.read(analyticsProvider).reset();
                 await ref.read(authRepositoryProvider).signOut();
               },
@@ -214,7 +233,7 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.privacy_tip_outlined,
             title: 'Privacy Policy',
             subtitle: 'What we store — and what stays on your device',
-            onTap: () => Navigator.of(context).push(
+            onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
             ),
           ),
@@ -222,7 +241,7 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.description_outlined,
             title: 'Terms of Service',
             subtitle: 'The agreement for using Rung',
-            onTap: () => Navigator.of(context).push(
+            onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const TermsScreen()),
             ),
           ),
@@ -298,6 +317,62 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
+/// Notification switches: a master push toggle (off removes the device token),
+/// and a finer "pod message alerts" toggle (mirrored to the cloud so the notify
+/// function skips muted users). Hidden entirely when cloud is off.
+class _NotificationControls extends ConsumerWidget {
+  const _NotificationControls();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(settingsChangesProvider);
+    if (!ref.watch(cloudEnabledProvider)) return const SizedBox.shrink();
+    final settings = ref.watch(settingsRepositoryProvider);
+    final pushOn = settings.pushEnabled;
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Radii.card,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          SwitchListTile(
+            secondary: const Icon(Icons.notifications_active_outlined,
+                color: AppColors.primary),
+            title: const Text('Notifications'),
+            subtitle: const Text('Alerts from Rung on this device'),
+            value: pushOn,
+            onChanged: (v) async {
+              await settings.setPushEnabled(v);
+              final push = ref.read(pushServiceProvider);
+              if (v) {
+                await push.registerForUser();
+              } else {
+                await push.unregister();
+              }
+            },
+          ),
+          const Divider(height: 1),
+          SwitchListTile(
+            secondary:
+                const Icon(Icons.forum_outlined, color: AppColors.primary),
+            title: const Text('Pod message alerts'),
+            subtitle: const Text('Tell me when someone posts in my pods'),
+            value: pushOn && settings.podAlertsEnabled,
+            onChanged: pushOn
+                ? (v) async {
+                    await settings.setPodAlertsEnabled(v);
+                    await ref.read(cloudRepositoryProvider).setPodAlerts(v);
+                  }
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Opt-in gentle daily reminder — schedules a local notification (§7.4).
 class _ReminderControl extends ConsumerWidget {
   const _ReminderControl();
@@ -355,40 +430,144 @@ class _ReminderControl extends ConsumerWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.name, required this.locked});
+  const _Avatar({
+    required this.name,
+    required this.locked,
+    this.avatarId,
+    this.onTap,
+  });
   final String? name;
   final bool locked;
+  final String? avatarId;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final initial =
-        (name == null || name!.isEmpty) ? '?' : name!.characters.first.toUpperCase();
-    return Stack(
-      children: [
-        CircleAvatar(
-          radius: 32,
-          backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-          child: Text(initial,
-              style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primaryDeep)),
-        ),
-        if (locked)
+    // Own profile: always show my avatar (not the lock icon); the badge signals
+    // locked / that it's tappable to change.
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          UserAvatar(avatarId: avatarId, name: name, radius: 32),
           Positioned(
             right: 0,
             bottom: 0,
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
+                border: Border.all(
+                    color: Theme.of(context).colorScheme.surface, width: 2),
               ),
-              child: const Icon(Icons.lock_rounded,
+              child: Icon(locked ? Icons.lock_rounded : Icons.edit_rounded,
                   size: 12, color: Colors.white),
             ),
           ),
-      ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom-sheet grid to pick an avatar (or "my initial"). Saves locally +
+/// pushes to the cloud profile so pod-mates see it.
+Future<void> showAvatarPickerSheet(BuildContext context, WidgetRef ref) {
+  final settings = ref.read(settingsRepositoryProvider);
+  final name = settings.displayName;
+  final current = settings.avatarId;
+
+  void choose(String? id) {
+    settings.setAvatarId(id);
+    pushIdentityToCloud(ref); // fire-and-forget; UI updates via settings change
+  }
+
+  return showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    useRootNavigator: true,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    builder: (sheetCtx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Choose your avatar',
+                style: Theme.of(sheetCtx).textTheme.titleLarge),
+            const SizedBox(height: Insets.xs),
+            Text('Only you can change it — pod-mates see it too.',
+                style: Theme.of(sheetCtx)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: AppColors.inkMuted)),
+            const SizedBox(height: Insets.lg),
+            // Scroll if the grid is taller than the sheet (avoids a Column
+            // overflow when there are many avatars / a short sheet).
+            Flexible(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: Insets.md,
+                  runSpacing: Insets.md,
+                  children: [
+                    _AvatarOption(
+                      name: name,
+                      selected: current == null,
+                      onTap: () {
+                        Navigator.of(sheetCtx).pop();
+                        choose(null);
+                      },
+                    ),
+                    for (final e in Avatars.options)
+                      _AvatarOption(
+                        avatarId: e.key,
+                        selected: current == e.key,
+                        onTap: () {
+                          Navigator.of(sheetCtx).pop();
+                          choose(e.key);
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _AvatarOption extends StatelessWidget {
+  const _AvatarOption({
+    this.avatarId,
+    this.name,
+    required this.selected,
+    required this.onTap,
+  });
+  final String? avatarId;
+  final String? name;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: selected ? AppColors.primary : Colors.transparent,
+            width: 2.5,
+          ),
+        ),
+        child: UserAvatar(avatarId: avatarId, name: name, radius: 26),
+      ),
     );
   }
 }

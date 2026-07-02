@@ -6,6 +6,7 @@ import '../../core/theme/app_theme.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/help_now.dart';
+import 'daily_check_in.dart';
 import '../../shared/progress_widgets.dart';
 import '../../shared/skeleton.dart';
 import '../../shared/today_step.dart';
@@ -66,6 +67,7 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: Insets.xs),
             Text("Here's one small step for today.", style: t.bodyMedium),
             const SizedBox(height: Insets.lg),
+            const DailyCheckIn(),
             today.when(
               loading: () => const TodayStepSkeleton(),
               error: (_, _) => const TodayStepEmpty(

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/analytics/analytics.dart';
 import '../core/analytics/posthog_analytics.dart';
 import '../core/config/app_config.dart';
+import '../core/purchases/purchase_service.dart';
 import '../core/push/push_service.dart';
 import '../data/local/app_database.dart';
 import '../data/remote/auth_repository.dart';
@@ -69,6 +70,34 @@ final syncServiceProvider = Provider<SyncService>(
   ),
 );
 
+/// RevenueCat purchases. No-ops until a RevenueCat key is configured.
+final purchaseServiceProvider =
+    Provider<PurchaseService>((_) => const PurchaseService());
+
+/// On sign-in: tie purchases to the user and sync their entitlement tier into
+/// local settings + the cloud profile (so server-side pod/content limits match).
+/// Renewals/expiries are also caught by the RevenueCat webhook server-side and
+/// re-synced here on the next app open.
+final purchaseSyncProvider = FutureProvider<void>((ref) async {
+  if (!purchasesReady) return;
+  final user = ref.watch(authUserProvider).asData?.value;
+  if (user == null) return;
+  final settings = ref.read(settingsRepositoryProvider);
+  final tier = await ref.read(purchaseServiceProvider).syncUser(user.id);
+  if (settings.subscriptionTier != tier) {
+    await settings.setSubscriptionTier(tier);
+    try {
+      await ref.read(cloudRepositoryProvider).upsertProfile(
+            displayName: settings.displayName,
+            bio: settings.bio,
+            isLocked: settings.profileLocked,
+            tier: tier,
+            avatarId: settings.avatarId,
+          );
+    } catch (_) {/* best-effort */}
+  }
+});
+
 /// Push-notification token lifecycle (FCM). No-ops until Firebase is ready.
 final pushServiceProvider = Provider<PushService>((ref) => PushService(
       onRegister: (token, platform) =>
@@ -81,8 +110,11 @@ final pushServiceProvider = Provider<PushService>((ref) => PushService(
 /// account switch). Watched in the shell; result ignored.
 final pushRegistrationProvider = FutureProvider<void>((ref) async {
   if (!ref.watch(cloudEnabledProvider)) return;
+  ref.watch(settingsChangesProvider); // re-run when the master toggle changes
   final signedIn = ref.watch(authUserProvider).asData?.value != null;
   if (!signedIn) return;
+  // Respect the master push switch — off means no token, so no cloud pushes.
+  if (!ref.read(settingsRepositoryProvider).pushEnabled) return;
   await ref.read(pushServiceProvider).registerForUser();
 });
 

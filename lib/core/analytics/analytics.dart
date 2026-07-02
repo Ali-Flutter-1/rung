@@ -12,6 +12,7 @@ class Ev {
   static const paywallViewed = 'paywall_viewed';
   static const subscribeTapped = 'subscribe_tapped';
   static const reminderEnabled = 'reminder_enabled';
+  static const checkInCompleted = 'check_in_completed';
 }
 
 /// The analytics seam — privacy-respecting. NEVER pass note/reflection text or

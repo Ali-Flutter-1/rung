@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -8,9 +11,13 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/remote/cloud_models.dart';
 import '../../data/remote/cloud_repository.dart';
+import '../../shared/avatars.dart';
 import '../../shared/support_sheet.dart';
 import 'member_sheet.dart';
 import 'pod_models.dart';
+
+/// Supportive quick-reactions offered on each message (kept small + kind).
+const _reactionEmojis = ['👏', '🎉', '❤️', '💪', '🌱'];
 
 /// Live pod chat backed by Supabase realtime. Posting is restricted to pod
 /// members by RLS; capacity/limits were enforced at join time.
@@ -24,9 +31,22 @@ class CloudChatScreen extends ConsumerStatefulWidget {
 
 class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   final _input = TextEditingController();
+  final _inputFocus = FocusNode();
   final _scroll = ScrollController();
   Map<String, CloudProfile> _profiles = {};
+  bool _membersLoaded = false; // gate the list so names resolve before render
+  List<CloudMessage> _lastMessages = const []; // keep list mounted across swaps
   final Set<String> _blocked = {};
+
+  // Reactions, aggregated per message from a realtime stream of the pod's rows.
+  StreamSubscription<List<CloudReaction>>? _reactionSub;
+  Map<String, Map<String, int>> _reactionCounts = {}; // msgId → emoji → count
+  Map<String, Set<String>> _myReactions = {}; // msgId → emojis I've added
+  String? _uid;
+
+  // Compose extras: the message being replied to, or the one being edited.
+  CloudMessage? _replyingTo;
+  CloudMessage? _editing;
 
   // The realtime message stream is cached and only rebuilt when the page size
   // changes — otherwise every setState (e.g. opening a member sheet) would
@@ -55,7 +75,40 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   void initState() {
     super.initState();
     _scroll.addListener(_onScroll);
+    _uid = ref.read(authRepositoryProvider).currentUser?.id;
     _loadMembers();
+    _reactionSub = ref
+        .read(cloudRepositoryProvider)
+        .watchReactions(widget.pod.id)
+        .listen(_applyReactions);
+  }
+
+  void _applyReactions(List<CloudReaction> rows) {
+    final counts = <String, Map<String, int>>{};
+    final mine = <String, Set<String>>{};
+    for (final r in rows) {
+      (counts[r.messageId] ??= {})
+          .update(r.emoji, (v) => v + 1, ifAbsent: () => 1);
+      if (r.userId == _uid) (mine[r.messageId] ??= {}).add(r.emoji);
+    }
+    if (mounted) {
+      setState(() {
+        _reactionCounts = counts;
+        _myReactions = mine;
+      });
+    }
+  }
+
+  void _toggleReaction(String messageId, String emoji) {
+    HapticFeedback.selectionClick();
+    final repo = ref.read(cloudRepositoryProvider);
+    final mineNow = _myReactions[messageId]?.contains(emoji) ?? false;
+    // The realtime stream reflects the change; no optimistic write needed.
+    if (mineNow) {
+      repo.removeReaction(messageId, emoji);
+    } else {
+      repo.addReaction(messageId, widget.pod.id, emoji);
+    }
   }
 
   void _onScroll() {
@@ -76,13 +129,20 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       final ids = await repo.podMemberIds(widget.pod.id);
       final profiles = await repo.visibleProfiles(ids);
       if (mounted) setState(() => _profiles = profiles);
-    } catch (_) {/* roster is best-effort */}
+    } catch (_) {
+      /* roster is best-effort */
+    } finally {
+      // Flag it either way so the chat doesn't wait forever if the roster fails.
+      if (mounted) setState(() => _membersLoaded = true);
+    }
   }
 
   @override
   void dispose() {
+    _reactionSub?.cancel();
     _scroll.removeListener(_onScroll);
     _input.dispose();
+    _inputFocus.dispose();
     _scroll.dispose();
     super.dispose();
   }
@@ -91,28 +151,159 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     final text = _input.text.trim();
     if (text.isEmpty) return;
 
-    // Soft-block obvious abuse before it ever leaves the device.
+    // Soft-block obvious abuse before it ever leaves the device (send or edit).
     if (ContentGuard.isAbusive(text)) {
       _snack("Let's keep pods kind — please rephrase that.");
       return;
     }
+    final editing = _editing;
+    final replyingTo = _replyingTo;
     _input.clear();
+    setState(() {
+      _editing = null;
+      _replyingTo = null;
+    });
     try {
-      await ref.read(cloudRepositoryProvider).sendMessage(widget.pod.id, text);
-      ref.read(analyticsProvider).capture(Ev.messageSent); // never log body text
+      final repo = ref.read(cloudRepositoryProvider);
+      if (editing != null) {
+        await repo.editMessage(editing.id, text);
+      } else {
+        await repo.sendMessage(widget.pod.id, text, replyTo: replyingTo?.id);
+        ref.read(analyticsProvider).capture(Ev.messageSent); // never log body
+      }
     } on CloudActionException catch (e) {
       _snack(e.message);
       return;
     }
-    // Surface support if the message signals distress (never blocks sending).
-    if (mounted && ContentGuard.isDistress(text)) {
+    // Surface support if a NEW message signals distress (never blocks sending).
+    if (mounted && editing == null && ContentGuard.isDistress(text)) {
       await showSupportSheet(context);
     }
   }
 
-  void _snack(String msg) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
-      );
+  void _startReply(CloudMessage m) {
+    setState(() {
+      _replyingTo = m;
+      _editing = null;
+    });
+    _inputFocus.requestFocus();
+  }
+
+  void _startEdit(CloudMessage m) {
+    setState(() {
+      _editing = m;
+      _replyingTo = null;
+      _input.text = m.body;
+      _input.selection =
+          TextSelection.collapsed(offset: _input.text.length);
+    });
+    _inputFocus.requestFocus();
+  }
+
+  void _cancelCompose() {
+    setState(() {
+      _replyingTo = null;
+      if (_editing != null) _input.clear();
+      _editing = null;
+    });
+  }
+
+  Future<void> _deleteMessage(CloudMessage m) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => AlertDialog(
+        title: const Text('Delete message?'),
+        content: const Text('This removes it for everyone in the pod.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(d).pop(false),
+              child: const Text('Cancel')),
+          FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.intensityHigh),
+              onPressed: () => Navigator.of(d).pop(true),
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ref.read(cloudRepositoryProvider).deleteMessage(m.id);
+    } on CloudActionException catch (e) {
+      _snack(e.message);
+    }
+  }
+
+  /// Long-press menu: reply to any message; edit/delete only your own.
+  void _messageActions(CloudMessage m, bool mine) {
+    if (m.isDeleted) return;
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      useRootNavigator: true,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Quick reactions — tap one to cheer this message.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  Insets.lg, 0, Insets.lg, Insets.sm),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  for (final e in _reactionEmojis)
+                    _ReactPick(
+                      emoji: e,
+                      selected: _myReactions[m.id]?.contains(e) ?? false,
+                      onTap: () {
+                        Navigator.of(sheetCtx).pop();
+                        _toggleReaction(m.id, e);
+                      },
+                    ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.reply_rounded),
+              title: const Text('Reply'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _startReply(m);
+              },
+            ),
+            if (mine) ...[
+              ListTile(
+                leading: const Icon(Icons.edit_outlined),
+                title: const Text('Edit'),
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  _startEdit(m);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline_rounded,
+                    color: AppColors.intensityHigh),
+                title: const Text('Delete'),
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  _deleteMessage(m);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _snack(String msg) {
+    if (!mounted) return; // guard: called after awaits / from callbacks
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
+    );
+  }
 
   Future<void> _leavePod() async {
     final ok = await showDialog<bool>(
@@ -158,6 +349,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         : Member(
             name: p.displayName ?? 'Member',
             bio: p.bio ?? '',
+            avatarId: p.avatarId,
             streak: p.currentStreak,
             challenges: p.totalChallenges,
           );
@@ -181,6 +373,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       name: p.displayName ?? 'Member',
       bio: p.bio ?? '',
       locked: false,
+      avatarId: p.avatarId,
       streak: p.currentStreak,
       challenges: p.totalChallenges,
     );
@@ -231,11 +424,19 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             child: StreamBuilder<List<CloudMessage>>(
               stream: stream,
               builder: (context, snap) {
-                if (snap.connectionState == ConnectionState.waiting) {
+                // First-load spinner only: wait for the roster AND the first
+                // batch. After that, keep showing the last messages even while
+                // the stream reconnects (load-more swaps the stream) so the
+                // ListView is NEVER torn down mid-scroll — tearing it down while
+                // scrolling caused "ScrollController attached to multiple scroll
+                // views" and a scroll-offset save on a dead context.
+                if (!_membersLoaded || (!snap.hasData && _lastMessages.isEmpty)) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                final raw = snap.data ?? const <CloudMessage>[];
+                final raw = snap.hasData ? snap.data! : _lastMessages;
+                _lastMessages = raw;
                 _lastCount = raw.length; // gauge whether more pages exist
+                final byId = {for (final m in raw) m.id: m}; // reply-parent lookup
                 // Newest-first (matches the stream); blocked users filtered out.
                 final messages =
                     raw.where((m) => !_blocked.contains(m.userId)).toList();
@@ -274,12 +475,37 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                     final m = messages[i];
                     final mine = m.userId == uid;
                     final member = mine ? null : _memberFor(m.userId);
-                    return _Bubble(
-                      text: m.body,
+                    final parent = m.replyTo == null ? null : byId[m.replyTo];
+                    String? replyLabel;
+                    String? replyText;
+                    if (parent != null) {
+                      replyLabel = parent.userId == uid
+                          ? 'You'
+                          : _memberFor(parent.userId).name;
+                      replyText =
+                          parent.isDeleted ? 'deleted message' : parent.body;
+                    }
+                    final bubble = _Bubble(
+                      message: m,
                       mine: mine,
                       member: member,
+                      replyLabel: replyLabel,
+                      replyText: replyText,
+                      reactions: _reactionCounts[m.id] ?? const {},
+                      myReactions: _myReactions[m.id] ?? const {},
+                      onToggleReaction: (e) => _toggleReaction(m.id, e),
                       onAvatarTap:
                           member == null ? null : () => _openMember(m),
+                      onLongPress:
+                          m.isDeleted ? null : () => _messageActions(m, mine),
+                    );
+                    // WhatsApp-style: swipe a message right to reply. Long-press
+                    // still opens the full actions menu. Deleted messages don't
+                    // swipe (nothing to reply to).
+                    if (m.isDeleted) return bubble;
+                    return _SwipeToReply(
+                      onReply: () => _startReply(m),
+                      child: bubble,
                     );
                   },
                 );
@@ -291,11 +517,25 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
                   Insets.md, Insets.sm, Insets.md, Insets.md),
-              child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_replyingTo != null || _editing != null)
+                    _ComposeBanner(
+                      editing: _editing != null,
+                      // Reply preview: whose message + a snippet.
+                      label: _editing != null
+                          ? 'Editing your message'
+                          : 'Replying to ${(_replyingTo!.userId == (ref.read(authRepositoryProvider).currentUser?.id)) ? 'yourself' : _memberFor(_replyingTo!.userId).name}',
+                      snippet: _editing != null ? null : _replyingTo!.body,
+                      onCancel: _cancelCompose,
+                    ),
+                  Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _input,
+                      focusNode: _inputFocus,
                       textCapitalization: TextCapitalization.sentences,
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
@@ -322,6 +562,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                     onPressed: _send,
                     icon: const Icon(Icons.arrow_upward_rounded),
                   ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -334,35 +576,51 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
 
 class _Bubble extends StatelessWidget {
   const _Bubble({
-    required this.text,
+    required this.message,
     required this.mine,
     this.member,
+    this.replyLabel,
+    this.replyText,
+    this.reactions = const {},
+    this.myReactions = const {},
+    required this.onToggleReaction,
     this.onAvatarTap,
+    this.onLongPress,
   });
-  final String text;
+  final CloudMessage message;
   final bool mine;
   final Member? member;
+  final String? replyLabel; // sender of the replied-to message
+  final String? replyText; // snippet of the replied-to message
+  final Map<String, int> reactions; // emoji → count
+  final Set<String> myReactions; // emojis the current user added
+  final void Function(String emoji) onToggleReaction;
   final VoidCallback? onAvatarTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final m = member;
-    final bubble = Container(
-      padding: const EdgeInsets.all(Insets.md),
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
-      decoration: BoxDecoration(
-        color: mine ? AppColors.primary : Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.only(
-          topLeft: Radii.md,
-          topRight: Radii.md,
-          bottomLeft: Radius.circular(mine ? 16 : 4),
-          bottomRight: Radius.circular(mine ? 4 : 16),
-        ),
-        border: mine ? null : Border.all(color: AppColors.border),
-      ),
-      child: Column(
+    final textColor =
+        mine ? Colors.white : Theme.of(context).colorScheme.onSurface;
+
+    Widget content;
+    if (message.isDeleted) {
+      content = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.block_rounded,
+              size: 15, color: textColor.withValues(alpha: 0.5)),
+          const SizedBox(width: 6),
+          Text('This message was deleted',
+              style: t.bodyMedium?.copyWith(
+                  color: textColor.withValues(alpha: 0.6),
+                  fontStyle: FontStyle.italic)),
+        ],
+      );
+    } else {
+      content = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!mine && m != null)
@@ -371,10 +629,43 @@ class _Bubble extends StatelessWidget {
                     color: AppColors.primaryDeep,
                     fontWeight: FontWeight.w700)),
           if (!mine && m != null) const SizedBox(height: 2),
-          Text(text,
-              style:
-                  t.bodyLarge?.copyWith(color: mine ? Colors.white : Theme.of(context).colorScheme.onSurface)),
+          if (replyLabel != null) _replyQuote(context, textColor),
+          Text(message.body, style: t.bodyLarge?.copyWith(color: textColor)),
+          if (message.isEdited)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text('edited',
+                  style: t.bodySmall
+                      ?.copyWith(color: textColor.withValues(alpha: 0.55))),
+            ),
+          if (reactions.isNotEmpty) _reactionChips(context),
         ],
+      );
+    }
+
+    final bubble = GestureDetector(
+      onLongPress: onLongPress,
+      child: Container(
+        padding: const EdgeInsets.all(Insets.md),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
+        decoration: BoxDecoration(
+          color: message.isDeleted
+              ? Theme.of(context).colorScheme.surfaceContainerHighest
+              : (mine
+                  ? AppColors.primary
+                  : Theme.of(context).colorScheme.surface),
+          borderRadius: BorderRadius.only(
+            topLeft: Radii.md,
+            topRight: Radii.md,
+            bottomLeft: Radius.circular(mine ? 16 : 4),
+            bottomRight: Radius.circular(mine ? 4 : 16),
+          ),
+          border: (mine || message.isDeleted)
+              ? null
+              : Border.all(color: AppColors.border),
+        ),
+        child: content,
       ),
     );
 
@@ -393,20 +684,291 @@ class _Bubble extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: m == null ? null : onAvatarTap,
-            child: CircleAvatar(
+            child: UserAvatar(
               radius: 16,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-              child: (m?.locked ?? true)
-                  ? const Icon(Icons.lock_outline_rounded,
-                      size: 16, color: AppColors.primaryDeep)
-                  : Text(m!.initial,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryDeep)),
+              locked: m?.locked ?? true,
+              avatarId: m?.avatarId,
+              name: m?.name,
             ),
           ),
           const SizedBox(width: Insets.sm),
           Flexible(child: bubble),
+        ],
+      ),
+    );
+  }
+
+  Widget _reactionChips(BuildContext context) {
+    final onBubble = mine; // teal bubble → light chips; else tinted chips
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
+        children: [
+          for (final entry in reactions.entries)
+            GestureDetector(
+              onTap: () => onToggleReaction(entry.key),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  borderRadius: Radii.pill,
+                  color: myReactions.contains(entry.key)
+                      ? (onBubble
+                          ? Colors.white.withValues(alpha: 0.30)
+                          : AppColors.primary.withValues(alpha: 0.18))
+                      : (onBubble
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : Theme.of(context).colorScheme.surface),
+                  border: Border.all(
+                    color: myReactions.contains(entry.key)
+                        ? (onBubble ? Colors.white : AppColors.primary)
+                        : (onBubble
+                            ? Colors.white.withValues(alpha: 0.30)
+                            : AppColors.border),
+                  ),
+                ),
+                child: Text(
+                  '${entry.key} ${entry.value}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: onBubble ? Colors.white : AppColors.primaryDeep,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _replyQuote(BuildContext context, Color textColor) {
+    final t = Theme.of(context).textTheme;
+    final accent = mine ? Colors.white : AppColors.primary;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border(left: BorderSide(color: accent, width: 3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(replyLabel!,
+              style: t.bodySmall
+                  ?.copyWith(color: textColor, fontWeight: FontWeight.w700)),
+          Text(replyText ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style:
+                  t.bodySmall?.copyWith(color: textColor.withValues(alpha: 0.75))),
+        ],
+      ),
+    );
+  }
+}
+
+/// The strip above the composer when replying to / editing a message.
+class _ComposeBanner extends StatelessWidget {
+  const _ComposeBanner({
+    required this.editing,
+    required this.label,
+    required this.onCancel,
+    this.snippet,
+  });
+  final bool editing;
+  final String label;
+  final String? snippet;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: Insets.sm),
+      padding: const EdgeInsets.fromLTRB(Insets.md, Insets.sm, 4, Insets.sm),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.08),
+        borderRadius: Radii.card,
+        border: const Border(
+            left: BorderSide(color: AppColors.primary, width: 3)),
+      ),
+      child: Row(
+        children: [
+          Icon(editing ? Icons.edit_outlined : Icons.reply_rounded,
+              size: 18, color: AppColors.primaryDeep),
+          const SizedBox(width: Insets.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label,
+                    style: t.bodyMedium?.copyWith(
+                        color: AppColors.primaryDeep,
+                        fontWeight: FontWeight.w700)),
+                if (snippet != null && snippet!.isNotEmpty)
+                  Text(snippet!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.bodySmall),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close_rounded, size: 20),
+            onPressed: onCancel,
+            visualDensity: VisualDensity.compact,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One emoji in the quick-reaction row of the message actions sheet.
+class _ReactPick extends StatelessWidget {
+  const _ReactPick(
+      {required this.emoji, required this.selected, required this.onTap});
+  final String emoji;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.18)
+              : Colors.transparent,
+        ),
+        child: Text(emoji, style: const TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+/// WhatsApp-style swipe-to-reply. Dragging a message to the right reveals a
+/// reply icon; releasing past the threshold triggers [onReply] and springs the
+/// bubble back. Uses Transform.translate (no layout change) so it's light and
+/// coexists with the list's vertical scroll.
+class _SwipeToReply extends StatefulWidget {
+  const _SwipeToReply({required this.child, required this.onReply});
+  final Widget child;
+  final VoidCallback onReply;
+
+  @override
+  State<_SwipeToReply> createState() => _SwipeToReplyState();
+}
+
+class _SwipeToReplyState extends State<_SwipeToReply>
+    with SingleTickerProviderStateMixin {
+  static const _max = 76.0; // how far the bubble can slide
+  static const _trigger = 52.0; // release past this → reply
+  double _dx = 0;
+  bool _armed = false; // crossed the trigger during this drag (for one haptic)
+
+  // Created eagerly in initState (NOT `late final`): a lazy `late final` would
+  // otherwise initialize on first access inside dispose() — building an
+  // AnimationController (vsync: this → TickerMode lookup) on a dead context.
+  late final AnimationController _spring;
+
+  @override
+  void initState() {
+    super.initState();
+    _spring = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 180),
+    );
+  }
+
+  @override
+  void dispose() {
+    _spring.dispose();
+    super.dispose();
+  }
+
+  void _onUpdate(DragUpdateDetails d) {
+    final next = (_dx + d.delta.dx).clamp(0.0, _max);
+    if (!_armed && next >= _trigger) {
+      _armed = true;
+      HapticFeedback.selectionClick();
+    }
+    setState(() => _dx = next);
+  }
+
+  void _onEnd(DragEndDetails _) {
+    final triggered = _dx >= _trigger;
+    _armed = false;
+    final from = _dx;
+    final anim = Tween<double>(begin: from, end: 0).animate(
+        CurvedAnimation(parent: _spring, curve: Curves.easeOut));
+    void tick() {
+      if (mounted) setState(() => _dx = anim.value);
+    }
+
+    anim.addListener(tick);
+    _spring
+      ..reset()
+      ..forward().whenComplete(() => anim.removeListener(tick));
+    // Defer the reply trigger to after this frame so we don't rebuild the list
+    // (and move focus) in the middle of the drag-end gesture.
+    if (triggered) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onReply();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final revealed = (_dx / _trigger).clamp(0.0, 1.0);
+    return GestureDetector(
+      onHorizontalDragUpdate: _onUpdate,
+      onHorizontalDragEnd: _onEnd,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 14),
+                child: Opacity(
+                  opacity: revealed,
+                  child: Transform.scale(
+                    scale: 0.5 + revealed * 0.5,
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primary.withValues(alpha: 0.16),
+                      ),
+                      child: const Icon(Icons.reply_rounded,
+                          size: 18, color: AppColors.primaryDeep),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Transform.translate(
+            offset: Offset(_dx, 0),
+            child: widget.child,
+          ),
         ],
       ),
     );

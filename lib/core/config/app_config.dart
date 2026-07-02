@@ -34,5 +34,22 @@ class AppConfig {
       _envPosthogKey.isNotEmpty ? _envPosthogKey : _inlinePosthogKey;
   static String get posthogHost => _inlinePosthogHost;
   static bool get hasPosthog => posthogKey.isNotEmpty;
+
+  // ── Payments (RevenueCat) — optional; the simulated tier is used until a key
+  // is present. These PUBLIC SDK keys are safe to ship (the store + the server
+  // webhook verify entitlements; a client can't fake a purchase).
+  static const _envRcIos = String.fromEnvironment('REVENUECAT_IOS_KEY');
+  static const _envRcAndroid = String.fromEnvironment('REVENUECAT_ANDROID_KEY');
+  static const _inlineRcIos = ''; // appl_…  (RevenueCat → Project → API keys)
+  static const _inlineRcAndroid = ''; // goog_…
+  /// The RevenueCat entitlement that unlocks Premium.
+  static const revenueCatEntitlement = 'premium';
+
+  static String get revenueCatIosKey =>
+      _envRcIos.isNotEmpty ? _envRcIos : _inlineRcIos;
+  static String get revenueCatAndroidKey =>
+      _envRcAndroid.isNotEmpty ? _envRcAndroid : _inlineRcAndroid;
+  static bool get hasRevenueCat =>
+      revenueCatIosKey.isNotEmpty || revenueCatAndroidKey.isNotEmpty;
 }
 

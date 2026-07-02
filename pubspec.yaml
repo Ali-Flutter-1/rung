@@ -54,6 +54,15 @@ dependencies:
   flutter_timezone: ^5.1.0
   firebase_core: ^4.11.0
   firebase_messaging: ^16.4.1
+  purchases_flutter: ^10.3.0
+
+# path_provider_foundation 2.6.0 migrated to Dart native code-assets (the
+# `objective_c` FFI package). Our toolchain doesn't pass SdkRoot to that native
+# build, so `objective_c.framework` never gets bundled and dlopen fails at
+# runtime ("Couldn't resolve native function 'DOBJC_initializeApi'"). Pin to the
+# last plain-CocoaPods release (2.5.1) until the native-assets flow is stable.
+dependency_overrides:
+  path_provider_foundation: 2.5.1
 
 dev_dependencies:
   flutter_test:

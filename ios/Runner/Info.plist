@@ -44,6 +44,11 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<!-- Opt out of iPad multitasking (Slide Over / Split View). Required so the
+	     app can stay portrait-only on iPad; otherwise Apple demands all four
+	     orientations for the ~ipad key. -->
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>com.posthog.posthog.AUTO_INIT</key>
 	<false/>
 </dict>

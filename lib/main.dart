@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'core/analytics/analytics_bootstrap.dart';
+import 'core/purchases/purchase_service.dart';
 import 'core/push/push_bootstrap.dart';
 import 'data/local/app_database.dart';
 import 'data/notifications/notification_service.dart';
@@ -14,6 +15,17 @@ import 'data/repositories/prefs_settings_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Known Flutter 3.38 semantics-engine regression: flushSemantics can throw a
+  // debug-only '!semantics.parentDataDirty' assertion when a route/sheet is
+  // presented over a tab shell. It never fires in release and doesn't affect
+  // behaviour, but in debug the per-frame throw blanks the screen. Swallow ONLY
+  // that assertion; everything else goes to the normal handler.
+  final defaultOnError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    if (details.exceptionAsString().contains('parentDataDirty')) return;
+    defaultOnError?.call(details);
+  };
+
   // Portrait-only — block landscape on every screen (native config in
   // Info.plist + AndroidManifest enforces it too; this is the belt-and-braces).
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -21,6 +33,7 @@ Future<void> main() async {
   // Cloud + analytics + notifications are optional and self-guarding (§2.2).
   await initSupabase();
   await initFirebase();
+  await initPurchases();
   await initAnalytics();
   await NotificationService.instance.init();
 

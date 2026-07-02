@@ -9,6 +9,7 @@ class Member {
     this.locked = false,
     this.you = false,
     this.climbing = '',
+    this.avatarId,
     this.streak = 0,
     this.challenges = 0,
   });
@@ -17,6 +18,7 @@ class Member {
   final String bio;
   final bool locked;
   final bool you;
+  final String? avatarId;
 
   /// What track they're climbing (shown in the detail sheet).
   final String climbing;
