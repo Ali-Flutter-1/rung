@@ -16,8 +16,13 @@ import '../../shared/support_sheet.dart';
 import 'member_sheet.dart';
 import 'pod_models.dart';
 
-/// Supportive quick-reactions offered on each message (kept small + kind).
-const _reactionEmojis = ['👏', '🎉', '❤️', '💪', '🌱'];
+/// Supportive quick-reactions offered on each message (kept warm + kind). The
+/// picker is a Wrap, so this list can grow freely.
+const _reactionEmojis = [
+  '👏', '🎉', '❤️', '💪', '🌱', '🙌', '🤗', '😊', '🔥', '⭐', '👍', '🥹',
+  '🥰', '🤩', '😌', '🫶', '🙏', '💛', '💯', '🫂', '🥳', '👌', '🤝', '😄',
+  '🌟', '🎊', '✨', '💚', '🌈', '🕊️',
+];
 
 /// Live pod chat backed by Supabase realtime. Posting is restricted to pod
 /// members by RLS; capacity/limits were enforced at join time.
@@ -103,7 +108,28 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     HapticFeedback.selectionClick();
     final repo = ref.read(cloudRepositoryProvider);
     final mineNow = _myReactions[messageId]?.contains(emoji) ?? false;
-    // The realtime stream reflects the change; no optimistic write needed.
+
+    // Optimistic local update so add/unsend feels instant; the realtime stream
+    // then overwrites these maps with the authoritative counts.
+    final mine = {...(_myReactions[messageId] ?? const <String>{})};
+    final counts = {...(_reactionCounts[messageId] ?? const <String, int>{})};
+    if (mineNow) {
+      mine.remove(emoji);
+      final c = (counts[emoji] ?? 1) - 1;
+      if (c <= 0) {
+        counts.remove(emoji);
+      } else {
+        counts[emoji] = c;
+      }
+    } else {
+      mine.add(emoji);
+      counts[emoji] = (counts[emoji] ?? 0) + 1;
+    }
+    setState(() {
+      _myReactions = {..._myReactions, messageId: mine};
+      _reactionCounts = {..._reactionCounts, messageId: counts};
+    });
+
     if (mineNow) {
       repo.removeReaction(messageId, emoji);
     } else {
@@ -249,8 +275,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                   Insets.lg, 0, Insets.lg, Insets.sm),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 4,
+                runSpacing: 4,
                 children: [
                   for (final e in _reactionEmojis)
                     _ReactPick(

@@ -8,23 +8,56 @@ import '../core/theme/app_colors.dart';
 class Avatars {
   Avatars._();
 
-  /// id → emoji. Order is the picker order. Add/keep ≤ ~15 for a tidy grid.
+  /// id → emoji. Order is the picker order. The grid scrolls, so the list can
+  /// grow freely. Kept calm + friendly to fit a low-pressure app.
   static const options = <MapEntry<String, String>>[
+    // ── Animals ──
     MapEntry('fox', '🦊'),
     MapEntry('owl', '🦉'),
     MapEntry('turtle', '🐢'),
     MapEntry('penguin', '🐧'),
     MapEntry('whale', '🐳'),
     MapEntry('cat', '🐱'),
+    MapEntry('dog', '🐶'),
+    MapEntry('panda', '🐼'),
+    MapEntry('koala', '🐨'),
+    MapEntry('rabbit', '🐰'),
     MapEntry('deer', '🦌'),
     MapEntry('hedgehog', '🦔'),
+    MapEntry('otter', '🦦'),
+    MapEntry('sloth', '🦥'),
+    MapEntry('frog', '🐸'),
+    MapEntry('chick', '🐥'),
     MapEntry('bee', '🐝'),
+    MapEntry('butterfly', '🦋'),
+    MapEntry('ladybug', '🐞'),
+    MapEntry('dolphin', '🐬'),
+    MapEntry('snail', '🐌'),
+    MapEntry('bear', '🐻'),
+    MapEntry('lion', '🦁'),
+    MapEntry('unicorn', '🦄'),
+    // ── Nature ──
     MapEntry('leaf', '🌿'),
+    MapEntry('clover', '🍀'),
+    MapEntry('seedling', '🌱'),
+    MapEntry('tree', '🌳'),
+    MapEntry('cactus', '🌵'),
+    MapEntry('mushroom', '🍄'),
+    MapEntry('flower', '🌸'),
+    MapEntry('sunflower', '🌻'),
+    MapEntry('tulip', '🌷'),
+    MapEntry('lotus', '🪷'),
+    MapEntry('maple', '🍁'),
+    // ── Sky ──
+    MapEntry('sun', '🌤️'),
     MapEntry('moon', '🌙'),
     MapEntry('star', '⭐'),
-    MapEntry('flower', '🌸'),
-    MapEntry('clover', '🍀'),
+    MapEntry('sparkles', '✨'),
+    MapEntry('rainbow', '🌈'),
+    MapEntry('cloud', '☁️'),
+    MapEntry('snowflake', '❄️'),
     MapEntry('wave', '🌊'),
+    MapEntry('mountain', '⛰️'),
   ];
 
   /// The emoji for a stored id, or null if unset / unknown (→ fall back to the
