@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -106,9 +108,11 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
       _error = null;
     });
     try {
-      // Identity only — never republish stats here (local may have just been
-      // reset by an account switch; pushing would zero this account's stats).
-      await pushIdentityToCloud(ref);
+      // Publish identity in the BACKGROUND — the pod list doesn't depend on it,
+      // so don't make the user wait a round-trip for it. (Identity only — never
+      // republish stats here; local may have just been reset by an account
+      // switch, and pushing would zero this account's stats.)
+      unawaited(pushIdentityToCloud(ref));
       await _repo.ensureSystemPod();
       await _reload();
     } catch (e) {
@@ -119,8 +123,12 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
   }
 
   Future<void> _reload() async {
-    final mine = await _repo.myPods();
-    final discover = await _repo.discoverPods();
+    // Fire both RPCs together (they don't depend on each other) → one round-trip
+    // of latency instead of two.
+    final mineF = _repo.myPods();
+    final discoverF = _repo.discoverPods();
+    final mine = await mineF;
+    final discover = await discoverF;
     if (mounted) {
       setState(() {
         _mine = mine;
@@ -261,6 +269,7 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
             _PodTile(
               name: pod.name,
               subtitle: '${pod.memberCount}/${pod.capacity} members',
+              unreadCount: pod.unreadCount,
               system: pod.isSystem,
               joined: true,
               onOpen: () => _open(pod),
@@ -433,6 +442,7 @@ class _PodTile extends StatelessWidget {
     required this.subtitle,
     required this.joined,
     this.system = false,
+    this.unreadCount = 0,
     this.onJoin,
     this.onOpen,
     this.onLeave,
@@ -441,6 +451,7 @@ class _PodTile extends StatelessWidget {
   final String subtitle;
   final bool joined;
   final bool system;
+  final int unreadCount;
   final VoidCallback? onJoin;
   final VoidCallback? onOpen;
   final VoidCallback? onLeave;
@@ -498,6 +509,13 @@ class _PodTile extends StatelessWidget {
                       style: t.bodyMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
+                  if (joined && unreadCount > 0)
+                    Text(
+                      '$unreadCount unread',
+                      style: t.bodySmall?.copyWith(
+                          color: AppColors.primaryDeep,
+                          fontWeight: FontWeight.w700),
+                    ),
                 ],
               ),
             ),

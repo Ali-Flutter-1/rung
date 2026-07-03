@@ -42,6 +42,9 @@ class PushService {
   }
 
   Future<void> _save(String token) async {
+    // Avoid repeating the same registration/log spam when reactive providers
+    // re-trigger registration without an actual token change.
+    if (_token == token) return;
     _token = token;
     final platform =
         defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';

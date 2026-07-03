@@ -33,6 +33,9 @@ class AppShell extends ConsumerWidget {
     ref.watch(progressSyncProvider); // auto-restore/sync progress on start/switch
     ref.watch(pushRegistrationProvider); // register FCM token when signed in
     ref.watch(purchaseSyncProvider); // sync entitlement tier on sign-in
+    ref.watch(streakProtectionProvider); // auto-protect streak (tier allowance)
+    ref.watch(smartReminderPlannerProvider); // missed/risks/comeback reminders
+    final unreadPods = ref.watch(unreadPodsProvider).asData?.value ?? 0;
     final surface = Theme.of(context).colorScheme.surface;
     return Scaffold(
       body: shell,
@@ -52,6 +55,7 @@ class AppShell extends ConsumerWidget {
                     child: _NavItem(
                       data: _items[i],
                       selected: i == shell.currentIndex,
+                      badgeCount: i == 2 ? unreadPods : 0,
                       onTap: () => _go(i),
                     ),
                   ),
@@ -68,11 +72,13 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.data,
     required this.selected,
+    required this.badgeCount,
     required this.onTap,
   });
 
   final ({IconData icon, IconData active, String label}) data;
   final bool selected;
+  final int badgeCount;
   final VoidCallback onTap;
 
   @override
@@ -94,8 +100,34 @@ class _NavItem extends StatelessWidget {
                   : Colors.transparent,
               borderRadius: Radii.pill,
             ),
-            child: Icon(selected ? data.active : data.icon,
-                color: color, size: 22),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(selected ? data.active : data.icon,
+                    color: color, size: 22),
+                if (badgeCount > 0)
+                  Positioned(
+                    right: -8,
+                    top: -8,
+                    child: Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.intensityHigh,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        badgeCount > 9 ? '9+' : '$badgeCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
           const SizedBox(height: 3),
           Text(

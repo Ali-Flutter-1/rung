@@ -264,15 +264,15 @@ class LocalProgressRepository implements ProgressRepository {
     return raw.split(',').where((s) => s.isNotEmpty).toSet();
   }
 
-  int _freezesRemaining(DateTime now) {
+  int _freezesRemaining(DateTime now, [int allowance = 1]) {
     final week = _weekKey(now);
     if (_db.meta(_isoWeekKey) != week) {
       _db
         ..setMeta(_isoWeekKey, week)
-        ..setMeta(_remainingKey, '1'); // 1 free save per week (§8.2)
-      return 1;
+        ..setMeta(_remainingKey, '$allowance'); // per-tier weekly saves (§8.2)
+      return allowance;
     }
-    return int.tryParse(_db.meta(_remainingKey) ?? '1') ?? 1;
+    return int.tryParse(_db.meta(_remainingKey) ?? '$allowance') ?? allowance;
   }
 
   @override
@@ -288,6 +288,29 @@ class LocalProgressRepository implements ProgressRepository {
         ..setMeta(_remainingKey, '${_freezesRemaining(now) - 1}');
     });
     return true;
+  }
+
+  /// Auto-protects a running streak from a single missed day, up to
+  /// [weeklyAllowance] times per week (tier-based). Runs on app open: if
+  /// yesterday was missed but the day before was active (so the streak is about
+  /// to break) and a freeze remains, it freezes yesterday so the streak holds.
+  @override
+  Future<void> autoProtectStreak({required int weeklyAllowance}) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yKey = dayKey(today.subtract(const Duration(days: 1)));
+    final beforeKey = dayKey(today.subtract(const Duration(days: 2)));
+    final days = _activeDayKeys(); // already includes frozen days
+    if (days.contains(yKey)) return; // yesterday already counts — nothing to do
+    if (!days.contains(beforeKey)) return; // no live streak to protect
+    final remaining = _freezesRemaining(now, weeklyAllowance);
+    if (remaining <= 0) return;
+    final frozen = _frozenDays()..add(yKey);
+    _db.transaction(() {
+      _db
+        ..setMeta(_frozenDaysKey, frozen.join(','))
+        ..setMeta(_remainingKey, '${remaining - 1}');
+    });
   }
 
   String _weekKey(DateTime d) {

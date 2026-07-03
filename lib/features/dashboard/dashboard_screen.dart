@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/help_now.dart';
+import '../share/share_progress.dart';
 import 'daily_check_in.dart';
 import '../../shared/progress_widgets.dart';
 import '../../shared/skeleton.dart';
@@ -28,6 +30,12 @@ class DashboardScreen extends ConsumerWidget {
     final today = ref.watch(todaysRungProvider);
     final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
     final t = Theme.of(context).textTheme;
+    final settings = ref.watch(settingsRepositoryProvider);
+    final weeklyGoal = settings.weeklyGoalSteps;
+    final weeklyDone = ref.watch(weeklyCompletedCountProvider).asData?.value ?? 0;
+    final weeklyRatio = weeklyGoal == 0
+        ? 0.0
+        : (weeklyDone / weeklyGoal).clamp(0.0, 1.0).toDouble();
 
     // Headline numbers come from local progress — the single source of truth.
     // (They survive an account switch via the cloud restore on sign-in, not by
@@ -62,6 +70,11 @@ class DashboardScreen extends ConsumerWidget {
                       style: t.headlineMedium, overflow: TextOverflow.ellipsis),
                 ),
                 if (streak > 0) StreakPill(days: streak),
+                IconButton(
+                  tooltip: 'Share my progress',
+                  icon: const Icon(Icons.ios_share_rounded),
+                  onPressed: () => showShareProgressSheet(context, ref),
+                ),
               ],
             ),
             const SizedBox(height: Insets.xs),
@@ -80,6 +93,64 @@ class DashboardScreen extends ConsumerWidget {
                           'rung or revisit one to keep the streak going.',
                     )
                   : TodayStepCard(suggestion: s),
+            ),
+            const SizedBox(height: Insets.lg),
+            Container(
+              padding: const EdgeInsets.all(Insets.md),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: Radii.card,
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('Weekly goal', style: t.titleMedium),
+                      const Spacer(),
+                      PopupMenuButton<int>(
+                        tooltip: 'Set weekly goal',
+                        onSelected: settings.setWeeklyGoalSteps,
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(value: 2, child: Text('2 steps/week')),
+                          PopupMenuItem(value: 3, child: Text('3 steps/week')),
+                          PopupMenuItem(value: 5, child: Text('5 steps/week')),
+                          PopupMenuItem(value: 7, child: Text('7 steps/week')),
+                        ],
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: Insets.sm, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColors.primarySoft,
+                            borderRadius: Radii.pill,
+                          ),
+                          child: Text(
+                            '$weeklyGoal/week',
+                            style: t.bodyMedium?.copyWith(
+                                color: AppColors.primaryDeep,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Insets.sm),
+                  Text(
+                    '$weeklyDone of $weeklyGoal steps completed this week',
+                    style: t.bodyMedium,
+                  ),
+                  const SizedBox(height: Insets.sm),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      minHeight: 10,
+                      value: weeklyRatio,
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: Insets.xl),
             Text('Your growth', style: t.titleMedium),

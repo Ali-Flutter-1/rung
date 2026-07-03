@@ -48,6 +48,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   Map<String, Map<String, int>> _reactionCounts = {}; // msgId → emoji → count
   Map<String, Set<String>> _myReactions = {}; // msgId → emojis I've added
   String? _uid;
+  CloudPodPrompt? _prompt;
+  int _todayCheckIns = 0;
+  bool _checkedInToday = false;
 
   // Compose extras: the message being replied to, or the one being edited.
   CloudMessage? _replyingTo;
@@ -82,6 +85,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     _scroll.addListener(_onScroll);
     _uid = ref.read(authRepositoryProvider).currentUser?.id;
     _loadMembers();
+    _loadEngagement();
+    unawaited(ref.read(cloudRepositoryProvider).markPodSeen(widget.pod.id));
     _reactionSub = ref
         .read(cloudRepositoryProvider)
         .watchReactions(widget.pod.id)
@@ -163,8 +168,25 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     }
   }
 
+  Future<void> _loadEngagement() async {
+    final repo = ref.read(cloudRepositoryProvider);
+    try {
+      final promptF = repo.todaysPrompt(widget.pod.id);
+      final stateF = repo.todaysCheckInState(widget.pod.id);
+      final prompt = await promptF;
+      final state = await stateF;
+      if (!mounted) return;
+      setState(() {
+        _prompt = prompt;
+        _todayCheckIns = state.count;
+        _checkedInToday = state.checkedIn;
+      });
+    } catch (_) {/* best-effort */}
+  }
+
   @override
   void dispose() {
+    unawaited(ref.read(cloudRepositoryProvider).markPodSeen(widget.pod.id));
     _reactionSub?.cancel();
     _scroll.removeListener(_onScroll);
     _input.dispose();
@@ -195,6 +217,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         await repo.editMessage(editing.id, text);
       } else {
         await repo.sendMessage(widget.pod.id, text, replyTo: replyingTo?.id);
+        unawaited(repo.markPodSeen(widget.pod.id));
         ref.read(analyticsProvider).capture(Ev.messageSent); // never log body
       }
     } on CloudActionException catch (e) {
@@ -204,6 +227,21 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     // Surface support if a NEW message signals distress (never blocks sending).
     if (mounted && editing == null && ContentGuard.isDistress(text)) {
       await showSupportSheet(context);
+    }
+  }
+
+  Future<void> _checkInToday() async {
+    if (_checkedInToday) return;
+    try {
+      final res = await ref.read(cloudRepositoryProvider).checkInToday(widget.pod.id);
+      if (!mounted) return;
+      setState(() {
+        _checkedInToday = res.checkedIn;
+        _todayCheckIns = res.count;
+      });
+      _snack('Nice work. Pod check-in posted.');
+    } catch (_) {
+      _snack('Could not check in right now. Try again.');
     }
   }
 
@@ -271,14 +309,14 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Quick reactions — tap one to cheer this message.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  Insets.lg, 0, Insets.lg, Insets.sm),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 4,
-                runSpacing: 4,
+            // Quick reactions — one scrollable row (keeps the sheet short even
+            // with many emojis; swipe sideways for more).
+            SizedBox(
+              height: 52,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: Insets.md),
                 children: [
                   for (final e in _reactionEmojis)
                     _ReactPick(
@@ -378,6 +416,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             name: p.displayName ?? 'Member',
             bio: p.bio ?? '',
             avatarId: p.avatarId,
+            isPremium: p.isPremium,
             streak: p.currentStreak,
             challenges: p.totalChallenges,
           );
@@ -402,6 +441,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       bio: p.bio ?? '',
       locked: false,
       avatarId: p.avatarId,
+      isPremium: p.isPremium,
       streak: p.currentStreak,
       challenges: p.totalChallenges,
     );
@@ -448,6 +488,50 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       ),
       body: Column(
         children: [
+          if (_prompt != null)
+            Container(
+              margin: const EdgeInsets.fromLTRB(Insets.md, Insets.sm, Insets.md, 0),
+              padding: const EdgeInsets.all(Insets.md),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.10),
+                borderRadius: Radii.card,
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.wb_twilight_outlined,
+                          size: 18, color: AppColors.primaryDeep),
+                      const SizedBox(width: Insets.xs),
+                      Text('Daily pod prompt',
+                          style: t.titleSmall?.copyWith(
+                              color: AppColors.primaryDeep,
+                              fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                  const SizedBox(height: Insets.xs),
+                  Text(_prompt!.prompt, style: t.bodyMedium),
+                  const SizedBox(height: Insets.sm),
+                  Row(
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: _checkedInToday ? null : _checkInToday,
+                        icon: Icon(_checkedInToday
+                            ? Icons.check_circle_rounded
+                            : Icons.task_alt_outlined),
+                        label: Text(_checkedInToday
+                            ? 'Checked in today'
+                            : "I did my step"),
+                      ),
+                      const SizedBox(width: Insets.sm),
+                      Text('$_todayCheckIns checked in', style: t.bodySmall),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           Expanded(
             child: StreamBuilder<List<CloudMessage>>(
               stream: stream,
@@ -652,10 +736,22 @@ class _Bubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!mine && m != null)
-            Text(m.locked ? 'Private member' : m.name,
-                style: t.bodyMedium?.copyWith(
-                    color: AppColors.primaryDeep,
-                    fontWeight: FontWeight.w700)),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(m.locked ? 'Private member' : m.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.bodyMedium?.copyWith(
+                          color: AppColors.primaryDeep,
+                          fontWeight: FontWeight.w700)),
+                ),
+                if (m.isPremium && !m.locked) ...[
+                  const SizedBox(width: 3),
+                  const Text('✨', style: TextStyle(fontSize: 11)),
+                ],
+              ],
+            ),
           if (!mine && m != null) const SizedBox(height: 2),
           if (replyLabel != null) _replyQuote(context, textColor),
           Text(message.body, style: t.bodyLarge?.copyWith(color: textColor)),

@@ -50,6 +50,11 @@ class ContentRules {
   /// paid).
   static bool canAddCustomRung(SubscriptionTier tier, int countInWindow) =>
       countInWindow < maxCustomRungs(tier);
+
+  /// Streak "freezes" per week — a missed day is auto-protected this many times.
+  /// Free 1 (a gentle safety net); Premium 3 (a real perk).
+  static int weeklyStreakFreezes(SubscriptionTier tier) =>
+      tier.isPremium ? 3 : 1;
 }
 
 /// Business rules for pods (groups) keyed off the user's subscription tier.

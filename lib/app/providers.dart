@@ -7,6 +7,7 @@ import '../core/config/app_config.dart';
 import '../core/purchases/purchase_service.dart';
 import '../core/push/push_service.dart';
 import '../data/local/app_database.dart';
+import '../data/notifications/notification_service.dart';
 import '../data/remote/auth_repository.dart';
 import '../data/remote/cloud_repository.dart';
 import '../data/remote/supabase_bootstrap.dart';
@@ -110,7 +111,6 @@ final pushServiceProvider = Provider<PushService>((ref) => PushService(
 /// account switch). Watched in the shell; result ignored.
 final pushRegistrationProvider = FutureProvider<void>((ref) async {
   if (!ref.watch(cloudEnabledProvider)) return;
-  ref.watch(settingsChangesProvider); // re-run when the master toggle changes
   final signedIn = ref.watch(authUserProvider).asData?.value != null;
   if (!signedIn) return;
   // Respect the master push switch — off means no token, so no cloud pushes.
@@ -148,6 +148,28 @@ final progressSyncProvider = FutureProvider<void>((ref) async {
   }
 });
 
+/// Number of joined pods with unread messages (for the Groups tab badge).
+final unreadPodsProvider = StreamProvider<int>((ref) async* {
+  if (!ref.watch(cloudEnabledProvider)) {
+    yield 0;
+    return;
+  }
+  final signedIn = ref.watch(authUserProvider).asData?.value != null;
+  if (!signedIn) {
+    yield 0;
+    return;
+  }
+  while (true) {
+    try {
+      final pods = await ref.read(cloudRepositoryProvider).myPods();
+      yield pods.where((p) => p.unreadCount > 0).length;
+    } catch (_) {
+      yield 0;
+    }
+    await Future<void>.delayed(const Duration(seconds: 20));
+  }
+});
+
 /// Current signed-in user (null when cloud off or signed out).
 final authUserProvider = StreamProvider<User?>((ref) async* {
   if (!supabaseReady) {
@@ -173,6 +195,73 @@ final attemptRepositoryProvider = Provider<AttemptRepository>(
 final progressRepositoryProvider = Provider<ProgressRepository>(
   (ref) => LocalProgressRepository(ref.watch(databaseProvider)),
 );
+
+/// On app open (and tier change), auto-protects a running streak from a single
+/// missed day using the tier's weekly allowance (free 1 / premium 3). Watched in
+/// the shell; result ignored. Silent — the user just sees their streak survive.
+final streakProtectionProvider = FutureProvider<void>((ref) async {
+  ref.watch(settingsChangesProvider); // re-run on tier change
+  final tier = ref.read(settingsRepositoryProvider).subscriptionTier;
+  await ref.read(progressRepositoryProvider).autoProtectStreak(
+        weeklyAllowance: ContentRules.weeklyStreakFreezes(tier),
+      );
+});
+
+/// Plans contextual local reminders (missed reflection, streak risk, comeback)
+/// whenever local progress/settings change. Runs best-effort and never blocks.
+final smartReminderPlannerProvider = FutureProvider<void>((ref) async {
+  ref.watch(settingsChangesProvider);
+  final settings = ref.read(settingsRepositoryProvider);
+  final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
+  final inProgress = ref.watch(inProgressAttemptProvider).asData?.value;
+  final streak = ref.watch(streakProvider).asData?.value ?? 0;
+
+  final now = DateTime.now();
+  final todayYmd =
+      '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  final completed = attempts
+      .where((a) => a.completedAt != null && (a.outcome?.counts ?? false))
+      .toList();
+  final hasCompletedToday =
+      completed.any((a) => _ymd(a.completedAt!) == todayYmd);
+  final lastCompletedAt = completed.isEmpty
+      ? null
+      : (completed
+            ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!)))
+          .first
+          .completedAt;
+
+  await NotificationService.instance.syncSmartReminders(
+    enabled: settings.reminderTime != null,
+    inProgressStartedAt: inProgress?.startedAt,
+    hasCompletedToday: hasCompletedToday,
+    currentStreak: streak,
+    lastCompletedAt: lastCompletedAt,
+  );
+});
+
+String _ymd(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+DateTime _startOfWeek(DateTime now) {
+  final day = DateTime(now.year, now.month, now.day);
+  return day.subtract(Duration(days: day.weekday - DateTime.monday));
+}
+
+/// Count of this week's counting attempts (done/partial) for weekly goals.
+final weeklyCompletedCountProvider = StreamProvider<int>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.watch(() {
+    final start = _startOfWeek(DateTime.now()).millisecondsSinceEpoch;
+    final rows = db.select(
+          "SELECT COUNT(*) AS n FROM attempts "
+          "WHERE outcome IN ('done','partial') AND completed_at IS NOT NULL "
+          "AND deleted_at IS NULL AND completed_at >= ?;",
+          [start],
+        );
+    return rows.first['n'] as int;
+  });
+});
 
 // ── Reactive read models for the UI ──────────────────────────────────────
 final tracksProvider = StreamProvider<List<Track>>(

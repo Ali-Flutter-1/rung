@@ -10,6 +10,7 @@ class Member {
     this.you = false,
     this.climbing = '',
     this.avatarId,
+    this.isPremium = false,
     this.streak = 0,
     this.challenges = 0,
   });
@@ -19,6 +20,7 @@ class Member {
   final bool locked;
   final bool you;
   final String? avatarId;
+  final bool isPremium;
 
   /// What track they're climbing (shown in the detail sheet).
   final String climbing;

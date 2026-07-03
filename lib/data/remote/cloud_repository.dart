@@ -122,6 +122,10 @@ class CloudRepository {
   Future<void> leavePod(String groupId) =>
       supabase.rpc('leave_group', params: {'gid': groupId});
 
+  /// Marks this pod as seen now, so unread counts clear.
+  Future<void> markPodSeen(String groupId) =>
+      supabase.rpc('mark_group_seen', params: {'gid': groupId});
+
   /// Server-side matchmaking for "Join another pod": returns the id of a
   /// joinable discoverable pod (creating a fresh, uniquely-named one if all are
   /// full). The caller still joins via [joinPod] so tier/capacity are enforced.
@@ -300,6 +304,39 @@ class CloudRepository {
   Future<void> reportUser(String userId, String groupId, String reason) =>
       supabase.rpc('report_user',
           params: {'target': userId, 'gid': groupId, 'why': reason});
+
+  // ── Pod engagement (daily prompts + check-ins) ──────────────────────────
+  /// Returns today's prompt for the pod (created server-side on first access).
+  Future<CloudPodPrompt?> todaysPrompt(String groupId) async {
+    try {
+      final row = await supabase.rpc('my_pod_prompt', params: {'gid': groupId});
+      if (row == null) return null;
+      return CloudPodPrompt.fromRow(Map<String, dynamic>.from(row as Map));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Marks "I did my step" for today (idempotent). Returns today's check-in
+  /// count for this pod and whether this user is now checked in.
+  Future<({int count, bool checkedIn})> checkInToday(String groupId) async {
+    final row = await supabase.rpc('pod_check_in_today', params: {'gid': groupId});
+    final m = Map<String, dynamic>.from(row as Map);
+    return (
+      count: ((m['today_count'] ?? 0) as num).toInt(),
+      checkedIn: (m['checked_in'] ?? false) as bool,
+    );
+  }
+
+  /// Current check-in state for today in a pod.
+  Future<({int count, bool checkedIn})> todaysCheckInState(String groupId) async {
+    final row = await supabase.rpc('pod_check_in_state', params: {'gid': groupId});
+    final m = Map<String, dynamic>.from(row as Map);
+    return (
+      count: ((m['today_count'] ?? 0) as num).toInt(),
+      checkedIn: (m['checked_in'] ?? false) as bool,
+    );
+  }
 
   // ── Progress backup (numbers only — never note text) ────────────────────
   Future<void> pushBackupAttempts(List<Map<String, dynamic>> rows) async {

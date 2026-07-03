@@ -566,7 +566,12 @@ class _AvatarOption extends StatelessWidget {
             width: 2.5,
           ),
         ),
-        child: UserAvatar(avatarId: avatarId, name: name, radius: 26),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            UserAvatar(avatarId: avatarId, name: name, radius: 26),
+          ],
+        ),
       ),
     );
   }

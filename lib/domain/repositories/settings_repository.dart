@@ -74,6 +74,10 @@ abstract interface class SettingsRepository {
   TimeOfDay? get reminderTime;
   Future<void> setReminderTime(TimeOfDay? value);
 
+  /// Weekly completion target shown on Home ("3 steps this week", etc).
+  int get weeklyGoalSteps;
+  Future<void> setWeeklyGoalSteps(int value);
+
   /// `yyyy-MM-dd` of the last daily check-in — gates the once-a-day prompt.
   String? get lastCheckInDate;
   Future<void> setLastCheckInDate(String ymd);

@@ -7,6 +7,7 @@ class CloudPod {
     required this.capacity,
     required this.isSystem,
     required this.memberCount,
+    this.unreadCount = 0,
   });
 
   final String id;
@@ -14,13 +15,36 @@ class CloudPod {
   final int capacity;
   final bool isSystem;
   final int memberCount;
+  final int unreadCount;
 
   factory CloudPod.fromRow(Map<String, dynamic> r) => CloudPod(
         id: r['id'] as String,
         name: (r['name'] ?? 'Pod') as String,
-        capacity: (r['capacity'] ?? 25) as int,
+        capacity: ((r['capacity'] ?? 25) as num).toInt(),
         isSystem: (r['is_system'] ?? false) as bool,
-        memberCount: (r['member_count'] ?? 0) as int,
+        memberCount: ((r['member_count'] ?? 0) as num).toInt(),
+        unreadCount: ((r['unread_count'] ?? 0) as num).toInt(),
+      );
+}
+
+class CloudPodPrompt {
+  const CloudPodPrompt({
+    required this.id,
+    required this.groupId,
+    required this.dayKey,
+    required this.prompt,
+  });
+
+  final String id;
+  final String groupId;
+  final String dayKey;
+  final String prompt;
+
+  factory CloudPodPrompt.fromRow(Map<String, dynamic> r) => CloudPodPrompt(
+        id: r['id'] as String,
+        groupId: r['group_id'] as String,
+        dayKey: (r['day_key'] ?? '') as String,
+        prompt: (r['prompt'] ?? '') as String,
       );
 }
 
@@ -32,6 +56,7 @@ class CloudProfile {
     this.isLocked = false,
     this.climbing = '',
     this.avatarId,
+    this.isPremium = false,
     this.currentStreak = 0,
     this.bestStreak = 0,
     this.totalChallenges = 0,
@@ -43,6 +68,7 @@ class CloudProfile {
   final bool isLocked;
   final String climbing;
   final String? avatarId;
+  final bool isPremium; // subscription_tier != 'free' (for the pod badge)
   final int currentStreak;
   final int bestStreak;
   final int totalChallenges;
@@ -53,6 +79,7 @@ class CloudProfile {
         bio: r['bio'] as String?,
         isLocked: (r['is_locked'] ?? false) as bool,
         avatarId: r['avatar'] as String?,
+        isPremium: ((r['subscription_tier'] ?? 'free') as String) != 'free',
         currentStreak: (r['current_streak'] ?? 0) as int,
         bestStreak: (r['best_streak'] ?? 0) as int,
         totalChallenges: (r['total_challenges'] ?? 0) as int,

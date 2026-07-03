@@ -86,7 +86,19 @@ class _MemberSheet extends ConsumerWidget {
                 style: t.bodyMedium,
               ),
             ] else ...[
-              Text(member.name, style: t.headlineSmall),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                      child: Text(member.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: t.headlineSmall)),
+                  if (member.isPremium) ...[
+                    const SizedBox(width: 6),
+                    const _PremiumTag(),
+                  ],
+                ],
+              ),
               if (member.bio.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
                 Text(member.bio,
@@ -244,6 +256,30 @@ class _MemberSheet extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
       );
+}
+
+class _PremiumTag extends StatelessWidget {
+  const _PremiumTag();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.accent.withValues(alpha: 0.18),
+        borderRadius: Radii.pill,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('✨', style: TextStyle(fontSize: 11)),
+          const SizedBox(width: 3),
+          Text('Premium',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.accentDeep, fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
+  }
 }
 
 class _ReasonPicker extends StatelessWidget {

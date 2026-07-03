@@ -6,6 +6,7 @@ import '../../core/theme/app_theme.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/progress_widgets.dart';
+import 'premium_insights.dart';
 
 /// Full "Your growth" surface — stat cards, week strip, the Bravery-Gap chart,
 /// per-track breakdown, and history. Reachable from the Rung tab's menu.
@@ -44,6 +45,8 @@ class InsightsScreen extends ConsumerWidget {
             const GapEmpty()
           else
             GapInsightCard(exposures: exposures),
+          const SizedBox(height: Insets.md),
+          PremiumInsights(attempts: attempts),
           const SizedBox(height: Insets.md),
           const CategoryBreakdown(),
           if (attempts.isNotEmpty) ...[

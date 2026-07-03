@@ -28,4 +28,8 @@ abstract interface class ProgressRepository {
 
   /// Consumes a weekly streak-save allowance (§2.5 ApplyStreakFreeze).
   Future<bool> applyStreakFreeze(String trackId);
+
+  /// Auto-protects a running streak from one missed day, up to [weeklyAllowance]
+  /// times per week (tier-based). No-op when nothing needs protecting.
+  Future<void> autoProtectStreak({required int weeklyAllowance});
 }

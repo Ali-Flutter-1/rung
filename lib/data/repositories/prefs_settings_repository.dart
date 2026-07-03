@@ -30,6 +30,7 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kPodAlerts = 'pod_alerts_enabled';
   static const _kLastUser = 'last_user_id';
   static const _kReminder = 'reminder_time';
+  static const _kWeeklyGoal = 'weekly_goal_steps';
   static const _kCheckIn = 'last_check_in_date';
   static const _kAvatar = 'avatar_id';
 
@@ -163,6 +164,19 @@ class PrefsSettingsRepository implements SettingsRepository {
     } else {
       await _prefs.setString(_kReminder, '${value.hour}:${value.minute}');
     }
+    _bump();
+  }
+
+  @override
+  int get weeklyGoalSteps {
+    final raw = _prefs.getInt(_kWeeklyGoal) ?? 3;
+    return raw.clamp(1, 14);
+  }
+
+  @override
+  Future<void> setWeeklyGoalSteps(int value) async {
+    final v = value.clamp(1, 14);
+    await _prefs.setInt(_kWeeklyGoal, v);
     _bump();
   }
 

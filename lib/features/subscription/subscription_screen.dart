@@ -121,17 +121,19 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     }
   }
 
-  // Honest value lines — these reflect what the tiers actually unlock. Ordered
-  // to lead with belonging (the pods), which is what keeps people coming back.
+  // Honest value lines — every one is actually enforced. Ordered to lead with
+  // belonging (the pods), which is what keeps people coming back.
   static const _benefits = [
     (Icons.diversity_3_rounded,
         "You're not doing this alone — join more support pods (3 on monthly, unlimited on yearly)"),
-    (Icons.groups_2_outlined,
-        'Bigger, warmer pods — up to 50 people who genuinely get it'),
+    (Icons.shield_moon_outlined,
+        "Streak protection — a missed day won't break your streak (3 saves a week)"),
+    (Icons.insights_rounded,
+        'Deeper insights — your month at a glance, fear vs reality'),
     (Icons.stairs_rounded,
         "Go deeper when you're ready — up to 40 steps a track (free has 5)"),
-    (Icons.add_circle_outline_rounded,
-        'Build your own steps, shaped around the fears that are yours'),
+    (Icons.emoji_emotions_outlined,
+        'Share-card styles to make your progress feel personal'),
     (Icons.lock_outline_rounded,
         'Always private, always ad-free — your practice stays yours'),
   ];
