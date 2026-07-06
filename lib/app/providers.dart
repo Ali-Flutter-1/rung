@@ -149,6 +149,8 @@ final progressSyncProvider = FutureProvider<void>((ref) async {
 });
 
 /// Number of joined pods with unread messages (for the Groups tab badge).
+/// The chat calls `ref.invalidate(unreadPodsProvider)` after marking a pod
+/// seen, which restarts this and re-checks immediately (no 20s wait).
 final unreadPodsProvider = StreamProvider<int>((ref) async* {
   if (!ref.watch(cloudEnabledProvider)) {
     yield 0;

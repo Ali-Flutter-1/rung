@@ -131,7 +131,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     }
     _loadMembers();
     _loadEngagement();
-    unawaited(ref.read(cloudRepositoryProvider).markPodSeen(widget.pod.id));
+    _markSeen();
     _reactionSub = ref
         .read(cloudRepositoryProvider)
         .watchReactions(widget.pod.id)
@@ -221,6 +221,15 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       // Flag it either way so the chat doesn't wait forever if the roster fails.
       if (mounted) setState(() => _membersLoaded = true);
     }
+  }
+
+  /// Mark this pod read on open, then nudge the nav badge to re-check now
+  /// (instead of waiting for its 20s poll).
+  Future<void> _markSeen() async {
+    try {
+      await _repo.markPodSeen(widget.pod.id);
+    } catch (_) {/* best-effort */}
+    if (mounted) ref.invalidate(unreadPodsProvider);
   }
 
   String _todayYmd() {

@@ -7,6 +7,7 @@ import '../../core/theme/app_theme.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/help_now.dart';
+import '../games/games_screen.dart';
 import '../share/share_progress.dart';
 import 'daily_check_in.dart';
 import '../../shared/progress_widgets.dart';
@@ -171,6 +172,68 @@ class DashboardScreen extends ConsumerWidget {
               const GapEmpty()
             else
               GapInsightCard(exposures: exposures),
+            const SizedBox(height: Insets.lg),
+            const _TakeABreakCard(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A small, low-key entry to the offline games — a calm break, not a headline.
+class _TakeABreakCard extends StatelessWidget {
+  const _TakeABreakCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return GestureDetector(
+      onTap: () => Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(builder: (_) => const GamesScreen()),
+      ),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(Insets.lg),
+        decoration: BoxDecoration(
+          borderRadius: Radii.lgAll,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.accent.withValues(alpha: 0.14),
+              AppColors.primary.withValues(alpha: 0.10),
+            ],
+          ),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.accent.withValues(alpha: 0.20),
+              ),
+              child: const Text('🎮', style: TextStyle(fontSize: 22)),
+            ),
+            const SizedBox(width: Insets.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Take a break', style: t.titleMedium),
+                  const SizedBox(height: 2),
+                  Text('A few quiet games — vs the phone or a friend.',
+                      style: t.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.inkFaint),
           ],
         ),
       ),
