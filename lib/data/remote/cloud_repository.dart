@@ -306,12 +306,23 @@ class CloudRepository {
           params: {'target': userId, 'gid': groupId, 'why': reason});
 
   // ── Pod engagement (daily prompts + check-ins) ──────────────────────────
+  /// RPCs declared `returns table` come back as a LIST of row maps (even for a
+  /// single row); plain `returns json` comes back as a Map. Normalize both.
+  static Map<String, dynamic> _singleRow(dynamic row) {
+    if (row is Map) return Map<String, dynamic>.from(row);
+    if (row is List && row.isNotEmpty && row.first is Map) {
+      return Map<String, dynamic>.from(row.first as Map);
+    }
+    return const {};
+  }
+
   /// Returns today's prompt for the pod (created server-side on first access).
   Future<CloudPodPrompt?> todaysPrompt(String groupId) async {
     try {
       final row = await supabase.rpc('my_pod_prompt', params: {'gid': groupId});
-      if (row == null) return null;
-      return CloudPodPrompt.fromRow(Map<String, dynamic>.from(row as Map));
+      final m = _singleRow(row);
+      if (m.isEmpty) return null;
+      return CloudPodPrompt.fromRow(m);
     } catch (_) {
       return null;
     }
@@ -321,7 +332,7 @@ class CloudRepository {
   /// count for this pod and whether this user is now checked in.
   Future<({int count, bool checkedIn})> checkInToday(String groupId) async {
     final row = await supabase.rpc('pod_check_in_today', params: {'gid': groupId});
-    final m = Map<String, dynamic>.from(row as Map);
+    final m = _singleRow(row);
     return (
       count: ((m['today_count'] ?? 0) as num).toInt(),
       checkedIn: (m['checked_in'] ?? false) as bool,
@@ -331,7 +342,7 @@ class CloudRepository {
   /// Current check-in state for today in a pod.
   Future<({int count, bool checkedIn})> todaysCheckInState(String groupId) async {
     final row = await supabase.rpc('pod_check_in_state', params: {'gid': groupId});
-    final m = Map<String, dynamic>.from(row as Map);
+    final m = _singleRow(row);
     return (
       count: ((m['today_count'] ?? 0) as num).toInt(),
       checkedIn: (m['checked_in'] ?? false) as bool,

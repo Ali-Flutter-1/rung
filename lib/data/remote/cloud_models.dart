@@ -17,6 +17,16 @@ class CloudPod {
   final int memberCount;
   final int unreadCount;
 
+  /// For the local "last seen pods" cache (instant Groups render on open).
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'capacity': capacity,
+        'is_system': isSystem,
+        'member_count': memberCount,
+        'unread_count': unreadCount,
+      };
+
   factory CloudPod.fromRow(Map<String, dynamic> r) => CloudPod(
         id: r['id'] as String,
         name: (r['name'] ?? 'Pod') as String,

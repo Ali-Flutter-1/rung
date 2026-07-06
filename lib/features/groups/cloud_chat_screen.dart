@@ -19,9 +19,36 @@ import 'pod_models.dart';
 /// Supportive quick-reactions offered on each message (kept warm + kind). The
 /// picker is a Wrap, so this list can grow freely.
 const _reactionEmojis = [
-  '👏', '🎉', '❤️', '💪', '🌱', '🙌', '🤗', '😊', '🔥', '⭐', '👍', '🥹',
-  '🥰', '🤩', '😌', '🫶', '🙏', '💛', '💯', '🫂', '🥳', '👌', '🤝', '😄',
-  '🌟', '🎊', '✨', '💚', '🌈', '🕊️',
+  '👏',
+  '🎉',
+  '❤️',
+  '💪',
+  '🌱',
+  '🙌',
+  '🤗',
+  '😊',
+  '🔥',
+  '⭐',
+  '👍',
+  '🥹',
+  '🥰',
+  '🤩',
+  '😌',
+  '🫶',
+  '🙏',
+  '💛',
+  '💯',
+  '🫂',
+  '🥳',
+  '👌',
+  '🤝',
+  '😄',
+  '🌟',
+  '🎊',
+  '✨',
+  '💚',
+  '🌈',
+  '🕊️',
 ];
 
 /// Live pod chat backed by Supabase realtime. Posting is restricted to pod
@@ -51,6 +78,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   CloudPodPrompt? _prompt;
   int _todayCheckIns = 0;
   bool _checkedInToday = false;
+  bool _promptDismissed = false; // hidden for today (per pod)
 
   // Compose extras: the message being replied to, or the one being edited.
   CloudMessage? _replyingTo;
@@ -79,11 +107,28 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   bool _loadingMore = false;
   bool get _hasMore => _lastCount >= _limit;
 
+  // Captured at init so dispose() can use it — reading `ref` inside dispose
+  // throws ("Using ref when a widget is about to be unmounted is unsafe").
+  late final CloudRepository _repo;
+
   @override
   void initState() {
     super.initState();
+    _repo = ref.read(cloudRepositoryProvider);
     _scroll.addListener(_onScroll);
     _uid = ref.read(authRepositoryProvider).currentUser?.id;
+    // Reopening a pod this session → render with the cached roster instantly
+    // (no wait-for-members gate); _loadMembers still refreshes it behind us.
+    final cached = _rosterCache[widget.pod.id];
+    if (cached != null) {
+      _profiles = cached;
+      _membersLoaded = true;
+    }
+    // Prompt was dismissed earlier today for this pod → keep it hidden.
+    if (ref.read(databaseProvider).meta('prompt_dismissed_${widget.pod.id}') ==
+        _todayYmd()) {
+      _promptDismissed = true;
+    }
     _loadMembers();
     _loadEngagement();
     unawaited(ref.read(cloudRepositoryProvider).markPodSeen(widget.pod.id));
@@ -97,8 +142,11 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     final counts = <String, Map<String, int>>{};
     final mine = <String, Set<String>>{};
     for (final r in rows) {
-      (counts[r.messageId] ??= {})
-          .update(r.emoji, (v) => v + 1, ifAbsent: () => 1);
+      (counts[r.messageId] ??= {}).update(
+        r.emoji,
+        (v) => v + 1,
+        ifAbsent: () => 1,
+      );
       if (r.userId == _uid) (mine[r.messageId] ??= {}).add(r.emoji);
     }
     if (mounted) {
@@ -149,16 +197,23 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     if (pos.pixels >= pos.maxScrollExtent - 300 && _hasMore && !_loadingMore) {
       _loadingMore = true;
       setState(() => _limit += _page);
-      Future.delayed(const Duration(milliseconds: 600),
-          () => _loadingMore = false);
+      Future.delayed(
+        const Duration(milliseconds: 600),
+        () => _loadingMore = false,
+      );
     }
   }
+
+  // Session-level roster cache: reopening a pod renders instantly with the
+  // last-known names/avatars while the fresh roster loads behind it.
+  static final Map<String, Map<String, CloudProfile>> _rosterCache = {};
 
   Future<void> _loadMembers() async {
     final repo = ref.read(cloudRepositoryProvider);
     try {
       final ids = await repo.podMemberIds(widget.pod.id);
       final profiles = await repo.visibleProfiles(ids);
+      _rosterCache[widget.pod.id] = profiles;
       if (mounted) setState(() => _profiles = profiles);
     } catch (_) {
       /* roster is best-effort */
@@ -166,6 +221,21 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       // Flag it either way so the chat doesn't wait forever if the roster fails.
       if (mounted) setState(() => _membersLoaded = true);
     }
+  }
+
+  String _todayYmd() {
+    final n = DateTime.now();
+    final m = n.month.toString().padLeft(2, '0');
+    final d = n.day.toString().padLeft(2, '0');
+    return '${n.year}-$m-$d';
+  }
+
+  /// Hide today's prompt for this pod; it returns tomorrow with a fresh one.
+  void _dismissPrompt() {
+    ref
+        .read(databaseProvider)
+        .setMeta('prompt_dismissed_${widget.pod.id}', _todayYmd());
+    setState(() => _promptDismissed = true);
   }
 
   Future<void> _loadEngagement() async {
@@ -181,12 +251,14 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         _todayCheckIns = state.count;
         _checkedInToday = state.checkedIn;
       });
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 
   @override
   void dispose() {
-    unawaited(ref.read(cloudRepositoryProvider).markPodSeen(widget.pod.id));
+    unawaited(_repo.markPodSeen(widget.pod.id));
     _reactionSub?.cancel();
     _scroll.removeListener(_onScroll);
     _input.dispose();
@@ -233,7 +305,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   Future<void> _checkInToday() async {
     if (_checkedInToday) return;
     try {
-      final res = await ref.read(cloudRepositoryProvider).checkInToday(widget.pod.id);
+      final res = await ref
+          .read(cloudRepositoryProvider)
+          .checkInToday(widget.pod.id);
       if (!mounted) return;
       setState(() {
         _checkedInToday = res.checkedIn;
@@ -258,8 +332,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       _editing = m;
       _replyingTo = null;
       _input.text = m.body;
-      _input.selection =
-          TextSelection.collapsed(offset: _input.text.length);
+      _input.selection = TextSelection.collapsed(offset: _input.text.length);
     });
     _inputFocus.requestFocus();
   }
@@ -280,13 +353,16 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         content: const Text('This removes it for everyone in the pod.'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(d).pop(false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.of(d).pop(false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
-              style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.intensityHigh),
-              onPressed: () => Navigator.of(d).pop(true),
-              child: const Text('Delete')),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.intensityHigh,
+            ),
+            onPressed: () => Navigator.of(d).pop(true),
+            child: const Text('Delete'),
+          ),
         ],
       ),
     );
@@ -315,8 +391,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
               height: 52,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: Insets.md),
+                padding: const EdgeInsets.symmetric(horizontal: Insets.md),
                 children: [
                   for (final e in _reactionEmojis)
                     _ReactPick(
@@ -349,8 +424,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.delete_outline_rounded,
-                    color: AppColors.intensityHigh),
+                leading: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppColors.intensityHigh,
+                ),
                 title: const Text('Delete'),
                 onTap: () {
                   Navigator.of(sheetCtx).pop();
@@ -377,14 +454,17 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: Text('Leave ${widget.pod.name}?'),
         content: const Text(
-            "You'll stop seeing this pod's messages. You can join again later."),
+          "You'll stop seeing this pod's messages. You can join again later.",
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.of(dialogCtx).pop(false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: const Text('Leave')),
+            onPressed: () => Navigator.of(dialogCtx).pop(true),
+            child: const Text('Leave'),
+          ),
         ],
       ),
     );
@@ -402,13 +482,16 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     // are reflected immediately (RLS returns nothing for a locked member).
     CloudProfile? p;
     try {
-      final map =
-          await ref.read(cloudRepositoryProvider).visibleProfiles([m.userId]);
+      final map = await ref.read(cloudRepositoryProvider).visibleProfiles([
+        m.userId,
+      ]);
       p = map[m.userId];
       if (p != null && mounted) {
         setState(() => _profiles = {..._profiles, m.userId: p!});
       }
-    } catch (_) {/* fall back to cache */}
+    } catch (_) {
+      /* fall back to cache */
+    }
 
     final member = (p == null || p.isLocked)
         ? const Member(name: 'Private member', locked: true)
@@ -452,7 +535,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     final t = Theme.of(context).textTheme;
     // Read the CURRENT account each build (not cached) so message alignment is
     // always relative to who's signed in right now.
-    final uid = ref.watch(authUserProvider).asData?.value?.id ??
+    final uid =
+        ref.watch(authUserProvider).asData?.value?.id ??
         ref.read(authRepositoryProvider).currentUser?.id;
     final stream = _messages();
 
@@ -462,8 +546,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.pod.name, style: t.titleMedium),
-            Text('${widget.pod.memberCount}/${widget.pod.capacity} · be kind',
-                style: t.bodyMedium),
+            Text(
+              '${widget.pod.memberCount}/${widget.pod.capacity} · be kind',
+              style: t.bodyMedium,
+            ),
           ],
         ),
         actions: [
@@ -488,27 +574,57 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       ),
       body: Column(
         children: [
-          if (_prompt != null)
+          if (_prompt != null && !_promptDismissed)
             Container(
-              margin: const EdgeInsets.fromLTRB(Insets.md, Insets.sm, Insets.md, 0),
+              margin: const EdgeInsets.fromLTRB(
+                Insets.md,
+                Insets.sm,
+                Insets.md,
+                0,
+              ),
               padding: const EdgeInsets.all(Insets.md),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.10),
                 borderRadius: Radii.card,
-                border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.25),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    // spaceBetween (no flex widget) so it's safe under the
+                    // route's unbounded-width layout pass.
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.wb_twilight_outlined,
-                          size: 18, color: AppColors.primaryDeep),
-                      const SizedBox(width: Insets.xs),
-                      Text('Daily pod prompt',
-                          style: t.titleSmall?.copyWith(
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.wb_twilight_outlined,
+                            size: 18,
+                            color: AppColors.primaryDeep,
+                          ),
+                          const SizedBox(width: Insets.xs),
+                          Text(
+                            'Daily pod prompt',
+                            style: t.titleSmall?.copyWith(
                               color: AppColors.primaryDeep,
-                              fontWeight: FontWeight.w700)),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: _dismissPrompt,
+                        behavior: HitTestBehavior.opaque,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: Insets.sm),
+                          child: Icon(Icons.close_rounded,
+                              size: 18, color: AppColors.inkMuted),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: Insets.xs),
@@ -516,14 +632,51 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                   const SizedBox(height: Insets.sm),
                   Row(
                     children: [
-                      FilledButton.tonalIcon(
-                        onPressed: _checkedInToday ? null : _checkInToday,
-                        icon: Icon(_checkedInToday
-                            ? Icons.check_circle_rounded
-                            : Icons.task_alt_outlined),
-                        label: Text(_checkedInToday
-                            ? 'Checked in today'
-                            : "I did my step"),
+                      // Plain tappable pill (NOT a Material button) — a button's
+                      // min-size ConstrainedBox asserts if a layout pass hands
+                      // it unbounded width (iOS transition); a pill can't.
+                      GestureDetector(
+                        onTap: _checkedInToday ? null : _checkInToday,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _checkedInToday
+                                ? AppColors.primary.withValues(alpha: 0.15)
+                                : AppColors.primary,
+                            borderRadius: Radii.pill,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _checkedInToday
+                                    ? Icons.check_circle_rounded
+                                    : Icons.task_alt_outlined,
+                                size: 16,
+                                color: _checkedInToday
+                                    ? AppColors.primaryDeep
+                                    : Colors.white,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                _checkedInToday
+                                    ? 'Checked in today'
+                                    : 'I did my step',
+                                style: TextStyle(
+                                  color: _checkedInToday
+                                      ? AppColors.primaryDeep
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(width: Insets.sm),
                       Text('$_todayCheckIns checked in', style: t.bodySmall),
@@ -542,16 +695,20 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                 // ListView is NEVER torn down mid-scroll — tearing it down while
                 // scrolling caused "ScrollController attached to multiple scroll
                 // views" and a scroll-offset save on a dead context.
-                if (!_membersLoaded || (!snap.hasData && _lastMessages.isEmpty)) {
+                if (!_membersLoaded ||
+                    (!snap.hasData && _lastMessages.isEmpty)) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 final raw = snap.hasData ? snap.data! : _lastMessages;
                 _lastMessages = raw;
                 _lastCount = raw.length; // gauge whether more pages exist
-                final byId = {for (final m in raw) m.id: m}; // reply-parent lookup
+                final byId = {
+                  for (final m in raw) m.id: m,
+                }; // reply-parent lookup
                 // Newest-first (matches the stream); blocked users filtered out.
-                final messages =
-                    raw.where((m) => !_blocked.contains(m.userId)).toList();
+                final messages = raw
+                    .where((m) => !_blocked.contains(m.userId))
+                    .toList();
                 if (messages.isEmpty) {
                   return Center(
                     child: Padding(
@@ -594,8 +751,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       replyLabel = parent.userId == uid
                           ? 'You'
                           : _memberFor(parent.userId).name;
-                      replyText =
-                          parent.isDeleted ? 'deleted message' : parent.body;
+                      replyText = parent.isDeleted
+                          ? 'deleted message'
+                          : parent.body;
                     }
                     final bubble = _Bubble(
                       message: m,
@@ -606,10 +764,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       reactions: _reactionCounts[m.id] ?? const {},
                       myReactions: _myReactions[m.id] ?? const {},
                       onToggleReaction: (e) => _toggleReaction(m.id, e),
-                      onAvatarTap:
-                          member == null ? null : () => _openMember(m),
-                      onLongPress:
-                          m.isDeleted ? null : () => _messageActions(m, mine),
+                      onAvatarTap: member == null ? null : () => _openMember(m),
+                      onLongPress: m.isDeleted
+                          ? null
+                          : () => _messageActions(m, mine),
                     );
                     // WhatsApp-style: swipe a message right to reply. Long-press
                     // still opens the full actions menu. Deleted messages don't
@@ -628,7 +786,11 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             top: false,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
-                  Insets.md, Insets.sm, Insets.md, Insets.md),
+                Insets.md,
+                Insets.sm,
+                Insets.md,
+                Insets.md,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -643,37 +805,44 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       onCancel: _cancelCompose,
                     ),
                   Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _input,
-                      focusNode: _inputFocus,
-                      textCapitalization: TextCapitalization.sentences,
-                      onSubmitted: (_) => _send(),
-                      decoration: InputDecoration(
-                        hintText: 'Say something kind…',
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: Insets.md, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: Radii.pill,
-                          borderSide: const BorderSide(color: AppColors.border),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: Radii.pill,
-                          borderSide: const BorderSide(color: AppColors.border),
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _input,
+                          focusNode: _inputFocus,
+                          textCapitalization: TextCapitalization.sentences,
+                          onSubmitted: (_) => _send(),
+                          decoration: InputDecoration(
+                            hintText: 'Say something kind…',
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.surface,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: Insets.md,
+                              vertical: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: Radii.pill,
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: Radii.pill,
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: Insets.sm),
-                  IconButton.filled(
-                    style:
-                        IconButton.styleFrom(backgroundColor: AppColors.primary),
-                    onPressed: _send,
-                    icon: const Icon(Icons.arrow_upward_rounded),
-                  ),
+                      const SizedBox(width: Insets.sm),
+                      IconButton.filled(
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                        ),
+                        onPressed: _send,
+                        icon: const Icon(Icons.arrow_upward_rounded),
+                      ),
                     ],
                   ),
                 ],
@@ -714,21 +883,28 @@ class _Bubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final m = member;
-    final textColor =
-        mine ? Colors.white : Theme.of(context).colorScheme.onSurface;
+    final textColor = mine
+        ? Colors.white
+        : Theme.of(context).colorScheme.onSurface;
 
     Widget content;
     if (message.isDeleted) {
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.block_rounded,
-              size: 15, color: textColor.withValues(alpha: 0.5)),
+          Icon(
+            Icons.block_rounded,
+            size: 15,
+            color: textColor.withValues(alpha: 0.5),
+          ),
           const SizedBox(width: 6),
-          Text('This message was deleted',
-              style: t.bodyMedium?.copyWith(
-                  color: textColor.withValues(alpha: 0.6),
-                  fontStyle: FontStyle.italic)),
+          Text(
+            'This message was deleted',
+            style: t.bodyMedium?.copyWith(
+              color: textColor.withValues(alpha: 0.6),
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ],
       );
     } else {
@@ -740,11 +916,14 @@ class _Bubble extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
-                  child: Text(m.locked ? 'Private member' : m.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: t.bodyMedium?.copyWith(
-                          color: AppColors.primaryDeep,
-                          fontWeight: FontWeight.w700)),
+                  child: Text(
+                    m.locked ? 'Private member' : m.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.bodyMedium?.copyWith(
+                      color: AppColors.primaryDeep,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
                 if (m.isPremium && !m.locked) ...[
                   const SizedBox(width: 3),
@@ -758,9 +937,12 @@ class _Bubble extends StatelessWidget {
           if (message.isEdited)
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text('edited',
-                  style: t.bodySmall
-                      ?.copyWith(color: textColor.withValues(alpha: 0.55))),
+              child: Text(
+                'edited',
+                style: t.bodySmall?.copyWith(
+                  color: textColor.withValues(alpha: 0.55),
+                ),
+              ),
             ),
           if (reactions.isNotEmpty) _reactionChips(context),
         ],
@@ -771,14 +953,15 @@ class _Bubble extends StatelessWidget {
       onLongPress: onLongPress,
       child: Container(
         padding: const EdgeInsets.all(Insets.md),
-        constraints:
-            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.68,
+        ),
         decoration: BoxDecoration(
           color: message.isDeleted
               ? Theme.of(context).colorScheme.surfaceContainerHighest
               : (mine
-                  ? AppColors.primary
-                  : Theme.of(context).colorScheme.surface),
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.surface),
           borderRadius: BorderRadius.only(
             topLeft: Radii.md,
             topRight: Radii.md,
@@ -797,7 +980,9 @@ class _Bubble extends StatelessWidget {
       return Align(
         alignment: Alignment.centerRight,
         child: Padding(
-            padding: const EdgeInsets.only(bottom: Insets.md), child: bubble),
+          padding: const EdgeInsets.only(bottom: Insets.md),
+          child: bubble,
+        ),
       );
     }
 
@@ -834,23 +1019,22 @@ class _Bubble extends StatelessWidget {
             GestureDetector(
               onTap: () => onToggleReaction(entry.key),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   borderRadius: Radii.pill,
                   color: myReactions.contains(entry.key)
                       ? (onBubble
-                          ? Colors.white.withValues(alpha: 0.30)
-                          : AppColors.primary.withValues(alpha: 0.18))
+                            ? Colors.white.withValues(alpha: 0.30)
+                            : AppColors.primary.withValues(alpha: 0.18))
                       : (onBubble
-                          ? Colors.white.withValues(alpha: 0.15)
-                          : Theme.of(context).colorScheme.surface),
+                            ? Colors.white.withValues(alpha: 0.15)
+                            : Theme.of(context).colorScheme.surface),
                   border: Border.all(
                     color: myReactions.contains(entry.key)
                         ? (onBubble ? Colors.white : AppColors.primary)
                         : (onBubble
-                            ? Colors.white.withValues(alpha: 0.30)
-                            : AppColors.border),
+                              ? Colors.white.withValues(alpha: 0.30)
+                              : AppColors.border),
                   ),
                 ),
                 child: Text(
@@ -883,14 +1067,21 @@ class _Bubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(replyLabel!,
-              style: t.bodySmall
-                  ?.copyWith(color: textColor, fontWeight: FontWeight.w700)),
-          Text(replyText ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  t.bodySmall?.copyWith(color: textColor.withValues(alpha: 0.75))),
+          Text(
+            replyLabel!,
+            style: t.bodySmall?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(
+            replyText ?? '',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: t.bodySmall?.copyWith(
+              color: textColor.withValues(alpha: 0.75),
+            ),
+          ),
         ],
       ),
     );
@@ -920,27 +1111,36 @@ class _ComposeBanner extends StatelessWidget {
         color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: Radii.card,
         border: const Border(
-            left: BorderSide(color: AppColors.primary, width: 3)),
+          left: BorderSide(color: AppColors.primary, width: 3),
+        ),
       ),
       child: Row(
         children: [
-          Icon(editing ? Icons.edit_outlined : Icons.reply_rounded,
-              size: 18, color: AppColors.primaryDeep),
+          Icon(
+            editing ? Icons.edit_outlined : Icons.reply_rounded,
+            size: 18,
+            color: AppColors.primaryDeep,
+          ),
           const SizedBox(width: Insets.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(label,
-                    style: t.bodyMedium?.copyWith(
-                        color: AppColors.primaryDeep,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  label,
+                  style: t.bodyMedium?.copyWith(
+                    color: AppColors.primaryDeep,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 if (snippet != null && snippet!.isNotEmpty)
-                  Text(snippet!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: t.bodySmall),
+                  Text(
+                    snippet!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.bodySmall,
+                  ),
               ],
             ),
           ),
@@ -957,8 +1157,11 @@ class _ComposeBanner extends StatelessWidget {
 
 /// One emoji in the quick-reaction row of the message actions sheet.
 class _ReactPick extends StatelessWidget {
-  const _ReactPick(
-      {required this.emoji, required this.selected, required this.onTap});
+  const _ReactPick({
+    required this.emoji,
+    required this.selected,
+    required this.onTap,
+  });
   final String emoji;
   final bool selected;
   final VoidCallback onTap;
@@ -1037,8 +1240,10 @@ class _SwipeToReplyState extends State<_SwipeToReply>
     final triggered = _dx >= _trigger;
     _armed = false;
     final from = _dx;
-    final anim = Tween<double>(begin: from, end: 0).animate(
-        CurvedAnimation(parent: _spring, curve: Curves.easeOut));
+    final anim = Tween<double>(
+      begin: from,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _spring, curve: Curves.easeOut));
     void tick() {
       if (mounted) setState(() => _dx = anim.value);
     }
@@ -1081,18 +1286,18 @@ class _SwipeToReplyState extends State<_SwipeToReply>
                         shape: BoxShape.circle,
                         color: AppColors.primary.withValues(alpha: 0.16),
                       ),
-                      child: const Icon(Icons.reply_rounded,
-                          size: 18, color: AppColors.primaryDeep),
+                      child: const Icon(
+                        Icons.reply_rounded,
+                        size: 18,
+                        color: AppColors.primaryDeep,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-          Transform.translate(
-            offset: Offset(_dx, 0),
-            child: widget.child,
-          ),
+          Transform.translate(offset: Offset(_dx, 0), child: widget.child),
         ],
       ),
     );

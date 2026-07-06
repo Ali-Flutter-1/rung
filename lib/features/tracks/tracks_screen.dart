@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -66,7 +67,19 @@ class TracksScreen extends ConsumerWidget {
       ),
       floatingActionButton: const HelpNowButton(),
       body: tracks.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => ListView(
+          padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, 96),
+          children: [
+            const Skeleton(width: 180, height: 28),
+            const SizedBox(height: Insets.sm),
+            const Skeleton(width: 240, height: 14),
+            const SizedBox(height: Insets.lg),
+            for (var i = 0; i < 3; i++) ...[
+              const Skeleton(height: 132, radius: 20),
+              const SizedBox(height: Insets.md),
+            ],
+          ],
+        ),
         error: (e, _) => Center(child: Text('Could not load tracks.\n$e')),
         data: (list) => ListView(
           padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, 96),
@@ -76,8 +89,11 @@ class TracksScreen extends ConsumerWidget {
             Text('Small steps toward big confidence.', style: t.bodyMedium),
             const SizedBox(height: Insets.lg),
             const _ContinueCard(),
-            for (final track in list) ...[
-              _TrackCard(track: track),
+            for (final (i, track) in list.indexed) ...[
+              _TrackCard(track: track)
+                  .animate()
+                  .fadeIn(duration: 260.ms, delay: (45 * i).ms)
+                  .slideY(begin: 0.05, end: 0, curve: Curves.easeOut),
               const SizedBox(height: Insets.md),
             ],
           ],
@@ -119,20 +135,43 @@ class _TrackCard extends ConsumerWidget {
             Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(14),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        accent,
+                        Color.lerp(accent, Colors.black, 0.25)!,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withValues(alpha: 0.35),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: Icon(TrackVisuals.iconFor(track), color: accent),
+                  child: Icon(TrackVisuals.iconFor(track),
+                      color: Colors.white, size: 24),
                 ),
                 const Spacer(),
                 loading
                     ? const Skeleton(width: 64, height: 14)
-                    : Text('$pctLabel% done',
-                        style:
-                            t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+                    : Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: Radii.pill,
+                        ),
+                        child: Text('$pctLabel%',
+                            style: t.bodyMedium?.copyWith(
+                                color: accent, fontWeight: FontWeight.w800)),
+                      ),
               ],
             ),
             const SizedBox(height: Insets.md),
@@ -147,12 +186,24 @@ class _TrackCard extends ConsumerWidget {
             const SizedBox(height: Insets.sm),
             ClipRRect(
               borderRadius: BorderRadius.circular(99),
-              child: LinearProgressIndicator(
-                value: loading ? null : pct, // indeterminate while settling
-                minHeight: 6,
-                backgroundColor: Colors.white.withValues(alpha: 0.6),
-                valueColor: AlwaysStoppedAnimation(accent),
-              ),
+              child: loading
+                  ? LinearProgressIndicator(
+                      minHeight: 6, // indeterminate while settling
+                      backgroundColor: Colors.white.withValues(alpha: 0.6),
+                      valueColor: AlwaysStoppedAnimation(accent),
+                    )
+                  : TweenAnimationBuilder<double>(
+                      // The bar fills in gently instead of snapping.
+                      tween: Tween(begin: 0, end: pct),
+                      duration: const Duration(milliseconds: 700),
+                      curve: Curves.easeOutCubic,
+                      builder: (_, v, _) => LinearProgressIndicator(
+                        value: v,
+                        minHeight: 6,
+                        backgroundColor: Colors.white.withValues(alpha: 0.6),
+                        valueColor: AlwaysStoppedAnimation(accent),
+                      ),
+                    ),
             ),
           ],
         ),
@@ -236,8 +287,19 @@ class _ContinueCard extends ConsumerWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: accent,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [accent, Color.lerp(accent, Colors.black, 0.25)!],
+                  ),
                   borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accent.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Icon(
                   resume

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -96,17 +98,54 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
 
   CloudRepository get _repo => ref.read(cloudRepositoryProvider);
 
+  // ── "Last seen pods" cache: instant render on open, refresh in background ──
+  String get _cacheKey {
+    final uid = ref.read(authRepositoryProvider).currentUser?.id ?? '';
+    return 'pods_cache_$uid';
+  }
+
+  bool _loadFromCache() {
+    try {
+      final raw = ref.read(databaseProvider).meta(_cacheKey);
+      if (raw == null || raw.isEmpty) return false;
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      List<CloudPod> pods(String k) => ((map[k] ?? []) as List)
+          .map((e) => CloudPod.fromRow(e as Map<String, dynamic>))
+          .toList();
+      _mine = pods('mine');
+      _discover = pods('discover');
+      return _mine.isNotEmpty || _discover.isNotEmpty;
+    } catch (_) {
+      return false; // corrupt/old cache → fall back to the network path
+    }
+  }
+
+  void _saveCache() {
+    try {
+      ref.read(databaseProvider).setMeta(
+            _cacheKey,
+            jsonEncode({
+              'mine': _mine.map((p) => p.toJson()).toList(),
+              'discover': _discover.map((p) => p.toJson()).toList(),
+            }),
+          );
+    } catch (_) {/* cache is best-effort */}
+  }
+
   @override
   void initState() {
     super.initState();
+    // Render the last-seen pods IMMEDIATELY (no shimmer) and refresh behind
+    // them; first-ever open still shows the skeleton while the network runs.
+    if (_loadFromCache()) _loading = false;
     _bootstrap();
   }
 
   Future<void> _bootstrap() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (_loading) {
+      // no cache — show the skeleton while we fetch
+      setState(() => _error = null);
+    }
     try {
       // Publish identity in the BACKGROUND — the pod list doesn't depend on it,
       // so don't make the user wait a round-trip for it. (Identity only — never
@@ -116,7 +155,10 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
       await _repo.ensureSystemPod();
       await _reload();
     } catch (e) {
-      if (mounted) setState(() => _error = 'Could not load pods. Pull to retry.\n$e');
+      // Only surface the error when there's nothing cached on screen.
+      if (mounted && _mine.isEmpty && _discover.isEmpty) {
+        setState(() => _error = 'Could not load pods. Pull to retry.\n$e');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -134,6 +176,7 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
         _mine = mine;
         _discover = discover;
       });
+      _saveCache();
     }
   }
 
@@ -265,16 +308,21 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
           const SizedBox(height: Insets.lg),
           Text('YOUR PODS', style: _section(t, AppColors.primary)),
           const SizedBox(height: Insets.sm),
-          for (final pod in _mine) ...[
+          for (final (i, pod) in _mine.indexed) ...[
             _PodTile(
               name: pod.name,
               subtitle: '${pod.memberCount}/${pod.capacity} members',
               unreadCount: pod.unreadCount,
               system: pod.isSystem,
               joined: true,
+              memberCount: pod.memberCount,
+              capacity: pod.capacity,
               onOpen: () => _open(pod),
               onLeave: () => _leave(pod),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 260.ms, delay: (40 * i).ms)
+                .slideY(begin: 0.06, end: 0, curve: Curves.easeOut),
             const SizedBox(height: Insets.sm),
           ],
           if (canJoinMore) ...[
@@ -295,13 +343,18 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
           else if (_discover.isEmpty)
             Text('No other pods to join right now.', style: t.bodyMedium)
           else
-            for (final pod in _discover) ...[
+            for (final (i, pod) in _discover.indexed) ...[
               _PodTile(
                 name: pod.name,
                 subtitle: '${pod.memberCount}/${pod.capacity} members',
                 joined: false,
+                memberCount: pod.memberCount,
+                capacity: pod.capacity,
                 onJoin: () => _join(pod),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 260.ms, delay: (40 * i).ms)
+                  .slideY(begin: 0.06, end: 0, curve: Curves.easeOut),
               const SizedBox(height: Insets.sm),
             ],
           const SizedBox(height: Insets.lg),
@@ -436,6 +489,17 @@ class _PodSkeleton extends StatelessWidget {
   }
 }
 
+/// Calm gradient pairs for pod icons — picked by the pod's name so each pod
+/// keeps a stable, recognisable colour (a little identity per pod).
+const _podGradients = <List<Color>>[
+  [Color(0xFF3AA8A0), Color(0xFF23736D)], // teal
+  [Color(0xFF6B8FC9), Color(0xFF33507E)], // dusk blue
+  [Color(0xFF4C9A6B), Color(0xFF2C6B48)], // forest
+  [Color(0xFFF2A65A), Color(0xFFC97B3D)], // amber
+  [Color(0xFFB187C9), Color(0xFF7C5296)], // lavender
+  [Color(0xFFE0899C), Color(0xFFAF5A72)], // rose
+];
+
 class _PodTile extends StatelessWidget {
   const _PodTile({
     required this.name,
@@ -443,6 +507,8 @@ class _PodTile extends StatelessWidget {
     required this.joined,
     this.system = false,
     this.unreadCount = 0,
+    this.memberCount,
+    this.capacity,
     this.onJoin,
     this.onOpen,
     this.onLeave,
@@ -452,6 +518,8 @@ class _PodTile extends StatelessWidget {
   final bool joined;
   final bool system;
   final int unreadCount;
+  final int? memberCount; // with [capacity], draws the little fill bar
+  final int? capacity;
   final VoidCallback? onJoin;
   final VoidCallback? onOpen;
   final VoidCallback? onLeave;
@@ -459,6 +527,10 @@ class _PodTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final gradient = _podGradients[name.hashCode.abs() % _podGradients.length];
+    final fill = (memberCount != null && capacity != null && capacity! > 0)
+        ? (memberCount! / capacity!).clamp(0.0, 1.0)
+        : null;
     return InkWell(
       borderRadius: Radii.lgAll,
       onTap: joined ? onOpen : null,
@@ -466,7 +538,7 @@ class _PodTile extends StatelessWidget {
         padding: const EdgeInsets.all(Insets.lg),
         decoration: BoxDecoration(
           color: joined
-              ? AppColors.primary.withValues(alpha: 0.12)
+              ? AppColors.primary.withValues(alpha: 0.10)
               : Theme.of(context).colorScheme.surface,
           borderRadius: Radii.lgAll,
           border: Border.all(
@@ -477,17 +549,29 @@ class _PodTile extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 46,
-              height: 46,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(14),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: gradient,
+                ),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradient.last.withValues(alpha: 0.30),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Icon(
                   system
                       ? Icons.auto_awesome_outlined
                       : Icons.groups_2_outlined,
-                  color: AppColors.primary),
+                  color: Colors.white,
+                  size: 24),
             ),
             const SizedBox(width: Insets.md),
             Expanded(
@@ -502,6 +586,23 @@ class _PodTile extends StatelessWidget {
                         const Icon(Icons.verified_rounded,
                             size: 15, color: AppColors.primary),
                       ],
+                      if (joined && unreadCount > 0) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 1.5),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(999)),
+                          ),
+                          child: Text('$unreadCount',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800)),
+                        ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 2),
@@ -509,13 +610,22 @@ class _PodTile extends StatelessWidget {
                       style: t.bodyMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
-                  if (joined && unreadCount > 0)
-                    Text(
-                      '$unreadCount unread',
-                      style: t.bodySmall?.copyWith(
-                          color: AppColors.primaryDeep,
-                          fontWeight: FontWeight.w700),
+                  if (fill != null) ...[
+                    const SizedBox(height: 7),
+                    // How alive the pod is, at a glance.
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(99),
+                      child: SizedBox(
+                        height: 4,
+                        child: LinearProgressIndicator(
+                          value: fill,
+                          backgroundColor:
+                              gradient.first.withValues(alpha: 0.15),
+                          valueColor: AlwaysStoppedAnimation(gradient.first),
+                        ),
+                      ),
                     ),
+                  ],
                 ],
               ),
             ),

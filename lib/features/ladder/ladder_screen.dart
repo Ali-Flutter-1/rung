@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -68,7 +69,7 @@ class LadderScreen extends ConsumerWidget {
                 isCurrent: isCurrent,
                 isLast: i - 1 == rungs.length - 1,
                 onTap: () => context.push(Routes.rung(rung.id)),
-              );
+              ).animate().fadeIn(duration: 200.ms);
             },
           );
         },
@@ -116,15 +117,28 @@ class _LadderHeader extends StatelessWidget {
               ),
             ),
           const SizedBox(height: Insets.md),
-          Text('$done of $total climbed', style: t.headlineSmall),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text('$done', style: t.headlineMedium?.copyWith(color: accent)),
+              Text(' of $total climbed', style: t.headlineSmall),
+            ],
+          ),
           const SizedBox(height: Insets.sm),
           ClipRRect(
             borderRadius: BorderRadius.circular(99),
-            child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 8,
-              backgroundColor: accent.withValues(alpha: 0.14),
-              valueColor: AlwaysStoppedAnimation(accent),
+            child: TweenAnimationBuilder<double>(
+              // Fill in gently on open — a small moment of "look how far".
+              tween: Tween(begin: 0, end: pct),
+              duration: const Duration(milliseconds: 700),
+              curve: Curves.easeOutCubic,
+              builder: (_, v, _) => LinearProgressIndicator(
+                value: v,
+                minHeight: 8,
+                backgroundColor: accent.withValues(alpha: 0.14),
+                valueColor: AlwaysStoppedAnimation(accent),
+              ),
             ),
           ),
         ],
@@ -194,6 +208,16 @@ class _RungRow extends StatelessWidget {
                             ? accent.withValues(alpha: 0.4)
                             : AppColors.border,
                       ),
+                      // The next step gets a soft glow so the eye lands on it.
+                      boxShadow: isCurrent
+                          ? [
+                              BoxShadow(
+                                color: accent.withValues(alpha: 0.18),
+                                blurRadius: 14,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,9 +276,10 @@ class _Node extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cleared) {
+      // Track accent (not global teal) so the whole ladder reads as one hue.
       return CircleAvatar(
         radius: 14,
-        backgroundColor: AppColors.primary,
+        backgroundColor: accent,
         child: const Icon(Icons.check_rounded, size: 16, color: Colors.white),
       );
     }
