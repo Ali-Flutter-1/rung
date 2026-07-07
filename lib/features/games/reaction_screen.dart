@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// Reaction speed — a simple focus/attention drill. Wait for green, then tap as
@@ -50,11 +52,11 @@ class _ReactionState extends State<ReactionScreen> {
       case _Phase.waiting:
         // Tapped before green.
         _timer?.cancel();
-        HapticFeedback.heavyImpact();
+        Haptics.heavy();
         setState(() => _phase = _Phase.tooSoon);
       case _Phase.go:
         final ms = DateTime.now().difference(_greenAt!).inMilliseconds;
-        HapticFeedback.mediumImpact();
+        Haptics.medium();
         setState(() {
           _lastMs = ms;
           if (_bestMs == null || ms < _bestMs!) _bestMs = ms;
@@ -106,7 +108,16 @@ class _ReactionState extends State<ReactionScreen> {
   Widget build(BuildContext context) {
     final look = _look;
     return Scaffold(
-      appBar: AppBar(title: const Text('Reaction speed')),
+      appBar: AppBar(
+        title: const Text('Reaction speed'),
+        actions: [
+          gameHelpAction(context, 'Reaction speed', const [
+            'Tap the screen to start, then wait — it will turn amber.',
+            'The instant it turns green, tap as fast as you can.',
+            'Tapping too early resets it. A lower time (ms) is better.',
+          ]),
+        ],
+      ),
       body: GestureDetector(
         onTap: _tap,
         behavior: HitTestBehavior.opaque,
@@ -127,7 +138,15 @@ class _ReactionState extends State<ReactionScreen> {
                         color: Colors.white,
                         fontSize: 40,
                         fontWeight: FontWeight.w800),
-                  ),
+                  )
+                      .animate(key: ValueKey(look.big))
+                      .scale(
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1, 1),
+                        duration: 220.ms,
+                        curve: Curves.easeOutBack,
+                      )
+                      .fadeIn(duration: 160.ms),
                   if (look.small.isNotEmpty) ...[
                     const SizedBox(height: Insets.md),
                     Text(

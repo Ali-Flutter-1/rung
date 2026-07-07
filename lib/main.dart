@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'core/analytics/analytics_bootstrap.dart';
+import 'core/haptics.dart';
 import 'core/purchases/purchase_service.dart';
 import 'core/push/push_bootstrap.dart';
 import 'data/local/app_database.dart';
@@ -40,6 +41,7 @@ Future<void> main() async {
   // Open the local-first store + settings before the app reads them (§2.2).
   final db = await AppDatabase.open();
   final settings = await PrefsSettingsRepository.create();
+  Haptics.enabled = settings.hapticsEnabled; // gate all haptics from here on
 
   // Record the already-signed-in account so the FIRST account switch is
   // detected (otherwise a session that persisted from before has no baseline).

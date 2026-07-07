@@ -17,8 +17,11 @@ class _Section {
 }
 
 class _LegalScaffold extends StatelessWidget {
-  const _LegalScaffold(
-      {required this.title, required this.intro, required this.sections});
+  const _LegalScaffold({
+    required this.title,
+    required this.intro,
+    required this.sections,
+  });
   final String title;
   final String intro;
   final List<_Section> sections;
@@ -28,21 +31,28 @@ class _LegalScaffold extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.lg, Insets.lg, 48),
-        children: [
-          Text(_kUpdated, style: t.bodySmall),
-          const SizedBox(height: Insets.md),
-          Text(intro, style: t.bodyLarge),
-          const SizedBox(height: Insets.lg),
-          for (final s in sections) ...[
-            Text(s.heading, style: t.titleMedium),
-            const SizedBox(height: Insets.xs),
-            Text(s.body, style: t.bodyMedium),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            Insets.lg,
+            Insets.lg,
+            48,
+          ),
+          children: [
+            Text(_kUpdated, style: t.bodySmall),
+            const SizedBox(height: Insets.md),
+            Text(intro, style: t.bodyLarge),
             const SizedBox(height: Insets.lg),
+            for (final s in sections) ...[
+              Text(s.heading, style: t.titleMedium),
+              const SizedBox(height: Insets.xs),
+              Text(s.body, style: t.bodyMedium),
+              const SizedBox(height: Insets.lg),
+            ],
+            Text('Questions? Contact us at $_kContact.', style: t.bodyMedium),
           ],
-          Text('Questions? Contact us at $_kContact.', style: t.bodyMedium),
-        ],
+        ),
       ),
     );
   }

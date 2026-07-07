@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +44,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       _rung = r;
     });
     if (a != null && a.outcome != null && a.outcome!.counts) {
-      HapticFeedback.mediumImpact();
+      Haptics.medium();
     }
   }
 

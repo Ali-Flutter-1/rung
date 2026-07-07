@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
@@ -116,7 +116,7 @@ class _GradientTrack extends StatelessWidget {
               onChanged: (v) {
                 final next = v.round();
                 if (next != value) {
-                  HapticFeedback.selectionClick();
+                  Haptics.selection();
                   onChanged(next);
                 }
               },

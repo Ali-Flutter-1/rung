@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -146,6 +146,8 @@ class ProfileScreen extends ConsumerWidget {
           const _NotificationControls(),
           const SizedBox(height: Insets.lg),
           const _ReminderControl(),
+          const SizedBox(height: Insets.lg),
+          const _HapticsControl(),
           const Divider(height: Insets.lg),
           _Tile(
             icon: Icons.health_and_safety_outlined,
@@ -213,7 +215,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 );
                 if (confirmed != true) return;
-                HapticFeedback.mediumImpact();
+                Haptics.medium();
                 messenger.showSnackBar(const SnackBar(
                   behavior: SnackBarBehavior.floating,
                   content: Text('Logging out…'),
@@ -320,6 +322,36 @@ class ProfileScreen extends ConsumerWidget {
 /// Notification switches: a master push toggle (off removes the device token),
 /// and a finer "pod message alerts" toggle (mirrored to the cloud so the notify
 /// function skips muted users). Hidden entirely when cloud is off.
+/// Master haptics (vibration) on/off. Gates every haptic in the app.
+class _HapticsControl extends ConsumerWidget {
+  const _HapticsControl();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(settingsChangesProvider);
+    final settings = ref.watch(settingsRepositoryProvider);
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Radii.card,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: SwitchListTile(
+        secondary:
+            const Icon(Icons.vibration_rounded, color: AppColors.primary),
+        title: const Text('Haptics'),
+        subtitle: const Text('Gentle vibration on taps and wins'),
+        value: settings.hapticsEnabled,
+        onChanged: (v) async {
+          Haptics.enabled = v;
+          await settings.setHapticsEnabled(v);
+          if (v) Haptics.selection(); // a little confirmation buzz
+        },
+      ),
+    );
+  }
+}
+
 class _NotificationControls extends ConsumerWidget {
   const _NotificationControls();
 

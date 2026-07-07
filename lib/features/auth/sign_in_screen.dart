@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -73,7 +74,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    HapticFeedback.lightImpact();
+    Haptics.light();
     setState(() {
       _busy = true;
       _error = null;
@@ -227,9 +228,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   ],
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validatePassword,
+                  // Don't auto-submit here — autofill fires onEditingComplete,
+                  // which would sign in/up without the user tapping the button.
                   onEditingComplete: () => _signUp
                       ? _confirmFocus.requestFocus()
-                      : _submit(),
+                      : FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock_outline_rounded),
@@ -254,7 +257,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     autofillHints: const [AutofillHints.newPassword],
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: _validateConfirm,
-                    onEditingComplete: _submit,
+                    // Just close the keyboard; only the button submits.
+                    onEditingComplete: () => FocusScope.of(context).unfocus(),
                     decoration: const InputDecoration(
                       labelText: 'Confirm password',
                       prefixIcon: Icon(Icons.lock_outline_rounded),

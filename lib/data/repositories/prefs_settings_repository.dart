@@ -33,6 +33,7 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kWeeklyGoal = 'weekly_goal_steps';
   static const _kCheckIn = 'last_check_in_date';
   static const _kAvatar = 'avatar_id';
+  static const _kHaptics = 'haptics_enabled';
 
   static Future<PrefsSettingsRepository> create() async =>
       PrefsSettingsRepository(await SharedPreferences.getInstance());
@@ -243,6 +244,15 @@ class PrefsSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> setAvatarId(String? id) => _setStr(_kAvatar, id);
+
+  @override
+  bool get hapticsEnabled => _prefs.getBool(_kHaptics) ?? true;
+
+  @override
+  Future<void> setHapticsEnabled(bool value) async {
+    await _prefs.setBool(_kHaptics, value);
+    _bump();
+  }
 
   @override
   String? get lastUserId => _str(_kLastUser);

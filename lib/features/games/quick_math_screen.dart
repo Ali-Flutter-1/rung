@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_confetti.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// Quick Math — a 30-second mental-speed sprint. Answer as many as you can;
@@ -32,10 +36,12 @@ class _QuickMathState extends State<QuickMathScreen> {
   String _op = '+';
   List<int> _options = [];
   int? _wrongTapped;
+  late final ConfettiController _confetti;
 
   @override
   void initState() {
     super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
     GameScores.best('quickmath').then((v) {
       if (mounted && v != null) setState(() => _best = v);
     });
@@ -44,8 +50,12 @@ class _QuickMathState extends State<QuickMathScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _confetti.dispose();
     super.dispose();
   }
+
+  Widget _wrapConfetti(Widget child) =>
+      Stack(children: [child, confettiLayer(_confetti)]);
 
   void _start() {
     _timer?.cancel();
@@ -64,10 +74,15 @@ class _QuickMathState extends State<QuickMathScreen> {
 
   void _end() {
     _timer?.cancel();
+    final newBest = _score > _best && _score > 0;
     setState(() {
       if (_score > _best) _best = _score;
       _phase = _Phase.over;
     });
+    if (newBest) {
+      Haptics.medium();
+      _confetti.play();
+    }
     GameScores.record('quickmath', _score);
   }
 
@@ -107,11 +122,11 @@ class _QuickMathState extends State<QuickMathScreen> {
   void _answerTap(int v) {
     if (_phase != _Phase.playing) return;
     if (v == _answer) {
-      HapticFeedback.selectionClick();
+      Haptics.selection();
       setState(() => _score++);
       _nextQuestion();
     } else {
-      HapticFeedback.heavyImpact();
+      Haptics.heavy();
       setState(() {
         _wrongTapped = v;
         _timeLeft = (_timeLeft - 2).clamp(0, _total);
@@ -124,13 +139,22 @@ class _QuickMathState extends State<QuickMathScreen> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Quick Math')),
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Quick Math'),
+        actions: [
+          gameHelpAction(context, 'Quick Math', const [
+            'You have 30 seconds — solve as many as you can.',
+            'Tap the correct answer from the four choices.',
+            'A wrong tap costs 2 seconds, so read carefully.',
+          ]),
+        ],
+      ),
+      body: _wrapConfetti(SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
           child: _phase == _Phase.playing ? _playing(t) : _startOver(t),
         ),
-      ),
+      )),
     );
   }
 
@@ -208,7 +232,15 @@ class _QuickMathState extends State<QuickMathScreen> {
         ),
         const Spacer(),
         Text('$_a  $_op  $_b',
-            style: const TextStyle(fontSize: 46, fontWeight: FontWeight.w800)),
+                style:
+                    const TextStyle(fontSize: 46, fontWeight: FontWeight.w800))
+            .animate(key: ValueKey('q$_a$_op$_b'))
+            .scale(
+              begin: const Offset(0.85, 0.85),
+              end: const Offset(1, 1),
+              duration: 200.ms,
+              curve: Curves.easeOutBack,
+            ),
         const Spacer(),
         GridView.count(
           shrinkWrap: true,
@@ -241,7 +273,11 @@ class _QuickMathState extends State<QuickMathScreen> {
                 ),
               ),
           ],
-        ),
+        ).animate(key: ValueKey('o$_a$_op$_b')).fadeIn(duration: 220.ms).slideY(
+              begin: 0.15,
+              end: 0,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: Insets.md),
       ],
     );

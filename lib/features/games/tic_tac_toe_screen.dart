@@ -1,8 +1,12 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_confetti.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// A calm little Tic-Tac-Toe break. Two offline modes: play the phone (a
@@ -32,6 +36,19 @@ class _TicTacToeState extends State<TicTacToeScreen> {
   List<int>? _winLine;
   int _xWins = 0, _oWins = 0, _draws = 0;
   bool _aiThinking = false;
+  late final ConfettiController _confetti;
+
+  @override
+  void initState() {
+    super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
+  }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
 
   void _setMode(_Mode m) {
     if (m == _mode) return;
@@ -68,7 +85,7 @@ class _TicTacToeState extends State<TicTacToeScreen> {
     if (_board[i] != 0 || _winner != null || _aiThinking) return;
     // In AI mode only X (the human) taps.
     if (_mode == _Mode.ai && _turn != 1) return;
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     _place(i, _turn);
   }
 
@@ -88,7 +105,8 @@ class _TicTacToeState extends State<TicTacToeScreen> {
           _draws++;
         }
         _winLine = w == 0 ? null : _lineFor(b, w);
-        HapticFeedback.mediumImpact();
+        Haptics.medium();
+        if (w == 1 || w == 2) _confetti.play();
       } else {
         _turn = p == 1 ? 2 : 1;
       }
@@ -163,8 +181,17 @@ class _TicTacToeState extends State<TicTacToeScreen> {
     final oLabel = _mode == _Mode.ai ? 'Phone' : 'P2 (O)';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tic-Tac-Toe')),
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Tic-Tac-Toe'),
+        actions: [
+          gameHelpAction(context, 'Tic-Tac-Toe', const [
+            'Take turns placing your mark on the 3×3 grid.',
+            'Get three of your marks in a row — across, down, or diagonally — to win.',
+            '"Play the phone" is you vs a simple AI. "2 players" passes the phone each turn.',
+          ]),
+        ],
+      ),
+      body: _wrapConfetti(SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
           child: Column(
@@ -188,7 +215,10 @@ class _TicTacToeState extends State<TicTacToeScreen> {
                 ],
               ),
               const SizedBox(height: Insets.lg),
-              Text(_status, style: t.titleLarge),
+              Text(_status, style: t.titleLarge)
+                  .animate(key: ValueKey(_status))
+                  .fadeIn(duration: 250.ms)
+                  .slideY(begin: 0.2, end: 0, curve: Curves.easeOut),
               const SizedBox(height: Insets.lg),
               // Board.
               AspectRatio(
@@ -215,7 +245,11 @@ class _TicTacToeState extends State<TicTacToeScreen> {
                     ],
                   ),
                 ),
-              ),
+              ).animate().fadeIn(duration: 300.ms).scale(
+                    begin: const Offset(0.96, 0.96),
+                    end: const Offset(1, 1),
+                    curve: Curves.easeOut,
+                  ),
               const SizedBox(height: Insets.lg),
               // Scores.
               Row(
@@ -251,9 +285,12 @@ class _TicTacToeState extends State<TicTacToeScreen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
+
+  Widget _wrapConfetti(Widget child) =>
+      Stack(children: [child, confettiLayer(_confetti)]);
 }
 
 class _ModeChip extends StatelessWidget {
@@ -333,8 +370,16 @@ class _Cell extends StatelessWidget {
             isX ? Icons.close_rounded : Icons.radio_button_unchecked,
             size: 44,
             color: isX ? AppColors.primary : AppColors.accentDeep,
-          );
-    return GestureDetector(
+          )
+            // Pop the mark in when it's placed.
+            .animate(key: ValueKey(value))
+            .scale(
+              begin: const Offset(0.3, 0.3),
+              end: const Offset(1, 1),
+              duration: 220.ms,
+              curve: Curves.easeOutBack,
+            );
+    final cell = GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
@@ -353,6 +398,12 @@ class _Cell extends StatelessWidget {
         child: mark,
       ),
     );
+    // Winning cells breathe gently.
+    return highlight
+        ? cell
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scaleXY(begin: 1, end: 1.06, duration: 700.ms, curve: Curves.easeInOut)
+        : cell;
   }
 }
 

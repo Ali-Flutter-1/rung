@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,7 +23,7 @@ class AppShell extends ConsumerWidget {
   ];
 
   void _go(int index) {
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     shell.goBranch(index, initialLocation: index == shell.currentIndex);
   }
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -158,7 +158,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   }
 
   void _toggleReaction(String messageId, String emoji) {
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     final repo = ref.read(cloudRepositoryProvider);
     final mineNow = _myReactions[messageId]?.contains(emoji) ?? false;
 
@@ -1240,7 +1240,7 @@ class _SwipeToReplyState extends State<_SwipeToReply>
     final next = (_dx + d.delta.dx).clamp(0.0, _max);
     if (!_armed && next >= _trigger) {
       _armed = true;
-      HapticFeedback.selectionClick();
+      Haptics.selection();
     }
     setState(() => _dx = next);
   }

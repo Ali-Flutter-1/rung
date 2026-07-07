@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
@@ -69,86 +70,59 @@ class _GamesScreenState extends State<GamesScreen> {
             style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
           ),
           const SizedBox(height: Insets.lg),
-          _GameCard(
-            id: 'reaction',
-            emoji: '⚡',
-            title: 'Reaction speed',
-            subtitle: 'focus · tap when it turns green',
-            best: _bests['reaction'],
-            colors: const [Color(0xFF3FA46A), Color(0xFF2C6B48)],
-            builder: (_) => const ReactionScreen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: 'sequence',
-            emoji: '🔵',
-            title: 'Sequence memory',
-            subtitle: 'memory · watch and repeat',
-            best: _bests['sequence'],
-            colors: const [Color(0xFF6B8FC9), Color(0xFF33507E)],
-            builder: (_) => const SequenceMemoryScreen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: '2048',
-            emoji: '🔢',
-            title: '2048',
-            subtitle: 'strategy · swipe to merge',
-            best: _bests['2048'],
-            colors: const [Color(0xFFE0574F), Color(0xFF9E3B36)],
-            builder: (_) => const Game2048Screen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: 'quickmath',
-            emoji: '🧮',
-            title: 'Quick Math',
-            subtitle: 'mental speed · 30-second sprint',
-            best: _bests['quickmath'],
-            colors: const [Color(0xFF4C9A6B), Color(0xFF2C6B48)],
-            builder: (_) => const QuickMathScreen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: 'tictactoe',
-            emoji: '⭕',
-            title: 'Tic-Tac-Toe',
-            subtitle: 'vs the phone · or 2 players',
-            best: _bests['tictactoe'],
-            colors: const [Color(0xFF3AA8A0), Color(0xFF23736D)],
-            builder: (_) => const TicTacToeScreen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: 'connect4',
-            emoji: '🔴',
-            title: 'Connect 4',
-            subtitle: 'vs the phone · or 2 players',
-            best: _bests['connect4'],
-            colors: const [Color(0xFFF2A65A), Color(0xFFC97B3D)],
-            builder: (_) => const ConnectFourScreen(),
-            onPlayed: _loadBests,
-          ),
-          const SizedBox(height: Insets.md),
-          _GameCard(
-            id: 'memory',
-            emoji: '🧠',
-            title: 'Memory match',
-            subtitle: 'solo · find the pairs',
-            best: _bests['memory'],
-            colors: const [Color(0xFFB187C9), Color(0xFF7C5296)],
-            builder: (_) => const MemoryMatchScreen(),
-            onPlayed: _loadBests,
-          ),
+          for (final (i, g) in _games.indexed) ...[
+            _GameCard(
+              id: g.id,
+              emoji: g.emoji,
+              title: g.title,
+              subtitle: g.subtitle,
+              best: _bests[g.id],
+              colors: g.colors,
+              builder: g.builder,
+              onPlayed: _loadBests,
+            )
+                .animate(delay: (i * 55).ms)
+                .fadeIn(duration: 300.ms)
+                .slideY(begin: 0.10, end: 0, curve: Curves.easeOut),
+            if (i < _games.length - 1) const SizedBox(height: Insets.md),
+          ],
         ],
       ),
     );
   }
+}
+
+/// The catalogue. Add a game by appending one entry.
+final _games = <_GameSpec>[
+  _GameSpec('reaction', '⚡', 'Reaction speed', 'focus · tap when it turns green',
+      const [Color(0xFF3FA46A), Color(0xFF2C6B48)], (_) => const ReactionScreen()),
+  _GameSpec('sequence', '🔵', 'Sequence memory', 'memory · watch and repeat',
+      const [Color(0xFF6B8FC9), Color(0xFF33507E)],
+      (_) => const SequenceMemoryScreen()),
+  _GameSpec('2048', '🔢', '2048', 'strategy · swipe to merge',
+      const [Color(0xFFE0574F), Color(0xFF9E3B36)], (_) => const Game2048Screen()),
+  _GameSpec('quickmath', '🧮', 'Quick Math', 'mental speed · 30-second sprint',
+      const [Color(0xFF4C9A6B), Color(0xFF2C6B48)], (_) => const QuickMathScreen()),
+  _GameSpec('tictactoe', '⭕', 'Tic-Tac-Toe', 'vs the phone · or 2 players',
+      const [Color(0xFF3AA8A0), Color(0xFF23736D)],
+      (_) => const TicTacToeScreen()),
+  _GameSpec('connect4', '🔴', 'Connect 4', 'vs the phone · or 2 players',
+      const [Color(0xFFF2A65A), Color(0xFFC97B3D)],
+      (_) => const ConnectFourScreen()),
+  _GameSpec('memory', '🧠', 'Memory match', 'solo · find the pairs',
+      const [Color(0xFFB187C9), Color(0xFF7C5296)],
+      (_) => const MemoryMatchScreen()),
+];
+
+class _GameSpec {
+  const _GameSpec(
+      this.id, this.emoji, this.title, this.subtitle, this.colors, this.builder);
+  final String id;
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final List<Color> colors;
+  final WidgetBuilder builder;
 }
 
 class _GameCard extends StatelessWidget {

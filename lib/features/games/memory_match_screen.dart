@@ -1,8 +1,12 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_confetti.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// Memory match — a calm solo game. Flip cards two at a time and find the
@@ -23,15 +27,26 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
   int _moves = 0;
   bool _busy = false;
   int? _best; // fewest moves
+  late final ConfettiController _confetti;
 
   @override
   void initState() {
     super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
     GameScores.best('memory').then((v) {
       if (mounted && v != null) setState(() => _best = v);
     });
     _deal();
   }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
+
+  Widget _wrapConfetti(Widget child) =>
+      Stack(children: [child, confettiLayer(_confetti)]);
 
   void _deal() {
     setState(() {
@@ -47,7 +62,7 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
 
   Future<void> _tap(int i) async {
     if (_busy || _matched.contains(i) || _flipped.contains(i) || _won) return;
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     setState(() => _flipped.add(i));
     if (_flipped.length < 2) return;
 
@@ -59,7 +74,8 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
         _flipped.clear();
       });
       if (_won) {
-        HapticFeedback.mediumImpact();
+        Haptics.medium();
+        _confetti.play();
         if (_best == null || _moves < _best!) setState(() => _best = _moves);
         GameScores.record('memory', _moves, lowerIsBetter: true);
       }
@@ -78,8 +94,17 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Memory match')),
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Memory match'),
+        actions: [
+          gameHelpAction(context, 'Memory match', const [
+            'Tap a card to flip it, then flip a second one.',
+            'If the two emojis match, they stay face-up; if not, they flip back.',
+            'Find all the pairs — in as few moves as you can.',
+          ]),
+        ],
+      ),
+      body: _wrapConfetti(SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
           child: Column(
@@ -138,7 +163,7 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -179,7 +204,10 @@ class _Card extends StatelessWidget {
             ? Text(face, style: const TextStyle(fontSize: 30))
             : const Icon(Icons.psychology_alt_rounded,
                 color: Colors.white, size: 22),
-      ),
+      )
+          // Flip when the face changes; a soft pop when it's matched.
+          .animate(key: ValueKey('$up-$matched'))
+          .flipH(duration: 260.ms, curve: Curves.easeOut),
     );
   }
 }

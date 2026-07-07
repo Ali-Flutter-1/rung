@@ -1,8 +1,12 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_confetti.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// Connect 4 — drop tokens, first to line up four wins. Offline: play the phone
@@ -27,8 +31,24 @@ class _ConnectFourState extends State<ConnectFourScreen> {
   Set<int> _winCells = {};
   int _p1 = 0, _p2 = 0, _draws = 0;
   bool _aiThinking = false;
+  late final ConfettiController _confetti;
+
+  @override
+  void initState() {
+    super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
+  }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
 
   int _idx(int r, int c) => r * _cols + c;
+
+  Widget _wrapConfetti(Widget child) =>
+      Stack(children: [child, confettiLayer(_confetti)]);
 
   void _setMode(_Mode m) {
     if (m == _mode) return;
@@ -57,7 +77,7 @@ class _ConnectFourState extends State<ConnectFourScreen> {
     if (_winner != null || _aiThinking) return;
     if (_mode == _Mode.ai && _turn != 1) return;
     if (_dropRow(_board, col) == null) return;
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     _drop(col, _turn);
   }
 
@@ -74,7 +94,8 @@ class _ConnectFourState extends State<ConnectFourScreen> {
         _winner = p;
         _winCells = line;
         p == 1 ? _p1++ : _p2++;
-        HapticFeedback.mediumImpact();
+        Haptics.medium();
+        _confetti.play();
       } else if (full) {
         _winner = 0;
         _draws++;
@@ -166,8 +187,17 @@ class _ConnectFourState extends State<ConnectFourScreen> {
     final p2Label = _mode == _Mode.ai ? 'Phone' : 'P2';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Connect 4')),
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Connect 4'),
+        actions: [
+          gameHelpAction(context, 'Connect 4', const [
+            'Tap a column to drop your token — it falls to the lowest free slot.',
+            'Line up four of your colour — across, down, or diagonally — to win.',
+            '"Play the phone" is you vs a simple AI. "2 players" passes the phone.',
+          ]),
+        ],
+      ),
+      body: _wrapConfetti(SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
           child: Column(
@@ -262,7 +292,7 @@ class _ConnectFourState extends State<ConnectFourScreen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -279,7 +309,7 @@ class _Slot extends StatelessWidget {
         : value == 2
             ? const Color(0xFFEBB13E)
             : Theme.of(context).colorScheme.surface;
-    return AnimatedContainer(
+    Widget slot = AnimatedContainer(
       duration: Motion.fast,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -290,6 +320,22 @@ class _Slot extends StatelessWidget {
         ),
       ),
     );
+    // Drop-in pop when a token lands.
+    if (value != 0) {
+      slot = slot.animate(key: ValueKey(value)).scale(
+            begin: const Offset(0.4, 0.4),
+            end: const Offset(1, 1),
+            duration: 240.ms,
+            curve: Curves.easeOutBack,
+          );
+    }
+    // Winning tokens breathe gently.
+    if (win) {
+      slot = slot
+          .animate(onPlay: (c) => c.repeat(reverse: true))
+          .scaleXY(begin: 1, end: 1.08, duration: 700.ms, curve: Curves.easeInOut);
+    }
+    return slot;
   }
 }
 

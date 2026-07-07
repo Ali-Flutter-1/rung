@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -48,7 +48,7 @@ class _BlockedMembersScreenState extends ConsumerState<BlockedMembersScreen> {
   }
 
   Future<void> _unblock(String id) async {
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     final messenger = ScaffoldMessenger.of(context);
     final name = _nameFor(id);
     setState(() => _ids = _ids.where((x) => x != id).toList());

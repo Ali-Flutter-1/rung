@@ -82,6 +82,10 @@ abstract interface class SettingsRepository {
   String? get lastCheckInDate;
   Future<void> setLastCheckInDate(String ymd);
 
+  /// Whether haptic feedback (vibration on taps/wins) is on. Default on.
+  bool get hapticsEnabled;
+  Future<void> setHapticsEnabled(bool value);
+
   /// Chosen avatar id (see [Avatars]); null = use the name's initial. Synced to
   /// the cloud profile so pod-mates see it.
   String? get avatarId;

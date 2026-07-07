@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// Sequence memory — watch the pattern, then repeat it. It grows by one each
@@ -76,7 +77,7 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
     // Guard against a fast second tap slipping in during the flash delay:
     // resolve correctness + advance SYNCHRONOUSLY before any await.
     if (_phase != _Phase.input || _userIdx >= _seq.length) return;
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     final correct = i == _seq[_userIdx];
 
     // Flash the tapped tile (fire-and-forget; don't block the game logic).
@@ -86,7 +87,7 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
     });
 
     if (!correct) {
-      HapticFeedback.heavyImpact();
+      Haptics.heavy();
       setState(() {
         if (_best == null || _reached > _best!) _best = _reached;
         _phase = _Phase.over;
@@ -118,7 +119,16 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
     final t = Theme.of(context).textTheme;
     final showStart = _phase == _Phase.idle || _phase == _Phase.over;
     return Scaffold(
-      appBar: AppBar(title: const Text('Sequence memory')),
+      appBar: AppBar(
+        title: const Text('Sequence memory'),
+        actions: [
+          gameHelpAction(context, 'Sequence memory', const [
+            'Watch the tiles light up one by one.',
+            'Repeat the exact same order by tapping the tiles.',
+            'Each round adds one more step — see how far you can go.',
+          ]),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
@@ -144,17 +154,32 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
                           GestureDetector(
                             onTap: () => _tapTile(i),
                             behavior: HitTestBehavior.opaque,
-                            child: AnimatedContainer(
+                            child: AnimatedScale(
+                              scale: _lit == i ? 1.06 : 1,
                               duration: const Duration(milliseconds: 120),
-                              decoration: BoxDecoration(
-                                color: _tileColors[i].withValues(
-                                    alpha: _lit == i ? 1 : 0.30),
-                                borderRadius: Radii.lgAll,
-                                border: Border.all(
-                                  color: _lit == i
-                                      ? Colors.white
-                                      : Colors.transparent,
-                                  width: 3,
+                              curve: Curves.easeOut,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 120),
+                                decoration: BoxDecoration(
+                                  color: _tileColors[i].withValues(
+                                      alpha: _lit == i ? 1 : 0.30),
+                                  borderRadius: Radii.lgAll,
+                                  border: Border.all(
+                                    color: _lit == i
+                                        ? Colors.white
+                                        : Colors.transparent,
+                                    width: 3,
+                                  ),
+                                  boxShadow: _lit == i
+                                      ? [
+                                          BoxShadow(
+                                            color: _tileColors[i]
+                                                .withValues(alpha: 0.55),
+                                            blurRadius: 18,
+                                            spreadRadius: 1,
+                                          ),
+                                        ]
+                                      : null,
                                 ),
                               ),
                             ),

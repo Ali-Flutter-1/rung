@@ -1,10 +1,14 @@
 import 'dart:math';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import 'game_confetti.dart';
+import 'game_help.dart';
 import 'game_scores.dart';
 
 /// 2048 — swipe to slide and merge tiles; reach 2048. A focus/strategy classic.
@@ -23,15 +27,26 @@ class _Game2048State extends State<Game2048Screen> {
   bool _over = false;
   bool _won = false;
   final _rand = Random();
+  late final ConfettiController _confetti;
 
   @override
   void initState() {
     super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
     GameScores.best('2048').then((v) {
       if (mounted && v != null) setState(() => _best = v);
     });
     _newGame();
   }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
+
+  Widget _wrapConfetti(Widget child) =>
+      Stack(children: [child, confettiLayer(_confetti)]);
 
   void _newGame() {
     setState(() {
@@ -115,12 +130,16 @@ class _Game2048State extends State<Game2048Screen> {
     final changed = !_sameGrid(before, _grid);
     if (!changed) return;
 
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     _spawn();
     setState(() {
       _score += gained;
       if (_score > _best) _best = _score;
-      if (!_won && _grid.any((r) => r.contains(2048))) _won = true;
+      if (!_won && _grid.any((r) => r.contains(2048))) {
+        _won = true;
+        Haptics.medium();
+        _confetti.play();
+      }
       if (_isOver()) _over = true;
     });
     GameScores.record('2048', _score);
@@ -150,8 +169,17 @@ class _Game2048State extends State<Game2048Screen> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('2048')),
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('2048'),
+        actions: [
+          gameHelpAction(context, '2048', const [
+            'Swipe up, down, left or right to slide all tiles.',
+            'Two tiles with the same number merge into one that doubles.',
+            'Keep merging to build a 2048 tile. The board fills — plan ahead!',
+          ]),
+        ],
+      ),
+      body: _wrapConfetti(SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Insets.lg),
           child: Column(
@@ -233,7 +261,7 @@ class _Game2048State extends State<Game2048Screen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 }
@@ -287,7 +315,10 @@ class _Tile extends StatelessWidget {
           ),
         ),
       ),
-    );
+    )
+        // Pop whenever this tile's value changes (spawn or merge).
+        .animate(key: ValueKey(value))
+        .scaleXY(begin: 0.7, end: 1, duration: 160.ms, curve: Curves.easeOutBack);
   }
 }
 

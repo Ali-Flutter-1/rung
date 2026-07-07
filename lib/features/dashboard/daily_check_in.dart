@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -47,7 +47,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
   }
 
   Future<void> _pick(_Mood mood) async {
-    HapticFeedback.selectionClick();
+    Haptics.selection();
     final settings = ref.read(settingsRepositoryProvider);
     await settings.setLastCheckInDate(_todayYmd);
     ref

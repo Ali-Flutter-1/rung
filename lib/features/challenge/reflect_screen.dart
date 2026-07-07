@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,7 +60,7 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
         {'actual': _suds, 'outcome': _outcome!.name});
     if (_outcome!.counts) {
       analytics.capture(Ev.rungCleared, {'actual': _suds});
-      HapticFeedback.mediumImpact(); // celebrate clearing a rung
+      Haptics.medium(); // celebrate clearing a rung
     }
     // Publish updated streak/challenges to your pod profile (numbers only),
     // and back up the new attempt + progress to the cloud RIGHT AWAY (not
