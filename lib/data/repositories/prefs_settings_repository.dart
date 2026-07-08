@@ -34,6 +34,7 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kCheckIn = 'last_check_in_date';
   static const _kAvatar = 'avatar_id';
   static const _kHaptics = 'haptics_enabled';
+  static const _kRatedApp = 'rated_app';
 
   static Future<PrefsSettingsRepository> create() async =>
       PrefsSettingsRepository(await SharedPreferences.getInstance());
@@ -252,6 +253,14 @@ class PrefsSettingsRepository implements SettingsRepository {
   Future<void> setHapticsEnabled(bool value) async {
     await _prefs.setBool(_kHaptics, value);
     _bump();
+  }
+
+  @override
+  bool get hasRatedApp => _prefs.getBool(_kRatedApp) ?? false;
+
+  @override
+  Future<void> setHasRatedApp(bool value) async {
+    await _prefs.setBool(_kRatedApp, value);
   }
 
   @override

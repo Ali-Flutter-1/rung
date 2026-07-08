@@ -18,17 +18,19 @@ extension SubscriptionTierX on SubscriptionTier {
 
 /// Content access keyed off the user's subscription tier.
 ///
-/// Rung depth per track: free 10 / monthly 40 / yearly 60. These cap how many
+/// Rung depth per track: free 10 / monthly 30 / yearly 40. These cap how many
 /// of a track's *seeded* rungs are visible — the list is always
 /// `min(limit, rungs that exist)`, so tiers "unlock" depth as more content is
-/// authored. Custom rungs the user creates are separate: free is capped at 5,
-/// paid is unlimited.
+/// authored. The free 10 is deliberately a *complete beginner arc* (a shy user
+/// can genuinely finish a track without paying — we never gate recovery itself);
+/// paid unlocks the deeper, advanced exposures. Custom rungs the user creates
+/// are separate: free is capped at 5, paid is unlimited.
 class ContentRules {
   const ContentRules._();
 
   /// Visible seeded rungs per track for this tier.
   static int maxRungsPerTrack(SubscriptionTier tier) => switch (tier) {
-        SubscriptionTier.free => 5,
+        SubscriptionTier.free => 10,
         SubscriptionTier.monthly => 30,
         SubscriptionTier.yearly => 40,
       };

@@ -12,6 +12,7 @@ import '../../data/notifications/notification_service.dart';
 import '../../domain/entities/subscription.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../shared/avatars.dart';
+import '../feedback/rate_app_sheet.dart';
 import '../groups/blocked_members_screen.dart';
 import '../legal/legal_screens.dart';
 import 'edit_profile_sheet.dart';
@@ -231,6 +232,13 @@ class ProfileScreen extends ConsumerWidget {
               },
             ),
           const Divider(height: Insets.lg),
+          _Tile(
+            icon: Icons.star_outline_rounded,
+            iconColor: AppColors.accent,
+            title: 'Rate Rung',
+            subtitle: 'Tell us how it’s going — it really helps',
+            onTap: () => showRateAppSheet(context, ref),
+          ),
           _Tile(
             icon: Icons.privacy_tip_outlined,
             title: 'Privacy Policy',

@@ -13,6 +13,8 @@ class Ev {
   static const subscribeTapped = 'subscribe_tapped';
   static const reminderEnabled = 'reminder_enabled';
   static const checkInCompleted = 'check_in_completed';
+  static const rateOpened = 'rate_opened';
+  static const ratingSubmitted = 'rating_submitted';
 }
 
 /// The analytics seam — privacy-respecting. NEVER pass note/reflection text or

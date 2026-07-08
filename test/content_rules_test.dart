@@ -1,4 +1,4 @@
-// Tier content limits: rung depth per track (free 10 / monthly 40 / yearly 60)
+// Tier content limits: rung depth per track (free 10 / monthly 30 / yearly 40)
 // and the custom-rung cap (free 5, paid unlimited), plus the ladder cap query.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rung/data/local/app_database.dart';
@@ -8,7 +8,7 @@ import 'package:rung/domain/entities/subscription.dart';
 void main() {
   group('ContentRules', () {
     test('rung depth per tier', () {
-      expect(ContentRules.maxRungsPerTrack(SubscriptionTier.free), 5);
+      expect(ContentRules.maxRungsPerTrack(SubscriptionTier.free), 10);
       expect(ContentRules.maxRungsPerTrack(SubscriptionTier.monthly), 30);
       expect(ContentRules.maxRungsPerTrack(SubscriptionTier.yearly), 40);
     });

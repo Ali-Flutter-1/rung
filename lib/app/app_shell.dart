@@ -37,12 +37,15 @@ class AppShell extends ConsumerWidget {
     ref.watch(smartReminderPlannerProvider); // missed/risks/comeback reminders
     final unreadPods = ref.watch(unreadPodsProvider).asData?.value ?? 0;
     final surface = Theme.of(context).colorScheme.surface;
+    // Use the theme's outline (dark-aware) — the hardcoded light border showed
+    // as a pale ~1px line above the bar in dark mode.
+    final topBorder = Theme.of(context).colorScheme.outline;
     return Scaffold(
       body: shell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: surface,
-          border: Border(top: BorderSide(color: AppColors.border)),
+          border: Border(top: BorderSide(color: topBorder)),
         ),
         child: SafeArea(
           top: false,

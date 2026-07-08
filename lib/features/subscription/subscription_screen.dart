@@ -121,21 +121,29 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     }
   }
 
-  // Honest value lines — every one is actually enforced. Ordered to lead with
-  // belonging (the pods), which is what keeps people coming back.
-  static const _benefits = [
+  // The headline reasons to subscribe — the emotional ones people actually pay
+  // for. Every line is really enforced. Lead with belonging (pods), then the
+  // "make it yours" levers (unlimited ladders, deeper steps).
+  static const _headlineBenefits = [
+    (Icons.spa_rounded,
+        'A private coach, any time — rehearse something coming up or talk '
+            'through how it went'),
     (Icons.diversity_3_rounded,
         "You're not doing this alone — join more support pods (3 on monthly, unlimited on yearly)"),
-    (Icons.shield_moon_outlined,
-        "Streak protection — a missed day won't break your streak (3 saves a week)"),
-    (Icons.insights_rounded,
-        'Deeper insights — your month at a glance, fear vs reality'),
+    (Icons.edit_note_rounded,
+        'Build unlimited ladders of your own — no cap on custom steps'),
     (Icons.stairs_rounded,
-        "Go deeper when you're ready — up to 40 steps a track (free has 5)"),
-    (Icons.emoji_emotions_outlined,
-        'Share-card styles to make your progress feel personal'),
-    (Icons.lock_outline_rounded,
-        'Always private, always ad-free — your practice stays yours'),
+        "Go deeper when you're ready — up to 40 steps a track (free is a full 10-step arc)"),
+  ];
+
+  // The "and also" tail — real, but nobody subscribes *for* these. They make
+  // the bundle feel full; they never lead.
+  static const _plusBenefits = [
+    (Icons.shield_moon_outlined,
+        "Streak protection — a missed day won't break your streak"),
+    (Icons.insights_rounded, 'Deeper insights — your month at a glance'),
+    (Icons.emoji_emotions_outlined, 'Personal share-card styles'),
+    (Icons.lock_outline_rounded, 'Always private, always ad-free'),
   ];
 
   @override
@@ -182,9 +190,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     style: t.headlineSmall?.copyWith(color: Colors.white)),
                 const SizedBox(height: Insets.xs),
                 Text(
-                  'The daily practice is always free. Premium opens up the '
-                  'community — more pods, more people beside you — for when '
-                  "you're ready to go further.",
+                  'The daily practice is always free. Premium adds a private '
+                  'coach in your corner — and a bigger community beside you — '
+                  "for when you're ready to go further.",
                   style: t.bodyLarge?.copyWith(
                       color: Colors.white.withValues(alpha: 0.9)),
                 ),
@@ -194,7 +202,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           const SizedBox(height: Insets.xl),
           Text("What's included", style: t.titleMedium),
           const SizedBox(height: Insets.md),
-          for (final (icon, label) in _benefits)
+          for (final (icon, label) in _headlineBenefits)
             Padding(
               padding: const EdgeInsets.only(bottom: Insets.md),
               child: Row(
@@ -214,7 +222,54 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ],
               ),
             ),
-          const SizedBox(height: Insets.md),
+
+          // The quieter "and also" tail — grouped so it fills out the bundle
+          // without competing with the headline reasons above.
+          const SizedBox(height: Insets.xs),
+          Container(
+            padding: const EdgeInsets.all(Insets.md),
+            decoration: BoxDecoration(
+              // Theme-aware: a faint tint reads as almost nothing on a dark
+              // background, so lift the alpha in dark mode and add a border for
+              // definition in both.
+              color: AppColors.primary.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.14
+                      : 0.05),
+              borderRadius: Radii.lgAll,
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.18)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Plus, every subscriber gets',
+                    style: t.labelLarge?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7))),
+                const SizedBox(height: Insets.sm),
+                for (final (icon, label) in _plusBenefits)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      children: [
+                        Icon(icon, color: AppColors.primary, size: 18),
+                        const SizedBox(width: Insets.sm),
+                        Expanded(
+                            child: Text(label,
+                                style: t.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface))),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: Insets.lg),
 
           // Plan toggle.
           Row(

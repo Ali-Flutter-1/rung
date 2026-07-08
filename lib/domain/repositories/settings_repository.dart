@@ -91,6 +91,11 @@ abstract interface class SettingsRepository {
   String? get avatarId;
   Future<void> setAvatarId(String? id);
 
+  /// Whether the user has already left a rating — used to avoid re-nagging with
+  /// the "how's it going?" prompt (the manual Rate tile is always available).
+  bool get hasRatedApp;
+  Future<void> setHasRatedApp(bool value);
+
   /// Notifies listeners (the app shell) when settings change.
   Stream<void> get changes;
 }

@@ -136,6 +136,58 @@ class CloudRepository {
   /// (cascades from auth.users). Irreversible.
   Future<void> deleteAccount() => supabase.rpc('delete_my_account');
 
+  /// Asks the AI Coach edge function for a reply. [mode] is 'rehearse' or
+  /// 'debrief'; [history] is the running conversation (oldest→newest) as
+  /// `{role, content}` maps; [context] is optional, gentle background about the
+  /// user (never their private notes). The Groq key stays server-side and the
+  /// function enforces the Premium gate + daily cap.
+  Future<CoachResult> coachReply({
+    required String mode,
+    required List<Map<String, String>> history,
+    String? context,
+  }) async {
+    try {
+      final res = await supabase.functions.invoke('coach', body: {
+        'mode': mode,
+        'context': context,
+        'messages': history,
+      });
+      final data = res.data;
+      if (data is Map) {
+        if (data['crisis'] == true) return const CoachResult.crisis();
+        final reply = data['reply'];
+        if (reply is String && reply.trim().isNotEmpty) {
+          return CoachResult.reply(reply.trim());
+        }
+        final err = data['error'];
+        if (err is String) return CoachResult.error(err);
+      }
+      return const CoachResult.error('coach_unavailable');
+    } catch (_) {
+      return const CoachResult.error('coach_unavailable');
+    }
+  }
+
+  /// Records an in-app rating (1–5) with an optional comment. Insert-only from
+  /// the client (no read-back policy) so it lands privately in the dashboard.
+  Future<void> submitFeedback({
+    required int rating,
+    String? comment,
+    String? platform,
+    String? appVersion,
+  }) async {
+    final uid = _uid;
+    if (uid == null) return;
+    final text = comment?.trim();
+    await supabase.from('app_feedback').insert({
+      'user_id': uid,
+      'rating': rating,
+      'comment': (text != null && text.isNotEmpty) ? text : null,
+      'platform': platform,
+      'app_version': appVersion,
+    });
+  }
+
   // ── Push tokens ──────────────────────────────────────────────────────────
   /// Registers this device's FCM token for the signed-in user (upsert by token,
   /// so switching accounts on one device reassigns it).
@@ -192,7 +244,12 @@ class CloudRepository {
         .eq('group_id', groupId)
         .order('created_at', ascending: false) // newest first
         .limit(limit)
-        .map((rows) => rows.map(CloudMessage.fromRow).toList());
+        .map((rows) => rows.map(CloudMessage.fromRow).toList())
+        // A realtime subscribe can time out (flaky network, or right after a
+        // hot reload before the old channel tears down). Swallow it so it never
+        // surfaces as an unhandled exception — realtime reconnects on its own
+        // and the last-loaded messages stay on screen.
+        .handleError((Object _) {});
   }
 
   Future<void> sendMessage(String groupId, String body, {String? replyTo}) async {
@@ -251,7 +308,9 @@ class CloudRepository {
         .from('message_reactions')
         .stream(primaryKey: ['message_id', 'user_id', 'emoji'])
         .eq('group_id', groupId)
-        .map((rows) => rows.map(CloudReaction.fromRow).toList());
+        .map((rows) => rows.map(CloudReaction.fromRow).toList())
+        // Swallow transient realtime subscribe timeouts (see watchMessages).
+        .handleError((Object _) {});
   }
 
   /// Adds the current user's reaction (idempotent — the PK dedupes).
@@ -470,4 +529,19 @@ class CloudJoinException implements Exception {
   final String message;
   @override
   String toString() => message;
+}
+
+/// Outcome of a coach turn: either a reply, a crisis signal (show support, not
+/// coaching), or an error code the UI maps to a gentle message.
+class CoachResult {
+  const CoachResult._({this.text, this.isCrisis = false, this.errorCode});
+  const CoachResult.reply(String text) : this._(text: text);
+  const CoachResult.crisis() : this._(isCrisis: true);
+  const CoachResult.error(String code) : this._(errorCode: code);
+
+  final String? text;
+  final bool isCrisis;
+  final String? errorCode;
+
+  bool get ok => text != null;
 }
