@@ -80,7 +80,7 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get onbWelcomeBody =>
-      'Rung hjelper deg å bygge sosial selvtillit gjennom mild, privat øving. Forutsi, gjør det, reflekter — og se de verste fryktene dine falle fra hverandre i dine egne tall.';
+      'Rung hjelper deg å bygge sosial selvtillit gjennom mild, privat øving. Forutsi, gjør det, reflekter — og se din verste frykt falle fra hverandre i dine egne tall.';
 
   @override
   String get onbGetStarted => 'Kom i gang';
@@ -817,7 +817,7 @@ class AppLocalizationsNb extends AppLocalizations {
   String get shareCardHeadline => 'Mine modige steg';
 
   @override
-  String get shareCardFearsFaced => 'frykter møtt';
+  String get shareCardFearsFaced => 'møter med frykten';
 
   @override
   String get shareCardCurrentStreak => 'Nåværende rekke';
