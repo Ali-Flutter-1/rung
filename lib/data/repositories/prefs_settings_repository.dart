@@ -27,7 +27,6 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kBackup = 'backup_enabled';
   static const _kLastBackup = 'last_backup_at';
   static const _kLastContentSync = 'last_content_sync_at';
-  static const _kLastContentLocale = 'last_content_locale';
   static const _kPush = 'push_enabled';
   static const _kPodAlerts = 'pod_alerts_enabled';
   static const _kLastUser = 'last_user_id';
@@ -225,14 +224,6 @@ class PrefsSettingsRepository implements SettingsRepository {
   @override
   Future<void> setLastContentSyncAt(int ms) async {
     await _prefs.setInt(_kLastContentSync, ms);
-  }
-
-  @override
-  String get lastContentLocale => _prefs.getString(_kLastContentLocale) ?? 'en';
-
-  @override
-  Future<void> setLastContentLocale(String code) async {
-    await _prefs.setString(_kLastContentLocale, code);
   }
 
   @override

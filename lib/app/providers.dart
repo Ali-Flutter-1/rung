@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -121,26 +119,13 @@ final pushRegistrationProvider = FutureProvider<void>((ref) async {
 });
 
 /// Pulls global content (tracks + rungs) from Supabase into the local cache
-/// whenever the signed-in user changes (sign-in / switch / startup) OR the app
-/// language changes. Watch it somewhere always-mounted (the shell) to keep
-/// content fresh; result ignored.
-///
-/// This runs even when signed out and offline: `syncContent` applies the local
-/// locale fallback chain before it touches the network, so any translations
-/// already cached take effect the moment the user switches language. Without
-/// that, signed-out users — who never reach the cloud fetch at all — would be
-/// stuck on English rung copy forever.
+/// whenever the signed-in user changes (sign-in / switch / startup). Watch it
+/// somewhere always-mounted (the shell) to keep content fresh; result ignored.
 final contentSyncProvider = FutureProvider<void>((ref) async {
-  ref.watch(settingsChangesProvider); // re-run when the language changes
-  final code = ref.watch(settingsRepositoryProvider).localeCode ??
-      PlatformDispatcher.instance.locale.toString();
-  final changed = await ref.read(syncServiceProvider).syncContent(locale: code);
-  if (!changed) return;
-  // The localized views read `content_locale_pref`; SQLite cannot tell Riverpod
-  // that moved, so cached track/rung reads must be dropped explicitly.
-  ref.invalidate(tracksProvider);
-  ref.invalidate(rungByIdProvider);
-  ref.invalidate(trackByIdProvider);
+  if (!ref.watch(cloudEnabledProvider)) return;
+  final signedIn = ref.watch(authUserProvider).asData?.value != null;
+  if (!signedIn) return;
+  await ref.read(syncServiceProvider).syncContent();
 });
 
 /// Auto-syncs the signed-in user's PROGRESS (attempts + streak, numbers only)

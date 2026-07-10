@@ -19,7 +19,10 @@ class AppDatabase {
   final StreamController<void> _changes = StreamController<void>.broadcast();
 
   /// Current schema version. Bump + add a migration step for additive changes.
-  static const int schemaVersion = 3;
+  /// v4 supersedes the short-lived v2/v3 (a per-locale content cache that was
+  /// reverted — rung/track copy is English-only). It drops those objects if a
+  /// dev build created them, and un-freezes the custom-rung default copy.
+  static const int schemaVersion = 4;
 
   /// The English default that older builds froze into `what_to_do` when the
   /// user left the field blank. Only English ever shipped, so this is the only
@@ -60,20 +63,21 @@ class AppDatabase {
       _createV1();
       v = 1;
     }
-    if (v < 2) {
-      _createV2();
-      v = 2;
-    }
-    if (v < 3) {
-      _migrateV3();
-      v = 3;
+    if (v < 4) {
+      _migrateV4();
+      v = 4;
     }
     if (v != version) {
       _db.execute('PRAGMA user_version = $v;');
     }
   }
 
-  /// v3 — un-freeze the app's own copy out of custom-rung rows.
+  /// v4 — un-freeze the app's own copy out of custom-rung rows, and drop the
+  /// short-lived per-locale content cache (v2/v3) if a dev build created it.
+  ///
+  /// Rung/track copy is English-only, so the localized views and translation
+  /// tables are gone. Dropping them here keeps a dev database that ran the
+  /// reverted migration from carrying dead objects forever.
   ///
   /// Older builds wrote the *localized* default text into `what_to_do` /
   /// `why_it_helps` at creation time. That is app copy, not user content: once
@@ -87,7 +91,14 @@ class AppDatabase {
   ///
   /// `updated_at` is bumped so the blanked rows re-push to the cloud on the
   /// next backup; otherwise the stale text would be pulled back on reinstall.
-  void _migrateV3() {
+  void _migrateV4() {
+    _db
+      ..execute('DROP VIEW IF EXISTS rungs_localized;')
+      ..execute('DROP VIEW IF EXISTS tracks_localized;')
+      ..execute('DROP TABLE IF EXISTS rung_i18n;')
+      ..execute('DROP TABLE IF EXISTS track_i18n;')
+      ..execute('DROP TABLE IF EXISTS content_locale_pref;');
+
     final now = DateTime.now().millisecondsSinceEpoch;
     _db.execute(
       'UPDATE rungs SET why_it_helps = ?, updated_at = ? '
@@ -100,125 +111,6 @@ class AppDatabase {
       ['', now, _legacyDefaultWhatToDo],
     );
   }
-
-  /// v2 — content translations.
-  ///
-  /// `tracks` / `rungs` remain the canonical base and hold the ENGLISH copy.
-  /// Translations live alongside, keyed by (id, locale); structural fields are
-  /// never duplicated per locale. Reads go through the `*_localized` views,
-  /// which resolve the best available locale and fall back to English.
-  ///
-  /// `source_updated_at` is the base row's `updated_at` that a translation was
-  /// made from. If English copy is later rewritten, `updated_at` bumps and the
-  /// translation becomes stale — it now describes a *different* exercise. The
-  /// view refuses stale rows, so the user sees English rather than instructions
-  /// for a step that no longer exists.
-  void _createV2() {
-    _db.execute('''
-      CREATE TABLE track_i18n (
-        track_id          TEXT NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
-        locale            TEXT NOT NULL,
-        title             TEXT NOT NULL,
-        description       TEXT NOT NULL,
-        source_updated_at INTEGER NOT NULL DEFAULT 0,
-        PRIMARY KEY (track_id, locale)
-      );
-    ''');
-    _db.execute('''
-      CREATE TABLE rung_i18n (
-        rung_id           TEXT NOT NULL REFERENCES rungs(id) ON DELETE CASCADE,
-        locale            TEXT NOT NULL,
-        title             TEXT NOT NULL,
-        what_to_do        TEXT NOT NULL,
-        why_it_helps      TEXT NOT NULL,
-        source_updated_at INTEGER NOT NULL DEFAULT 0,
-        PRIMARY KEY (rung_id, locale)
-      );
-    ''');
-    // The active locale fallback chain, lowest rank wins (pt_PT=0, pt=1, en=2).
-    // Empty table ⇒ every lookup misses ⇒ everything falls back to English.
-    _db.execute('''
-      CREATE TABLE content_locale_pref (
-        locale TEXT PRIMARY KEY,
-        rank   INTEGER NOT NULL
-      );
-    ''');
-
-    // Custom rungs (is_custom = 1) never have i18n rows, so COALESCE returns
-    // the user's own text untouched — user content is never translated.
-    _db.execute('''
-      CREATE VIEW rungs_localized AS
-      SELECT
-        r.id, r.track_id,
-        COALESCE(i.title, r.title)               AS title,
-        COALESCE(i.what_to_do, r.what_to_do)     AS what_to_do,
-        COALESCE(i.why_it_helps, r.why_it_helps) AS why_it_helps,
-        r.difficulty, r.sort_order, r.is_custom, r.owner_id,
-        r.est_minutes, r.updated_at, r.deleted_at
-      FROM rungs r
-      LEFT JOIN rung_i18n i
-        ON i.rung_id = r.id
-       AND i.locale = (
-             SELECT x.locale
-             FROM rung_i18n x
-             JOIN content_locale_pref p ON p.locale = x.locale
-             WHERE x.rung_id = r.id
-               AND x.source_updated_at >= r.updated_at
-             ORDER BY p.rank
-             LIMIT 1
-           );
-    ''');
-    _db.execute('''
-      CREATE VIEW tracks_localized AS
-      SELECT
-        t.id, t.slug,
-        COALESCE(i.title, t.title)             AS title,
-        COALESCE(i.description, t.description) AS description,
-        t.icon, t.sort_order, t.color_seed
-      FROM tracks t
-      LEFT JOIN track_i18n i
-        ON i.track_id = t.id
-       AND i.locale = (
-             SELECT x.locale
-             FROM track_i18n x
-             JOIN content_locale_pref p ON p.locale = x.locale
-             WHERE x.track_id = t.id
-             ORDER BY p.rank
-             LIMIT 1
-           );
-    ''');
-  }
-
-  /// Sets the content-locale fallback chain, best first (e.g. `['pt_PT','pt']`).
-  /// English is the implicit last resort via COALESCE, so it need not be listed.
-  ///
-  /// Returns true if the chain actually changed — the caller uses that to
-  /// invalidate cached content providers, since the localized views read this
-  /// table and SQLite has no way to tell Riverpod it moved.
-  bool setContentLocaleChain(List<String> chain) {
-    final current = _db
-        .select('SELECT locale FROM content_locale_pref ORDER BY rank;')
-        .map((r) => r['locale'] as String)
-        .toList();
-    if (current.length == chain.length) {
-      var same = true;
-      for (var i = 0; i < chain.length; i++) {
-        if (current[i] != chain[i]) same = false;
-      }
-      if (same) return false;
-    }
-    transaction(() {
-      _db.execute('DELETE FROM content_locale_pref;');
-      for (var i = 0; i < chain.length; i++) {
-        _db.execute(
-          'INSERT INTO content_locale_pref (locale, rank) VALUES (?, ?);',
-          [chain[i], i],
-        );
-      }
-    });
-    return true;
-  }
-
   void _createV1() {
     _db.execute('''
       CREATE TABLE tracks (
@@ -342,15 +234,8 @@ class AppDatabase {
   void upsertContent({
     required List<Map<String, dynamic>> tracks,
     required List<Map<String, dynamic>> rungs,
-    List<Map<String, dynamic>> trackI18n = const [],
-    List<Map<String, dynamic>> rungI18n = const [],
   }) {
-    if (tracks.isEmpty &&
-        rungs.isEmpty &&
-        trackI18n.isEmpty &&
-        rungI18n.isEmpty) {
-      return;
-    }
+    if (tracks.isEmpty && rungs.isEmpty) return;
     transaction(() {
       for (final t in tracks) {
         _db.execute(
@@ -384,32 +269,6 @@ class AppDatabase {
             r['id'], r['track_id'], r['title'], r['what_to_do'],
             r['why_it_helps'], r['difficulty'], r['sort_order'],
             r['est_minutes'] ?? 2, r['updated_at'] ?? 0, r['deleted_at'],
-          ],
-        );
-      }
-      for (final t in trackI18n) {
-        _db.execute(
-          'INSERT INTO track_i18n (track_id, locale, title, description, '
-          'source_updated_at) VALUES (?, ?, ?, ?, ?) '
-          'ON CONFLICT(track_id, locale) DO UPDATE SET title=excluded.title, '
-          'description=excluded.description, '
-          'source_updated_at=excluded.source_updated_at;',
-          [
-            t['track_id'], t['locale'], t['title'], t['description'],
-            t['source_updated_at'] ?? 0,
-          ],
-        );
-      }
-      for (final r in rungI18n) {
-        _db.execute(
-          'INSERT INTO rung_i18n (rung_id, locale, title, what_to_do, '
-          'why_it_helps, source_updated_at) VALUES (?, ?, ?, ?, ?, ?) '
-          'ON CONFLICT(rung_id, locale) DO UPDATE SET title=excluded.title, '
-          'what_to_do=excluded.what_to_do, why_it_helps=excluded.why_it_helps, '
-          'source_updated_at=excluded.source_updated_at;',
-          [
-            r['rung_id'], r['locale'], r['title'], r['what_to_do'],
-            r['why_it_helps'], r['source_updated_at'] ?? 0,
           ],
         );
       }
