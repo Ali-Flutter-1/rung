@@ -38,7 +38,11 @@ class _BreathingScreenState extends State<BreathingScreen>
   static const _minScale = 0.5;
 
   late final AnimationController _scale;
-  final _elapsed = Stopwatch();
+
+  /// Time spent breathing so far. Accumulated from the phase durations rather
+  /// than read off a wall clock, so it advances in lockstep with the timers —
+  /// which keeps the whole exercise deterministic (and testable).
+  Duration _elapsed = Duration.zero;
   Timer? _phaseTimer;
   _Phase _phase = _Phase.inhale;
   bool _done = false;
@@ -52,7 +56,6 @@ class _BreathingScreenState extends State<BreathingScreen>
       upperBound: 1.0,
       value: _minScale,
     );
-    _elapsed.start();
     _runPhase();
   }
 
@@ -66,7 +69,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   void _runPhase() {
     if (!mounted) return;
     // Finish only at the end of a full cycle so the exhale never cuts off short.
-    if (_elapsed.elapsed >= _total && _phase == _Phase.inhale) {
+    if (_elapsed >= _total && _phase == _Phase.inhale) {
       _finish();
       return;
     }
@@ -76,12 +79,14 @@ class _BreathingScreenState extends State<BreathingScreen>
         _scale.animateTo(1.0, duration: _inhale, curve: Curves.easeInOut);
         _phaseTimer = Timer(_inhale, () {
           if (!mounted) return;
+          _elapsed += _inhale;
           setState(() => _phase = _Phase.hold);
           _runPhase();
         });
       case _Phase.hold:
         _phaseTimer = Timer(_hold, () {
           if (!mounted) return;
+          _elapsed += _hold;
           setState(() => _phase = _Phase.exhale);
           _runPhase();
         });
@@ -90,6 +95,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         _scale.animateTo(_minScale, duration: _exhale, curve: Curves.easeInOut);
         _phaseTimer = Timer(_exhale, () {
           if (!mounted) return;
+          _elapsed += _exhale;
           setState(() => _phase = _Phase.inhale);
           _runPhase();
         });
@@ -98,7 +104,6 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   void _finish() {
     _phaseTimer?.cancel();
-    _elapsed.stop();
     Haptics.medium();
     setState(() => _done = true);
   }
