@@ -76,9 +76,13 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
     await repo.addCustomRung(
       trackId: widget.trackId,
       title: _title.text.trim(),
-      whatToDo:
-          _what.text.trim().isEmpty ? l.customDefaultWhat : _what.text.trim(),
-      whyItHelps: l.customDefaultWhy,
+      // Empty means "no user text" — the app's own default copy is rendered at
+      // display time from the ACTIVE locale. Freezing the translated default
+      // into the row would strand it in whatever language it was created in,
+      // forever, even after the user switches. `whyItHelps` is never
+      // user-authored at all, so it is always stored empty.
+      whatToDo: _what.text.trim(),
+      whyItHelps: '',
       difficulty: _difficulty.round(),
     );
     ref.read(syncServiceProvider).scheduleBackup(); // back up the new rung

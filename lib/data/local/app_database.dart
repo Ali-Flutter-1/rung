@@ -19,7 +19,12 @@ class AppDatabase {
   final StreamController<void> _changes = StreamController<void>.broadcast();
 
   /// Current schema version. Bump + add a migration step for additive changes.
-  static const int schemaVersion = 2;
+  static const int schemaVersion = 3;
+
+  /// The English default that older builds froze into `what_to_do` when the
+  /// user left the field blank. Only English ever shipped, so this is the only
+  /// value that can be in the wild.
+  static const _legacyDefaultWhatToDo = 'A challenge you set for yourself.';
 
   static Future<AppDatabase> open({String? path}) async {
     final dbPath = path ??
@@ -59,9 +64,41 @@ class AppDatabase {
       _createV2();
       v = 2;
     }
+    if (v < 3) {
+      _migrateV3();
+      v = 3;
+    }
     if (v != version) {
       _db.execute('PRAGMA user_version = $v;');
     }
+  }
+
+  /// v3 — un-freeze the app's own copy out of custom-rung rows.
+  ///
+  /// Older builds wrote the *localized* default text into `what_to_do` /
+  /// `why_it_helps` at creation time. That is app copy, not user content: once
+  /// stored it was stranded in whatever language the rung was created in and
+  /// never followed a later language switch. Both are now stored empty and
+  /// rendered from the active locale at display time (see `RungCopy`).
+  ///
+  /// `why_it_helps` was NEVER user-authored for a custom rung, so it is blanked
+  /// unconditionally. `what_to_do` is only blanked when it exactly matches the
+  /// default — anything else is the user's own words and is left alone.
+  ///
+  /// `updated_at` is bumped so the blanked rows re-push to the cloud on the
+  /// next backup; otherwise the stale text would be pulled back on reinstall.
+  void _migrateV3() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    _db.execute(
+      'UPDATE rungs SET why_it_helps = ?, updated_at = ? '
+      "WHERE is_custom = 1 AND why_it_helps <> '';",
+      ['', now],
+    );
+    _db.execute(
+      'UPDATE rungs SET what_to_do = ?, updated_at = ? '
+      'WHERE is_custom = 1 AND what_to_do = ?;',
+      ['', now, _legacyDefaultWhatToDo],
+    );
   }
 
   /// v2 — content translations.

@@ -8,6 +8,7 @@ import '../../core/theme/app_theme.dart';
 import '../../domain/entities/track.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/rung_copy.dart';
 import '../../shared/rung_logo.dart';
 import '../../shared/track_visuals.dart';
 
@@ -486,7 +487,7 @@ class _StartingPointPage extends ConsumerWidget {
                   const SizedBox(height: Insets.sm),
                   Text(firstRung.title, style: t.titleLarge),
                   const SizedBox(height: 4),
-                  Text(firstRung.whyItHelps, style: t.bodyMedium),
+                  Text(firstRung.whyItHelpsText(l), style: t.bodyMedium),
                 ],
               ),
             ),

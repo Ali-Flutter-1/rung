@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
+import '../../shared/rung_copy.dart';
 import '../../shared/rung_cover.dart';
 import '../../shared/track_visuals.dart';
 
@@ -62,14 +63,14 @@ class RungDetailScreen extends ConsumerWidget {
                 icon: Icons.checklist_rounded,
                 accent: accent,
                 title: l.detailWhatToDo,
-                body: rung.whatToDo,
+                body: rung.whatToDoText(l),
               ),
               const SizedBox(height: Insets.md),
               _Block(
                 icon: Icons.favorite_outline_rounded,
                 accent: accent,
                 title: l.detailWhyHelps,
-                body: rung.whyItHelps,
+                body: rung.whyItHelpsText(l),
               ),
               if (history.isNotEmpty) ...[
                 const SizedBox(height: Insets.xl),
