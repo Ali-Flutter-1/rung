@@ -60,6 +60,12 @@ abstract interface class SettingsRepository {
   int get lastContentSyncAt;
   Future<void> setLastContentSyncAt(int ms);
 
+  /// The locale the cached content was last pulled for. When the user switches
+  /// language this no longer matches, so the content sync bypasses its TTL and
+  /// translated rung copy arrives immediately rather than up to 24h later.
+  String get lastContentLocale;
+  Future<void> setLastContentLocale(String code);
+
   /// Master push switch — when off, the device's push token is removed so no
   /// cloud notifications arrive at all.
   bool get pushEnabled;

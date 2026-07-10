@@ -13,7 +13,7 @@ class LocalTrackRepository implements TrackRepository {
   static const _uuid = Uuid();
 
   List<Track> _allTracks() => _db
-      .select('SELECT * FROM tracks ORDER BY sort_order;')
+      .select('SELECT * FROM tracks_localized ORDER BY sort_order;')
       .map(trackFromRow)
       .toList();
 
@@ -23,7 +23,7 @@ class LocalTrackRepository implements TrackRepository {
     if (maxBase == null) {
       return _db
           .select(
-            'SELECT * FROM rungs WHERE track_id = ? AND deleted_at IS NULL '
+            'SELECT * FROM rungs_localized WHERE track_id = ? AND deleted_at IS NULL '
             'ORDER BY sort_order;',
             [trackId],
           )
@@ -32,7 +32,7 @@ class LocalTrackRepository implements TrackRepository {
     }
     return _db
         .select(
-          'SELECT * FROM rungs WHERE track_id = ? AND deleted_at IS NULL '
+          'SELECT * FROM rungs_localized WHERE track_id = ? AND deleted_at IS NULL '
           'AND (is_custom = 1 OR id IN ('
           '  SELECT id FROM rungs WHERE track_id = ? AND deleted_at IS NULL '
           '  AND is_custom = 0 ORDER BY sort_order LIMIT ?'
@@ -51,7 +51,7 @@ class LocalTrackRepository implements TrackRepository {
 
   @override
   Future<Track?> getTrack(String trackId) async {
-    final rows = _db.select('SELECT * FROM tracks WHERE id = ?;', [trackId]);
+    final rows = _db.select('SELECT * FROM tracks_localized WHERE id = ?;', [trackId]);
     return rows.isEmpty ? null : trackFromRow(rows.first);
   }
 
@@ -65,7 +65,7 @@ class LocalTrackRepository implements TrackRepository {
 
   @override
   Future<Rung?> getRung(String rungId) async {
-    final rows = _db.select('SELECT * FROM rungs WHERE id = ?;', [rungId]);
+    final rows = _db.select('SELECT * FROM rungs_localized WHERE id = ?;', [rungId]);
     return rows.isEmpty ? null : rungFromRow(rows.first);
   }
 
@@ -118,7 +118,7 @@ class LocalTrackRepository implements TrackRepository {
   @override
   Future<Rung?> recommendNextRung(String trackId) async {
     final rows = _db.select(
-      "SELECT * FROM rungs WHERE track_id = ? AND deleted_at IS NULL "
+      "SELECT * FROM rungs_localized WHERE track_id = ? AND deleted_at IS NULL "
       "AND id NOT IN (SELECT rung_id FROM attempts "
       "  WHERE outcome IN ('done','partial') AND deleted_at IS NULL) "
       "ORDER BY sort_order LIMIT 1;",

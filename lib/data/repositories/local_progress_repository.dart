@@ -239,11 +239,11 @@ class LocalProgressRepository implements ProgressRepository {
   TodaySuggestion? _suggestion(String rungId, TodayReason reason,
       {Attempt? attempt}) {
     final rungRows =
-        _db.select('SELECT * FROM rungs WHERE id = ?;', [rungId]);
+        _db.select('SELECT * FROM rungs_localized WHERE id = ?;', [rungId]);
     if (rungRows.isEmpty) return null;
     final rung = rungFromRow(rungRows.first);
     final trackRows =
-        _db.select('SELECT * FROM tracks WHERE id = ?;', [rung.trackId]);
+        _db.select('SELECT * FROM tracks_localized WHERE id = ?;', [rung.trackId]);
     if (trackRows.isEmpty) return null;
     return TodaySuggestion(
       rung: rung,

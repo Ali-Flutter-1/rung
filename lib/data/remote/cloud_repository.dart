@@ -465,6 +465,33 @@ class CloudRepository {
     return rows.cast<Map<String, dynamic>>();
   }
 
+  /// Fetches track translations for [locales] only — never all 17 at once, so
+  /// the payload stays the size of a single-language pull.
+  Future<List<Map<String, dynamic>>> fetchContentTrackI18n(
+    List<String> locales,
+  ) async {
+    if (locales.isEmpty) return const [];
+    final rows = await supabase
+        .from('content_track_i18n')
+        .select()
+        .inFilter('locale', locales);
+    return rows.cast<Map<String, dynamic>>();
+  }
+
+  /// Fetches rung translations for [locales] only. Rows translated from an
+  /// older English revision are kept but filtered out on read by the local
+  /// view, which compares `source_updated_at` against the base `updated_at`.
+  Future<List<Map<String, dynamic>>> fetchContentRungI18n(
+    List<String> locales,
+  ) async {
+    if (locales.isEmpty) return const [];
+    final rows = await supabase
+        .from('content_rung_i18n')
+        .select()
+        .inFilter('locale', locales);
+    return rows.cast<Map<String, dynamic>>();
+  }
+
   // ── Custom rungs (per-user content) ─────────────────────────────────────
   /// Pushes the user's custom rungs. A server trigger enforces the free-tier
   /// cap (5); a [CloudActionException] surfaces if it's exceeded.

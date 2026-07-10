@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/repositories/settings_repository.dart';
 import '../local/app_database.dart';
+import '../local/content_locale.dart';
 import '../remote/cloud_repository.dart';
 import '../remote/supabase_bootstrap.dart';
 
@@ -42,22 +43,46 @@ class SyncService {
   /// into local SQLite, so paid-tier depth is available offline afterwards.
   /// Throttled to once per [_contentTtl] per device. Best-effort: on failure
   /// the bundled seed (and any prior cache) remains in place.
-  Future<void> syncContent({bool force = false}) async {
-    if (!supabaseReady || !_cloud.isSignedIn) return;
+  /// [locale] is the app's active locale code (e.g. `pt_PT`); only that locale
+  /// and its base language are pulled, never all of them. Passing a locale we
+  /// have not cached before bypasses the TTL — otherwise switching language
+  /// would show English rung copy for up to 24h.
+  /// Returns true if the content the UI would render may have changed, so the
+  /// caller can invalidate cached content providers.
+  Future<bool> syncContent({bool force = false, String? locale}) async {
+    final chain = locale == null ? const <String>[] : contentLocaleChain(locale);
+    // Apply the chain locally FIRST: it is free, works offline and signed out,
+    // and makes already-cached translations take effect the instant the user
+    // switches language — no network round-trip.
+    var changed = _db.setContentLocaleChain(chain);
+
+    if (!supabaseReady || !_cloud.isSignedIn) return changed;
     final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final localeChanged = _settings.lastContentLocale != (locale ?? 'en');
     if (!force &&
+        !localeChanged &&
         nowMs - _settings.lastContentSyncAt < _contentTtl.inMilliseconds) {
-      return; // fetched recently — the local cache is fresh enough
+      return changed; // fetched recently for this locale — cache is fresh
     }
     try {
       final tracks = await _cloud.fetchContentTracks();
       final rungs = await _cloud.fetchContentRungs();
-      _db.upsertContent(tracks: tracks, rungs: rungs);
+      final trackI18n = await _cloud.fetchContentTrackI18n(chain);
+      final rungI18n = await _cloud.fetchContentRungI18n(chain);
+      _db.upsertContent(
+        tracks: tracks,
+        rungs: rungs,
+        trackI18n: trackI18n,
+        rungI18n: rungI18n,
+      );
       await _settings.setLastContentSyncAt(nowMs);
+      await _settings.setLastContentLocale(locale ?? 'en');
+      changed = true;
     } catch (e) {
       if (kDebugMode) debugPrint('[sync] content pull failed: $e');
       // keep the bundled seed / prior cache
     }
+    return changed;
   }
 
   /// True if the signed-in account has cloud backup data to restore.
