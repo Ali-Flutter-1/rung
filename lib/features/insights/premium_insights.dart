@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/attempt.dart';
 import '../../domain/entities/subscription.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Premium "Deeper insights": a this-month fear-vs-reality summary computed from
 /// the user's attempts. Free users see a locked teaser with an upgrade CTA.
@@ -26,6 +27,7 @@ class PremiumInsights extends ConsumerWidget {
   // ── Free: locked teaser ────────────────────────────────────────────────────
   Widget _locked(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(Insets.lg),
       decoration: BoxDecoration(
@@ -40,15 +42,14 @@ class PremiumInsights extends ConsumerWidget {
             children: [
               const Icon(Icons.insights_rounded, color: AppColors.primary),
               const SizedBox(width: Insets.sm),
-              Text('Deeper insights', style: t.titleMedium),
+              Text(l.insightsDeeperTitle, style: t.titleMedium),
               const Spacer(),
               const Icon(Icons.lock_rounded, size: 16, color: AppColors.inkMuted),
             ],
           ),
           const SizedBox(height: Insets.sm),
           Text(
-            'See your month at a glance — how much your fear ran hotter than '
-            'reality, and how often you over-predicted it. A Premium perk.',
+            l.insightsLockedBody,
             style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
           ),
           const SizedBox(height: Insets.md),
@@ -57,7 +58,7 @@ class PremiumInsights extends ConsumerWidget {
             child: FilledButton.tonalIcon(
               onPressed: () => context.go(Routes.subscription),
               icon: const Icon(Icons.workspace_premium_outlined, size: 18),
-              label: const Text('Unlock with Premium'),
+              label: Text(l.insightsUnlockCta),
             ),
           ),
         ],
@@ -68,6 +69,7 @@ class PremiumInsights extends ConsumerWidget {
   // ── Premium: the real summary ──────────────────────────────────────────────
   Widget _unlocked(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final now = DateTime.now();
     final monthStart = DateTime(now.year, now.month, 1);
     final prevStart = DateTime(now.year, now.month - 1, 1);
@@ -87,8 +89,7 @@ class PremiumInsights extends ConsumerWidget {
     Widget body;
     if (n == 0) {
       body = Text(
-        'No steps logged yet this month. Face a couple and your summary '
-        'appears here.',
+        l.insightsNoSteps,
         style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
       );
     } else {
@@ -114,7 +115,7 @@ class PremiumInsights extends ConsumerWidget {
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
-                child: Text('fears faced this month', style: t.bodyLarge),
+                child: Text(l.insightsFearsFacedMonth, style: t.bodyLarge),
               ),
             ],
           ),
@@ -126,15 +127,15 @@ class PremiumInsights extends ConsumerWidget {
           _Line(
             icon: Icons.trending_down_rounded,
             text: avgGap > 0.2
-                ? 'Your fear ran ${avgGap.toStringAsFixed(1)} points hotter than reality, on average.'
+                ? l.insightsGapHotter(avgGap.toStringAsFixed(1))
                 : avgGap < -0.2
-                    ? 'Reality was a bit tougher than you predicted this month — that\'s brave data too.'
-                    : 'Your predictions were about spot-on this month.',
+                    ? l.insightsGapTougher
+                    : l.insightsGapSpotOn,
           ),
           const SizedBox(height: Insets.sm),
           _Line(
             icon: Icons.psychology_alt_outlined,
-            text: 'You over-predicted the fear $overRate% of the time.',
+            text: l.insightsOverPredicted(overRate),
           ),
         ],
       );
@@ -161,7 +162,7 @@ class PremiumInsights extends ConsumerWidget {
             children: [
               const Icon(Icons.insights_rounded, color: AppColors.primary),
               const SizedBox(width: Insets.sm),
-              Text('Deeper insights', style: t.titleMedium),
+              Text(l.insightsDeeperTitle, style: t.titleMedium),
             ],
           ),
           const SizedBox(height: Insets.md),
@@ -177,13 +178,14 @@ class _Trend extends StatelessWidget {
   final int trend;
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final up = trend >= 0;
     final color = up ? AppColors.primary : AppColors.inkMuted;
     final label = trend == 0
-        ? 'Same as last month'
+        ? l.insightsTrendSame
         : up
-            ? '${trend.abs()} more than last month'
-            : '${trend.abs()} fewer than last month';
+            ? l.insightsTrendMore(trend.abs())
+            : l.insightsTrendFewer(trend.abs());
     return Row(
       children: [
         Icon(up ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,

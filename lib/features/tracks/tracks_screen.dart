@@ -8,6 +8,7 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/today_suggestion.dart';
 import '../../domain/entities/track.dart';
 import '../../shared/help_now.dart';
@@ -24,6 +25,7 @@ class TracksScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tracks = ref.watch(tracksProvider);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const RungWordmark(),
@@ -44,21 +46,21 @@ class TracksScreen extends ConsumerWidget {
                     .push(MaterialPageRoute(builder: (_) => page));
               }
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'insights',
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.insights_rounded),
-                  title: Text('Insights'),
+                  leading: const Icon(Icons.insights_rounded),
+                  title: Text(l.menuInsights),
                 ),
               ),
               PopupMenuItem(
                 value: 'safety',
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.health_and_safety_outlined),
-                  title: Text('Is this right for me?'),
+                  leading: const Icon(Icons.health_and_safety_outlined),
+                  title: Text(l.menuIsThisRight),
                 ),
               ),
             ],
@@ -80,13 +82,13 @@ class TracksScreen extends ConsumerWidget {
             ],
           ],
         ),
-        error: (e, _) => Center(child: Text('Could not load tracks.\n$e')),
+        error: (e, _) => Center(child: Text('${l.tracksLoadError}\n$e')),
         data: (list) => ListView(
           padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, 96),
           children: [
-            Text('Your tracks', style: t.headlineMedium),
+            Text(l.tracksTitle, style: t.headlineMedium),
             const SizedBox(height: Insets.xs),
-            Text('Small steps toward big confidence.', style: t.bodyMedium),
+            Text(l.tracksSubtitle, style: t.bodyMedium),
             const SizedBox(height: Insets.lg),
             const _ContinueCard(),
             for (final (i, track) in list.indexed) ...[
@@ -179,7 +181,7 @@ class _TrackCard extends ConsumerWidget {
             const SizedBox(height: 2),
             loading
                 ? const Skeleton(width: 90, height: 14)
-                : Text('$done of $total rungs',
+                : Text(AppLocalizations.of(context).tracksRungsCount(done, total),
                     style: t.bodyMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
@@ -262,8 +264,8 @@ class _ContinueCard extends ConsumerWidget {
                   children: [
                     Text(
                       resume
-                          ? 'CONTINUE WHERE YOU LEFT OFF'
-                          : 'YOUR NEXT STEP',
+                          ? AppLocalizations.of(context).tracksContinueLabel
+                          : AppLocalizations.of(context).tracksNextStepLabel,
                       style: t.bodyMedium?.copyWith(
                         color: accent,
                         fontWeight: FontWeight.w700,
@@ -277,7 +279,8 @@ class _ContinueCard extends ConsumerWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
-                    Text('${suggestion.track.title} · $done of ${ladder.length} climbed',
+                    Text(
+                        '${suggestion.track.title} · ${AppLocalizations.of(context).tracksClimbedCount(done, ladder.length)}',
                         style: t.bodyMedium),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// "Is this right for me?" — the non-negotiable safety framing (§1.9).
 /// Reused in onboarding and reachable any time from Profile.
@@ -11,38 +12,31 @@ class SafetyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Is this right for me?')),
+      appBar: AppBar(title: Text(l.safetyScreenTitle)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(Insets.lg),
           children: [
-            Text('Rung is practice, not therapy.', style: t.headlineSmall),
+            Text(l.safetyPracticeTitle, style: t.headlineSmall),
             const SizedBox(height: Insets.md),
             Text(
-              'Rung is a confidence and practice tool. It helps you face everyday '
-              'social situations gradually, at your own pace. It is not therapy, '
-              'not a medical treatment, and not a diagnosis.',
+              l.safetyIntro,
               style: t.bodyLarge,
             ),
             const SizedBox(height: Insets.lg),
             _Point(
               icon: Icons.self_improvement_rounded,
-              text:
-                  'The goal is manageable dread — feeling more comfortable in the '
-                  'moments you used to avoid. Not becoming a different person.',
+              text: l.safetyPoint1,
             ),
             _Point(
               icon: Icons.favorite_outline_rounded,
-              text:
-                  'Skipping is always okay and never counts against you. There '
-                  'are no shame mechanics here.',
+              text: l.safetyPoint2,
             ),
             _Point(
               icon: Icons.lock_outline_rounded,
-              text:
-                  'Your data is yours. Everything works offline, with no account '
-                  'required.',
+              text: l.safetyPoint3,
             ),
             const SizedBox(height: Insets.lg),
             Container(
@@ -55,15 +49,12 @@ class SafetyScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'If this is more than nerves',
+                    l.safetyMoreTitle,
                     style: t.titleMedium?.copyWith(color: AppColors.accentDeep),
                   ),
                   const SizedBox(height: Insets.sm),
                   Text(
-                    'If anxiety is severely affecting your daily life, or you ever '
-                    'have thoughts of harming yourself, please reach out to a '
-                    'qualified professional or a local crisis line. That is a '
-                    'strong, healthy step — and Rung is not a substitute for it.',
+                    l.safetyMoreBody,
                     style: t.bodyLarge?.copyWith(color: AppColors.ink),
                   ),
                 ],

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/remote/cloud_models.dart';
 import '../../shared/avatars.dart';
 
@@ -50,6 +51,7 @@ class _BlockedMembersScreenState extends ConsumerState<BlockedMembersScreen> {
   Future<void> _unblock(String id) async {
     Haptics.selection();
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
     final name = _nameFor(id);
     setState(() => _ids = _ids.where((x) => x != id).toList());
     try {
@@ -57,28 +59,31 @@ class _BlockedMembersScreenState extends ConsumerState<BlockedMembersScreen> {
     } catch (_) {
       // Put it back if the server call failed.
       if (mounted && !_ids.contains(id)) setState(() => _ids = [..._ids, id]);
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Could not unblock. Try again.'),
+        content: Text(l.blockedUnblockError),
       ));
       return;
     }
     messenger.showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
-      content: Text("Unblocked $name. You'll see their messages again."),
+      content: Text(l.blockedUnblocked(name)),
     ));
   }
 
   String _nameFor(String id) {
     final n = _profiles[id]?.displayName?.trim();
-    return (n == null || n.isEmpty) ? 'Member' : n;
+    return (n == null || n.isEmpty)
+        ? AppLocalizations.of(context).memberFallback
+        : n;
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Blocked members')),
+      appBar: AppBar(
+          title: Text(AppLocalizations.of(context).profileBlockedTitle)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _ids.isEmpty
@@ -117,8 +122,7 @@ class _Intro extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: Insets.md),
       child: Text(
-        "Blocking hides a member's messages from you — and yours from them, "
-        'both ways. Unblock anyone below to undo it.',
+        AppLocalizations.of(context).blockedIntro,
         style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
       ),
     );
@@ -163,7 +167,7 @@ class _BlockedCard extends StatelessWidget {
                     const Icon(Icons.block_rounded,
                         size: 13, color: AppColors.inkMuted),
                     const SizedBox(width: 4),
-                    Text('Blocked',
+                    Text(AppLocalizations.of(context).blockedLabel,
                         style:
                             t.bodySmall?.copyWith(color: AppColors.inkMuted)),
                   ],
@@ -185,7 +189,7 @@ class _BlockedCard extends StatelessWidget {
                 border: Border.all(color: AppColors.primary),
               ),
               child: Text(
-                'Unblock',
+                AppLocalizations.of(context).blockedUnblock,
                 style: t.labelLarge?.copyWith(
                     color: AppColors.primaryDeep, fontWeight: FontWeight.w700),
               ),
@@ -220,11 +224,11 @@ class _EmptyState extends StatelessWidget {
                   size: 34, color: AppColors.primary),
             ),
             const SizedBox(height: Insets.lg),
-            Text('No one blocked', style: t.titleLarge),
+            Text(AppLocalizations.of(context).blockedEmptyTitle,
+                style: t.titleLarge),
             const SizedBox(height: Insets.sm),
             Text(
-              "You haven't blocked anyone. Blocking hides a member's messages "
-              'from you, both ways — and you can always undo it here.',
+              AppLocalizations.of(context).blockedEmptyBody,
               textAlign: TextAlign.center,
               style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
             ),

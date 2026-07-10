@@ -7,6 +7,7 @@ import '../../core/analytics/analytics.dart';
 import '../../core/purchases/purchase_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/subscription.dart';
 import '../profile/profile_sync.dart';
 
@@ -54,25 +55,25 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Ev.subscribeTapped, {'plan': _yearly ? 'yearly' : 'monthly'});
     final settings = ref.read(settingsRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
 
     // Dev / no-keys fallback: simulate the tier so pod rules stay testable.
     if (!purchasesReady) {
       await settings.setSubscriptionTier(
           _yearly ? SubscriptionTier.yearly : SubscriptionTier.monthly);
       await pushIdentityToCloud(ref);
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text(
-            'Premium active (simulated — add RevenueCat keys for real purchases).'),
+        content: Text(l.paywallSimulated),
       ));
       return;
     }
 
     final pkg = _selectedPackage;
     if (pkg == null) {
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text("That plan isn't available right now. Try again shortly."),
+        content: Text(l.paywallPlanUnavailable),
       ));
       return;
     }
@@ -81,16 +82,16 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       final tier = await ref.read(purchaseServiceProvider).buy(pkg);
       await settings.setSubscriptionTier(tier);
       await pushIdentityToCloud(ref);
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Premium active — thank you. 🌱'),
+        content: Text(l.paywallThankYou),
       ));
     } on PurchaseCancelled {
       // User backed out — nothing to say.
     } catch (_) {
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text("The purchase didn't complete. You haven't been charged."),
+        content: Text(l.paywallPurchaseFailed),
       ));
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -100,6 +101,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Future<void> _onRestore() async {
     final settings = ref.read(settingsRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
       final tier = await ref.read(purchaseServiceProvider).restore();
@@ -107,14 +109,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       await pushIdentityToCloud(ref);
       messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text(tier.isPremium
-            ? 'Purchases restored.'
-            : 'No previous purchases found on this account.'),
+        content:
+            Text(tier.isPremium ? l.paywallRestored : l.paywallNoRestore),
       ));
     } catch (_) {
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text("Couldn't restore right now. Try again shortly."),
+        content: Text(l.paywallRestoreFailed),
       ));
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -124,27 +125,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // The headline reasons to subscribe — the emotional ones people actually pay
   // for. Every line is really enforced. Lead with belonging (pods), then the
   // "make it yours" levers (unlimited ladders, deeper steps).
-  static const _headlineBenefits = [
-    (Icons.spa_rounded,
-        'A private coach, any time — rehearse something coming up or talk '
-            'through how it went'),
-    (Icons.diversity_3_rounded,
-        "You're not doing this alone — join more support pods (3 on monthly, unlimited on yearly)"),
-    (Icons.edit_note_rounded,
-        'Build unlimited ladders of your own — no cap on custom steps'),
-    (Icons.stairs_rounded,
-        "Go deeper when you're ready — up to 40 steps a track (free is a full 10-step arc)"),
-  ];
+  List<(IconData, String)> _headlineBenefits(AppLocalizations l) => [
+        (Icons.spa_rounded, l.paywallBenefitCoach),
+        (Icons.diversity_3_rounded, l.paywallBenefitPods),
+        (Icons.edit_note_rounded, l.paywallBenefitCustom),
+        (Icons.stairs_rounded, l.paywallBenefitDepth),
+      ];
 
   // The "and also" tail — real, but nobody subscribes *for* these. They make
   // the bundle feel full; they never lead.
-  static const _plusBenefits = [
-    (Icons.shield_moon_outlined,
-        "Streak protection — a missed day won't break your streak"),
-    (Icons.insights_rounded, 'Deeper insights — your month at a glance'),
-    (Icons.emoji_emotions_outlined, 'Personal share-card styles'),
-    (Icons.lock_outline_rounded, 'Always private, always ad-free'),
-  ];
+  List<(IconData, String)> _plusBenefits(AppLocalizations l) => [
+        (Icons.shield_moon_outlined, l.paywallPlusStreak),
+        (Icons.insights_rounded, l.paywallPlusInsights),
+        (Icons.emoji_emotions_outlined, l.paywallPlusShare),
+        (Icons.lock_outline_rounded, l.paywallPlusPrivacy),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +147,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     final settings = ref.watch(settingsRepositoryProvider);
     final tier = settings.subscriptionTier;
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rung Premium'),
@@ -162,7 +158,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 await settings.setSubscriptionTier(SubscriptionTier.free);
                 await pushIdentityToCloud(ref);
               },
-              child: const Text('Switch to Free'),
+              child: Text(l.paywallSwitchToFree),
             ),
         ],
       ),
@@ -186,13 +182,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const Icon(Icons.workspace_premium_outlined,
                     color: Colors.white, size: 32),
                 const SizedBox(height: Insets.sm),
-                Text("You don't have to face it alone.",
+                Text(l.paywallHeroTitle,
                     style: t.headlineSmall?.copyWith(color: Colors.white)),
                 const SizedBox(height: Insets.xs),
                 Text(
-                  'The daily practice is always free. Premium adds a private '
-                  'coach in your corner — and a bigger community beside you — '
-                  "for when you're ready to go further.",
+                  l.paywallHeroBody,
                   style: t.bodyLarge?.copyWith(
                       color: Colors.white.withValues(alpha: 0.9)),
                 ),
@@ -200,9 +194,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
           ),
           const SizedBox(height: Insets.xl),
-          Text("What's included", style: t.titleMedium),
+          Text(l.paywallWhatsIncluded, style: t.titleMedium),
           const SizedBox(height: Insets.md),
-          for (final (icon, label) in _headlineBenefits)
+          for (final (icon, label) in _headlineBenefits(l))
             Padding(
               padding: const EdgeInsets.only(bottom: Insets.md),
               child: Row(
@@ -243,14 +237,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Plus, every subscriber gets',
+                Text(l.paywallPlusHeader,
                     style: t.labelLarge?.copyWith(
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
                             .withValues(alpha: 0.7))),
                 const SizedBox(height: Insets.sm),
-                for (final (icon, label) in _plusBenefits)
+                for (final (icon, label) in _plusBenefits(l))
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Row(
@@ -276,20 +270,20 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             children: [
               Expanded(
                 child: _PlanCard(
-                  title: 'Yearly',
+                  title: l.paywallYearly,
                   price: _priceLabel(true),
-                  per: 'per year · best value',
+                  per: l.paywallPerYear,
                   highlight: _yearly,
-                  badge: 'Save 33%',
+                  badge: l.paywallSave,
                   onTap: () => setState(() => _yearly = true),
                 ),
               ),
               const SizedBox(width: Insets.md),
               Expanded(
                 child: _PlanCard(
-                  title: 'Monthly',
+                  title: l.paywallMonthly,
                   price: _priceLabel(false),
-                  per: 'per month',
+                  per: l.paywallPerMonth,
                   highlight: !_yearly,
                   onTap: () => setState(() => _yearly = false),
                 ),
@@ -307,17 +301,17 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         strokeWidth: 2, color: Colors.white),
                   )
                 : Text(tier.isPremium
-                    ? (_yearly ? 'Switch to yearly' : 'Switch to monthly')
+                    ? (_yearly ? l.paywallSwitchYearly : l.paywallSwitchMonthly)
                     : (_yearly
-                        ? 'Start yearly — ${_priceLabel(true)}'
-                        : 'Start monthly — ${_priceLabel(false)}')),
+                        ? l.paywallStartYearly(_priceLabel(true))
+                        : l.paywallStartMonthly(_priceLabel(false)))),
           ),
           if (purchasesReady) ...[
             const SizedBox(height: Insets.xs),
             Center(
               child: TextButton(
                 onPressed: _busy ? null : _onRestore,
-                child: const Text('Restore purchases'),
+                child: Text(l.paywallRestore),
               ),
             ),
           ],
@@ -325,8 +319,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           Center(
             child: Text(
                 tier.isPremium
-                    ? 'Current plan: ${tier.label}. Cancel anytime.'
-                    : 'Cancel anytime. The core loop stays free forever.',
+                    ? l.paywallCurrentPlan(switch (tier) {
+                        SubscriptionTier.free => l.tierFree,
+                        SubscriptionTier.monthly => l.tierMonthly,
+                        SubscriptionTier.yearly => l.tierYearly,
+                      })
+                    : l.paywallCancelAnytime,
                 style: t.bodyMedium),
           ),
         ],
@@ -374,27 +372,40 @@ class _PlanCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(title, style: t.titleMedium),
-                const Spacer(),
-                if (badge != null)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: Radii.pill,
+                Expanded(
+                  child: Text(title,
+                      style: t.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                if (badge != null) ...[
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        borderRadius: Radii.pill,
+                      ),
+                      child: Text(badge!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11)),
                     ),
-                    child: Text(badge!,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11)),
                   ),
+                ],
               ],
             ),
             const SizedBox(height: Insets.sm),
-            Text(price, style: t.headlineSmall),
-            Text(per, style: t.bodyMedium),
+            Text(price,
+                style: t.headlineSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
+            Text(per, style: t.bodyMedium, maxLines: 2),
           ],
         ),
       ),

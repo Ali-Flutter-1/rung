@@ -8,6 +8,7 @@ import '../../core/analytics/analytics.dart';
 import '../../core/haptics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Opens the "Rate Rung" sheet: pick 1–5 stars and (optionally) leave a comment.
 ///
@@ -49,11 +50,11 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
     super.dispose();
   }
 
-  String get _prompt => switch (_rating) {
-        0 => 'How is Rung feeling for you?',
-        1 || 2 => "We're sorry it's not landing. What's missing?",
-        3 => 'Thanks — what would make it a 5?',
-        _ => 'That means a lot. What do you love?',
+  String _promptText(AppLocalizations l) => switch (_rating) {
+        0 => l.ratePromptNone,
+        1 || 2 => l.ratePromptLow,
+        3 => l.ratePromptMid,
+        _ => l.ratePromptHigh,
       };
 
   Future<void> _submit() async {
@@ -62,6 +63,7 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
     Haptics.medium();
     final rating = _rating;
     final comment = _comment.text.trim();
+    final l = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final nav = Navigator.of(context);
 
@@ -95,15 +97,14 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
     nav.pop();
     messenger.showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
-      content: Text(rating >= 4
-          ? 'Thank you — it truly helps. 🌱'
-          : 'Thank you for the honesty — we’ll use it to improve.'),
+      content: Text(rating >= 4 ? l.rateThanksHigh : l.rateThanksLow),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return SafeArea(
       top: false,
       child: Padding(
@@ -113,10 +114,10 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Enjoying Rung?',
+            Text(l.rateTitle,
                 textAlign: TextAlign.center, style: t.headlineSmall),
             const SizedBox(height: Insets.xs),
-            Text(_prompt,
+            Text(_promptText(l),
                 textAlign: TextAlign.center,
                 style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
             const SizedBox(height: Insets.lg),
@@ -153,9 +154,7 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
               maxLength: 500,
               textInputAction: TextInputAction.newline,
               decoration: InputDecoration(
-                hintText: _rating >= 4
-                    ? 'Anything you love? (optional)'
-                    : 'Tell us more (optional)',
+                hintText: _rating >= 4 ? l.rateHintLove : l.rateHintMore,
                 border: OutlineInputBorder(borderRadius: Radii.card),
               ),
             ),
@@ -168,7 +167,7 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
                       width: 20,
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white))
-                  : const Text('Send'),
+                  : Text(l.rateSend),
             ),
           ],
         ),

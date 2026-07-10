@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/progress_widgets.dart';
@@ -16,6 +17,7 @@ class InsightsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
     final streak = ref.watch(streakProvider).asData?.value ?? 0;
     final cleared = ref.watch(totalClearedProvider).asData?.value ?? 0;
@@ -29,7 +31,7 @@ class InsightsScreen extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your growth')),
+      appBar: AppBar(title: Text(l.dashYourGrowth)),
       body: ListView(
         padding: const EdgeInsets.all(Insets.lg),
         children: [
@@ -51,7 +53,7 @@ class InsightsScreen extends ConsumerWidget {
           const CategoryBreakdown(),
           if (attempts.isNotEmpty) ...[
             const SizedBox(height: Insets.xl),
-            Text('History', style: t.titleMedium),
+            Text(l.insightsHistory, style: t.titleMedium),
             const SizedBox(height: Insets.sm),
             ...attempts.map((a) => AttemptHistoryTile(attempt: a)),
           ],

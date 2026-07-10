@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
@@ -168,14 +169,15 @@ class _Game2048State extends State<Game2048Screen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('2048'),
         actions: [
-          gameHelpAction(context, '2048', const [
-            'Swipe up, down, left or right to slide all tiles.',
-            'Two tiles with the same number merge into one that doubles.',
-            'Keep merging to build a 2048 tile. The board fills — plan ahead!',
+          gameHelpAction(context, '2048', [
+            l.g2048Rule1,
+            l.g2048Rule2,
+            l.g2048Rule3,
           ]),
         ],
       ),
@@ -186,16 +188,16 @@ class _Game2048State extends State<Game2048Screen> {
             children: [
               Row(
                 children: [
-                  _Stat(label: 'Score', value: _score),
+                  _Stat(label: l.g2048Score, value: _score),
                   const SizedBox(width: Insets.md),
-                  _Stat(label: 'Best', value: _best),
+                  _Stat(label: l.g2048Best, value: _best),
                   const Spacer(),
                   Text(
                     _over
-                        ? 'Game over'
+                        ? l.g2048GameOver
                         : _won
-                            ? 'You made 2048! 🎉'
-                            : 'Swipe to merge',
+                            ? l.g2048Won
+                            : l.g2048SwipeToMerge,
                     style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
                   ),
                 ],
@@ -251,8 +253,8 @@ class _Game2048State extends State<Game2048Screen> {
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: const Text('New game',
-                      style: TextStyle(
+                  child: Text(l.gameNewGame,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 15)),

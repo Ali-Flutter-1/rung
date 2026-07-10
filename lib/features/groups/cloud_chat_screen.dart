@@ -9,6 +9,7 @@ import '../../core/analytics/analytics.dart';
 import '../../core/safety/content_guard.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/remote/cloud_models.dart';
 import '../../data/remote/cloud_repository.dart';
 import '../../shared/avatars.dart';
@@ -313,6 +314,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
 
   Future<void> _checkInToday() async {
     if (_checkedInToday) return;
+    final l = AppLocalizations.of(context);
     try {
       final res = await ref
           .read(cloudRepositoryProvider)
@@ -322,9 +324,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         _checkedInToday = res.checkedIn;
         _todayCheckIns = res.count;
       });
-      _snack('Nice work. Pod check-in posted.');
+      _snack(l.chatCheckInPosted);
     } catch (_) {
-      _snack('Could not check in right now. Try again.');
+      _snack(l.chatCheckInError);
     }
   }
 
@@ -355,22 +357,23 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   }
 
   Future<void> _deleteMessage(CloudMessage m) async {
+    final l = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (d) => AlertDialog(
-        title: const Text('Delete message?'),
-        content: const Text('This removes it for everyone in the pod.'),
+        title: Text(l.chatDeleteMsgTitle),
+        content: Text(l.chatDeleteMsgBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(d).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.intensityHigh,
             ),
             onPressed: () => Navigator.of(d).pop(true),
-            child: const Text('Delete'),
+            child: Text(l.profileDelete),
           ),
         ],
       ),
@@ -417,7 +420,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.reply_rounded),
-              title: const Text('Reply'),
+              title: Text(AppLocalizations.of(sheetCtx).chatReply),
               onTap: () {
                 Navigator.of(sheetCtx).pop();
                 _startReply(m);
@@ -426,7 +429,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             if (mine) ...[
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
-                title: const Text('Edit'),
+                title: Text(AppLocalizations.of(sheetCtx).chatEdit),
                 onTap: () {
                   Navigator.of(sheetCtx).pop();
                   _startEdit(m);
@@ -437,7 +440,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                   Icons.delete_outline_rounded,
                   color: AppColors.intensityHigh,
                 ),
-                title: const Text('Delete'),
+                title: Text(AppLocalizations.of(sheetCtx).profileDelete),
                 onTap: () {
                   Navigator.of(sheetCtx).pop();
                   _deleteMessage(m);
@@ -458,21 +461,20 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   }
 
   Future<void> _leavePod() async {
+    final l = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: Text('Leave ${widget.pod.name}?'),
-        content: const Text(
-          "You'll stop seeing this pod's messages. You can join again later.",
-        ),
+        title: Text(l.groupsLeaveTitle(widget.pod.name)),
+        content: Text(l.groupsLeaveBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogCtx).pop(true),
-            child: const Text('Leave'),
+            child: Text(l.groupsLeave),
           ),
         ],
       ),
@@ -482,11 +484,12 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       await ref.read(cloudRepositoryProvider).leavePod(widget.pod.id);
       if (mounted) Navigator.of(context).pop(true); // tell the list to refresh
     } catch (_) {
-      _snack('Could not leave the pod. Try again.');
+      _snack(l.groupsLeaveError);
     }
   }
 
   Future<void> _openMember(CloudMessage m) async {
+    final l = AppLocalizations.of(context);
     // Fetch the member's CURRENT profile so a just-applied lock / updated stats
     // are reflected immediately (RLS returns nothing for a locked member).
     CloudProfile? p;
@@ -503,9 +506,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
     }
 
     final member = (p == null || p.isLocked)
-        ? const Member(name: 'Private member', locked: true)
+        ? Member(name: l.chatPrivateMember, locked: true)
         : Member(
-            name: p.displayName ?? 'Member',
+            name: p.displayName ?? l.memberFallback,
             bio: p.bio ?? '',
             avatarId: p.avatarId,
             isPremium: p.isPremium,
@@ -524,12 +527,13 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   }
 
   Member _memberFor(String userId) {
+    final l = AppLocalizations.of(context);
     final p = _profiles[userId];
     if (p == null || p.isLocked) {
-      return const Member(name: 'Private member', locked: true);
+      return Member(name: l.chatPrivateMember, locked: true);
     }
     return Member(
-      name: p.displayName ?? 'Member',
+      name: p.displayName ?? l.memberFallback,
       bio: p.bio ?? '',
       locked: false,
       avatarId: p.avatarId,
@@ -542,6 +546,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     // Read the CURRENT account each build (not cached) so message alignment is
     // always relative to who's signed in right now.
     final uid =
@@ -556,7 +561,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
           children: [
             Text(widget.pod.name, style: t.titleMedium),
             Text(
-              '${widget.pod.memberCount}/${widget.pod.capacity} · be kind',
+              l.chatBeKind(widget.pod.memberCount, widget.pod.capacity),
               style: t.bodyMedium,
             ),
           ],
@@ -564,17 +569,17 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         actions: [
           if (!widget.pod.isSystem)
             PopupMenuButton<String>(
-              tooltip: 'Pod options',
+              tooltip: l.groupsPodOptions,
               onSelected: (v) {
                 if (v == 'leave') _leavePod();
               },
-              itemBuilder: (_) => const [
+              itemBuilder: (_) => [
                 PopupMenuItem(
                   value: 'leave',
                   child: ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.logout_rounded),
-                    title: Text('Leave pod'),
+                    leading: const Icon(Icons.logout_rounded),
+                    title: Text(l.groupsLeavePod),
                   ),
                 ),
               ],
@@ -617,7 +622,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                           ),
                           const SizedBox(width: Insets.xs),
                           Text(
-                            'Daily pod prompt',
+                            l.chatDailyPrompt,
                             style: t.titleSmall?.copyWith(
                               color: AppColors.primaryDeep,
                               fontWeight: FontWeight.w700,
@@ -673,8 +678,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 _checkedInToday
-                                    ? 'Checked in today'
-                                    : 'I did my step',
+                                    ? l.chatCheckedInToday
+                                    : l.chatDidMyStep,
                                 style: TextStyle(
                                   color: _checkedInToday
                                       ? AppColors.primaryDeep
@@ -688,7 +693,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                         ),
                       ),
                       const SizedBox(width: Insets.sm),
-                      Text('$_todayCheckIns checked in', style: t.bodySmall),
+                      Text(l.chatCheckedInCount(_todayCheckIns),
+                          style: t.bodySmall),
                     ],
                   ),
                 ],
@@ -723,7 +729,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(Insets.xl),
                       child: Text(
-                        'No messages yet. A simple "hi" is a brave first rung.',
+                        l.chatNoMessages,
                         textAlign: TextAlign.center,
                         style: t.bodyMedium,
                       ),
@@ -758,10 +764,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                     String? replyText;
                     if (parent != null) {
                       replyLabel = parent.userId == uid
-                          ? 'You'
+                          ? l.chatYou
                           : _memberFor(parent.userId).name;
                       replyText = parent.isDeleted
-                          ? 'deleted message'
+                          ? l.chatDeletedMessageShort
                           : parent.body;
                     }
                     final bubble = _Bubble(
@@ -808,8 +814,8 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       editing: _editing != null,
                       // Reply preview: whose message + a snippet.
                       label: _editing != null
-                          ? 'Editing your message'
-                          : 'Replying to ${(_replyingTo!.userId == (ref.read(authRepositoryProvider).currentUser?.id)) ? 'yourself' : _memberFor(_replyingTo!.userId).name}',
+                          ? l.chatEditingMessage
+                          : l.chatReplyingTo((_replyingTo!.userId == (ref.read(authRepositoryProvider).currentUser?.id)) ? l.chatYourself : _memberFor(_replyingTo!.userId).name),
                       snippet: _editing != null ? null : _replyingTo!.body,
                       onCancel: _cancelCompose,
                     ),
@@ -822,7 +828,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                           textCapitalization: TextCapitalization.sentences,
                           onSubmitted: (_) => _send(),
                           decoration: InputDecoration(
-                            hintText: 'Say something kind…',
+                            hintText: l.chatHint,
                             filled: true,
                             fillColor: Theme.of(context).colorScheme.surface,
                             contentPadding: const EdgeInsets.symmetric(
@@ -908,7 +914,7 @@ class _Bubble extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            'This message was deleted',
+            AppLocalizations.of(context).chatMsgDeleted,
             style: t.bodyMedium?.copyWith(
               color: textColor.withValues(alpha: 0.6),
               fontStyle: FontStyle.italic,
@@ -926,7 +932,7 @@ class _Bubble extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    m.locked ? 'Private member' : m.name,
+                    m.locked ? AppLocalizations.of(context).chatPrivateMember : m.name,
                     overflow: TextOverflow.ellipsis,
                     style: t.bodyMedium?.copyWith(
                       color: AppColors.primaryDeep,

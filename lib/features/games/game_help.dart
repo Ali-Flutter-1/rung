@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// A reusable "How to play" action for game app bars + the rules sheet it opens.
 /// Each game passes its own short, numbered rules.
 Widget gameHelpAction(BuildContext context, String game, List<String> rules) {
   return IconButton(
-    tooltip: 'How to play',
+    tooltip: AppLocalizations.of(context).gameHelpTooltip,
     icon: const Icon(Icons.help_outline_rounded),
     onPressed: () => showGameRules(context, game, rules),
   );
@@ -22,6 +23,7 @@ Future<void> showGameRules(
     backgroundColor: Theme.of(context).colorScheme.surface,
     builder: (sheetCtx) {
       final t = Theme.of(sheetCtx).textTheme;
+      final l = AppLocalizations.of(sheetCtx);
       return SafeArea(
         child: Padding(
           padding:
@@ -36,7 +38,7 @@ Future<void> showGameRules(
                       color: AppColors.primary),
                   const SizedBox(width: Insets.sm),
                   Expanded(
-                    child: Text('How to play · $game', style: t.titleLarge),
+                    child: Text(l.gameHelpTitle(game), style: t.titleLarge),
                   ),
                 ],
               ),
@@ -79,8 +81,8 @@ Future<void> showGameRules(
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: const Text('Got it',
-                      style: TextStyle(
+                  child: Text(l.gameGotIt,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 15)),

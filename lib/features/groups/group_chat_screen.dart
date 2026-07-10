@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'member_sheet.dart';
 import 'pod_models.dart';
 
@@ -35,8 +36,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
 
-  static const _you = Member(name: 'You', you: true);
-
   late final List<_Message> _messages = [
     _Message(sampleMembers[0],
         'Did anyone do their rung today? I asked a barista a question 😅'),
@@ -58,8 +57,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   void _send() {
     final text = _input.text.trim();
     if (text.isEmpty) return;
+    final you = Member(name: AppLocalizations.of(context).chatYou, you: true);
     setState(() {
-      _messages.add(_Message(_you, text, mine: true));
+      _messages.add(_Message(you, text, mine: true));
       _input.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -73,13 +73,14 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.podName, style: t.titleMedium),
-            Text('${widget.memberCount}/${widget.capacity} introverts · be kind',
+            Text(l.chatIntrosBeKind(widget.memberCount, widget.capacity),
                 style: t.bodyMedium),
           ],
         ),
@@ -108,7 +109,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       textCapitalization: TextCapitalization.sentences,
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
-                        hintText: 'Say something kind…',
+                        hintText: l.chatHint,
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
@@ -151,8 +152,7 @@ class _PreviewBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           horizontal: Insets.lg, vertical: Insets.sm),
       child: Text(
-        'Preview · messages stay on your device for now. Real, moderated pods '
-        'arrive with accounts.',
+        AppLocalizations.of(context).chatPreviewBanner,
         style: Theme.of(context)
             .textTheme
             .bodyMedium

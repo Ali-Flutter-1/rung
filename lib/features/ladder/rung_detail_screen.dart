@@ -6,6 +6,7 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/rung_cover.dart';
 import '../../shared/track_visuals.dart';
@@ -18,15 +19,16 @@ class RungDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final rungAsync = ref.watch(rungByIdProvider(rungId));
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(),
       body: rungAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Could not load.\n$e')),
+        error: (e, _) => Center(child: Text('${l.detailLoadError}\n$e')),
         data: (rung) {
           if (rung == null) {
-            return const Center(child: Text('This rung no longer exists.'));
+            return Center(child: Text(l.detailNotExist));
           }
           final track = ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
           final accent =
@@ -59,19 +61,19 @@ class RungDetailScreen extends ConsumerWidget {
               _Block(
                 icon: Icons.checklist_rounded,
                 accent: accent,
-                title: 'What to do',
+                title: l.detailWhatToDo,
                 body: rung.whatToDo,
               ),
               const SizedBox(height: Insets.md),
               _Block(
                 icon: Icons.favorite_outline_rounded,
                 accent: accent,
-                title: 'Why this helps',
+                title: l.detailWhyHelps,
                 body: rung.whyItHelps,
               ),
               if (history.isNotEmpty) ...[
                 const SizedBox(height: Insets.xl),
-                Text('Your past attempts', style: t.titleMedium),
+                Text(l.detailPastAttempts, style: t.titleMedium),
                 const SizedBox(height: Insets.sm),
                 ...history.map((a) => _HistoryRow(attempt: a)),
               ],
@@ -84,13 +86,12 @@ class RungDetailScreen extends ConsumerWidget {
                 icon: Icon(resumable
                     ? Icons.play_circle_outline_rounded
                     : Icons.arrow_forward_rounded),
-                label: Text(resumable ? 'Finish logging' : "I'll do this"),
+                label: Text(resumable ? l.todayResumeCta : l.detailDoThis),
               ),
               if (history.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
                 Center(
-                  child: Text('Re-attempting is encouraged — it builds your data.',
-                      style: t.bodyMedium),
+                  child: Text(l.detailReattempt, style: t.bodyMedium),
                 ),
               ],
             ],
@@ -150,11 +151,12 @@ class _HistoryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final gap = attempt.predictionGap;
     final outcomeLabel = switch (attempt.outcome) {
-      Outcome.done => 'Done',
-      Outcome.partial => 'Partial',
-      Outcome.skipped => 'Not today',
+      Outcome.done => l.reflectOutcomeDone,
+      Outcome.partial => l.reflectOutcomePartial,
+      Outcome.skipped => l.reflectOutcomeNotToday,
       null => '',
     };
     return Padding(
@@ -175,8 +177,8 @@ class _HistoryRow extends StatelessWidget {
           const Spacer(),
           if (attempt.actualSuds != null)
             Text(
-              'predicted ${attempt.predictedSuds} · actual ${attempt.actualSuds}'
-              '${gap != null && gap > 0 ? '  (−$gap)' : ''}',
+              l.detailHistoryStat(attempt.predictedSuds, attempt.actualSuds!) +
+                  (gap != null && gap > 0 ? '  (−$gap)' : ''),
               style: t.bodyMedium,
             ),
         ],

@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
@@ -138,14 +139,15 @@ class _QuickMathState extends State<QuickMathScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quick Math'),
+        title: Text(l.gameTitleQuickMath),
         actions: [
-          gameHelpAction(context, 'Quick Math', const [
-            'You have 30 seconds — solve as many as you can.',
-            'Tap the correct answer from the four choices.',
-            'A wrong tap costs 2 seconds, so read carefully.',
+          gameHelpAction(context, l.gameTitleQuickMath, [
+            l.qmRule1,
+            l.qmRule2,
+            l.qmRule3,
           ]),
         ],
       ),
@@ -159,6 +161,7 @@ class _QuickMathState extends State<QuickMathScreen> {
   }
 
   Widget _startOver(TextTheme t) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -166,14 +169,14 @@ class _QuickMathState extends State<QuickMathScreen> {
           const Text('🧮', style: TextStyle(fontSize: 48)),
           const SizedBox(height: Insets.md),
           Text(
-            _phase == _Phase.over ? 'Time! You scored $_score' : 'Quick Math',
+            _phase == _Phase.over
+                ? l.qmTimeScored(_score)
+                : l.gameTitleQuickMath,
             style: t.headlineSmall,
           ),
           const SizedBox(height: Insets.xs),
           Text(
-            _phase == _Phase.over
-                ? 'Best $_best · 30 seconds, answer as many as you can.'
-                : '30 seconds. A wrong tap costs 2 seconds.',
+            _phase == _Phase.over ? l.qmBestSub(_best) : l.qmStartSub,
             textAlign: TextAlign.center,
             style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
           ),
@@ -186,7 +189,7 @@ class _QuickMathState extends State<QuickMathScreen> {
                   horizontal: 40, vertical: 14),
               decoration: BoxDecoration(
                   color: AppColors.primary, borderRadius: Radii.pill),
-              child: Text(_phase == _Phase.over ? 'Play again' : 'Start',
+              child: Text(_phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -207,7 +210,8 @@ class _QuickMathState extends State<QuickMathScreen> {
                 style: t.headlineSmall
                     ?.copyWith(color: AppColors.primaryDeep, fontWeight: FontWeight.w800)),
             const SizedBox(width: 6),
-            Text('correct', style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+            Text(AppLocalizations.of(context).qmCorrect,
+                style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
             const Spacer(),
             Icon(Icons.timer_outlined,
                 size: 18,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/subscription.dart';
 
 /// Lets a user add their own rung to a track (§1.6 Should-have, §2.5).
@@ -43,6 +44,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
 
   Future<void> _save() async {
     if (_title.text.trim().isEmpty) return;
+    final l = AppLocalizations.of(context);
     final repo = ref.read(trackRepositoryProvider);
     final tier = ref.read(settingsRepositoryProvider).subscriptionTier;
 
@@ -59,10 +61,8 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
     }
     if (!ContentRules.canAddCustomRung(tier, count)) {
       final cap = ContentRules.maxCustomRungs(tier);
-      final msg = tier.isPremium
-          ? "You've reached this month's limit of $cap custom rungs — it "
-              'resets next month.'
-          : 'Free plan includes 5 custom rungs — upgrade for more each month.';
+      final msg =
+          tier.isPremium ? l.customLimitPremium(cap) : l.customLimitFree;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           behavior: SnackBarBehavior.floating,
@@ -76,10 +76,9 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
     await repo.addCustomRung(
       trackId: widget.trackId,
       title: _title.text.trim(),
-      whatToDo: _what.text.trim().isEmpty
-          ? 'A challenge you set for yourself.'
-          : _what.text.trim(),
-      whyItHelps: 'You named this one — that makes it count.',
+      whatToDo:
+          _what.text.trim().isEmpty ? l.customDefaultWhat : _what.text.trim(),
+      whyItHelps: l.customDefaultWhy,
       difficulty: _difficulty.round(),
     );
     ref.read(syncServiceProvider).scheduleBackup(); // back up the new rung
@@ -89,6 +88,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           Insets.lg, 0, Insets.lg, Insets.lg),
@@ -96,32 +96,30 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Add your own rung', style: t.titleLarge),
+          Text(l.ladderAddOwn, style: t.titleLarge),
           const SizedBox(height: Insets.xs),
-          Text('Your situation is specific — this rung is just for you.',
-              style: t.bodyMedium),
+          Text(l.customSubtitle, style: t.bodyMedium),
           const SizedBox(height: Insets.lg),
           TextField(
             controller: _title,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'What will you do?',
-              hintText: 'e.g. Ask my manager for feedback',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.customWhatLabel,
+              hintText: l.customWhatHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: Insets.md),
           TextField(
             controller: _what,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'A note to yourself (optional)',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.customNoteLabel,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: Insets.lg),
-          Text('How hard does it feel? ${_difficulty.round()}/10',
-              style: t.titleMedium),
+          Text(l.customDifficulty(_difficulty.round()), style: t.titleMedium),
           Slider(
             value: _difficulty,
             min: 1,
@@ -138,7 +136,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Add to ladder'),
+                : Text(l.customAddToLadder),
           ),
         ],
       ),

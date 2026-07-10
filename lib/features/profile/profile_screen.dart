@@ -7,6 +7,7 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/analytics/analytics.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../domain/entities/subscription.dart';
@@ -27,11 +28,12 @@ class ProfileScreen extends ConsumerWidget {
     ref.watch(settingsChangesProvider);
     final settings = ref.watch(settingsRepositoryProvider);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final name = settings.displayName;
     final tier = settings.subscriptionTier;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(l.profileTitle)),
       body: ListView(
         padding: const EdgeInsets.all(Insets.lg),
         children: [
@@ -49,14 +51,14 @@ class ProfileScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name ?? 'Add your name',
+                    Text(name ?? l.profileAddName,
                         style: t.titleLarge?.copyWith(
                             color: name == null ? AppColors.inkFaint : null)),
                     const SizedBox(height: 2),
                     Text(
                       settings.bio?.isNotEmpty == true
                           ? settings.bio!
-                          : 'A quiet climber.',
+                          : l.profileBioPlaceholder,
                       style: t.bodyMedium,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -91,10 +93,10 @@ class ProfileScreen extends ConsumerWidget {
                     : Icons.lock_open_rounded,
                 color: AppColors.primary,
               ),
-              title: const Text('Lock my profile'),
+              title: Text(l.profileLockTitle),
               subtitle: Text(settings.profileLocked
-                  ? 'Hidden — pod members can\'t open your details.'
-                  : 'Pod members can tap your avatar to see your details.'),
+                  ? l.profileLockedSub
+                  : l.profileUnlockedSub),
             ),
           ),
           const SizedBox(height: Insets.lg),
@@ -102,47 +104,54 @@ class ProfileScreen extends ConsumerWidget {
           // ── Plan ───────────────────────────────────────────────────────
           _Tile(
             icon: Icons.workspace_premium_outlined,
-            title: 'Your plan',
-            subtitle: tier.label,
+            title: l.profilePlanTitle,
+            subtitle: switch (tier) {
+              SubscriptionTier.free => l.tierFree,
+              SubscriptionTier.monthly => l.tierMonthly,
+              SubscriptionTier.yearly => l.tierYearly,
+            },
             onTap: () => context.go(Routes.subscription),
-            trailingText: tier.isPremium ? 'Premium' : 'Upgrade',
+            trailingText: tier.isPremium ? l.profilePremium : l.profileUpgrade,
           ),
           const Divider(height: Insets.lg),
 
-          Text('Your tone', style: t.titleMedium),
+          Text(l.yourTone, style: t.titleMedium),
           const SizedBox(height: Insets.sm),
           Text(
-            'Rung speaks gently by default. If your anxiety is more situational, '
-            'a slightly bolder tone may suit you better.',
+            l.profileToneDesc,
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.md),
           SegmentedButton<ToneMode>(
-            segments: const [
+            segments: [
               ButtonSegment(
                   value: ToneMode.introvert,
-                  label: Text('Introvert'),
-                  icon: Icon(Icons.spa_outlined)),
+                  label: Text(l.profileToneIntrovert),
+                  icon: const Icon(Icons.spa_outlined)),
               ButtonSegment(
                   value: ToneMode.situational,
-                  label: Text('Situational'),
-                  icon: Icon(Icons.bolt_outlined)),
+                  label: Text(l.profileToneSituational),
+                  icon: const Icon(Icons.bolt_outlined)),
             ],
             selected: {settings.toneMode},
             onSelectionChanged: (s) => settings.setToneMode(s.first),
           ),
           const SizedBox(height: Insets.xl),
-          Text('Appearance', style: t.titleMedium),
+          Text(l.appearance, style: t.titleMedium),
           const SizedBox(height: Insets.md),
           SegmentedButton<ThemeMode>(
-            segments: const [
-              ButtonSegment(value: ThemeMode.system, label: Text('System')),
-              ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-              ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+            segments: [
+              ButtonSegment(value: ThemeMode.system, label: Text(l.themeSystem)),
+              ButtonSegment(value: ThemeMode.light, label: Text(l.themeLight)),
+              ButtonSegment(value: ThemeMode.dark, label: Text(l.themeDark)),
             ],
             selected: {settings.themeMode},
             onSelectionChanged: (s) => settings.setThemeMode(s.first),
           ),
+          const SizedBox(height: Insets.xl),
+          Text(l.language, style: t.titleMedium),
+          const SizedBox(height: Insets.md),
+          const _LanguageControl(),
           const SizedBox(height: Insets.xl),
           const _NotificationControls(),
           const SizedBox(height: Insets.lg),
@@ -152,8 +161,8 @@ class ProfileScreen extends ConsumerWidget {
           const Divider(height: Insets.lg),
           _Tile(
             icon: Icons.health_and_safety_outlined,
-            title: 'Is this right for me?',
-            subtitle: 'How Rung fits — and when to seek more',
+            title: l.menuIsThisRight,
+            subtitle: l.profileSafetySub,
             onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const SafetyScreen()),
             ),
@@ -161,8 +170,8 @@ class ProfileScreen extends ConsumerWidget {
           if (ref.watch(cloudEnabledProvider))
             _Tile(
               icon: Icons.block_rounded,
-              title: 'Blocked members',
-              subtitle: "See and unblock people you've blocked",
+              title: l.profileBlockedTitle,
+              subtitle: l.profileBlockedSub,
               onTap: () => Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(builder: (_) => const BlockedMembersScreen()),
               ),
@@ -170,14 +179,14 @@ class ProfileScreen extends ConsumerWidget {
           if (ref.watch(cloudEnabledProvider))
             _Tile(
               icon: Icons.cloud_sync_rounded,
-              title: 'Restore my progress',
-              subtitle: 'Pull your streak & challenges from the cloud',
+              title: l.profileRestoreTitle,
+              subtitle: l.profileRestoreSub,
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 final sync = ref.read(syncServiceProvider);
-                messenger.showSnackBar(const SnackBar(
+                messenger.showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Restoring…'),
+                  content: Text(l.profileRestoring),
                 ));
                 final ok = await sync.restoreFromCloud();
                 messenger.hideCurrentSnackBar();
@@ -185,41 +194,40 @@ class ProfileScreen extends ConsumerWidget {
                   behavior: SnackBarBehavior.floating,
                   duration: const Duration(seconds: 6),
                   content: Text(ok
-                      ? 'Progress restored from the cloud.'
-                      : 'Restore failed: ${sync.lastError ?? "unknown error"}'),
+                      ? l.profileRestoreOk
+                      : l.profileRestoreFail(
+                          sync.lastError ?? 'unknown error')),
                 ));
               },
             ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(
               icon: Icons.logout_rounded,
-              title: 'Log out',
+              title: l.profileLogout,
               subtitle:
-                  ref.watch(authUserProvider).asData?.value?.email ?? 'Signed in',
+                  ref.watch(authUserProvider).asData?.value?.email ?? l.profileSignedIn,
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (dialogCtx) => AlertDialog(
-                    title: const Text('Log out?'),
-                    content: const Text(
-                        'Your progress is saved to the cloud and comes back '
-                        'when you sign in again.'),
+                    title: Text(l.profileLogoutConfirmTitle),
+                    content: Text(l.profileLogoutConfirmBody),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.of(dialogCtx).pop(false),
-                          child: const Text('Cancel')),
+                          child: Text(l.commonCancel)),
                       FilledButton(
                           onPressed: () => Navigator.of(dialogCtx).pop(true),
-                          child: const Text('Log out')),
+                          child: Text(l.profileLogout)),
                     ],
                   ),
                 );
                 if (confirmed != true) return;
                 Haptics.medium();
-                messenger.showSnackBar(const SnackBar(
+                messenger.showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Logging out…'),
+                  content: Text(l.profileLoggingOut),
                 ));
                 // Flush any unsaved progress to the cloud BEFORE logging out, so
                 // it can be restored next sign-in (no lost rungs on switch), and
@@ -235,22 +243,22 @@ class ProfileScreen extends ConsumerWidget {
           _Tile(
             icon: Icons.star_outline_rounded,
             iconColor: AppColors.accent,
-            title: 'Rate Rung',
-            subtitle: 'Tell us how it’s going — it really helps',
+            title: l.profileRateTitle,
+            subtitle: l.profileRateSub,
             onTap: () => showRateAppSheet(context, ref),
           ),
           _Tile(
             icon: Icons.privacy_tip_outlined,
-            title: 'Privacy Policy',
-            subtitle: 'What we store — and what stays on your device',
+            title: l.profilePrivacyTitle,
+            subtitle: l.profilePrivacySub,
             onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
             ),
           ),
           _Tile(
             icon: Icons.description_outlined,
-            title: 'Terms of Service',
-            subtitle: 'The agreement for using Rung',
+            title: l.profileTermsTitle,
+            subtitle: l.profileTermsSub,
             onTap: () => Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const TermsScreen()),
             ),
@@ -259,14 +267,14 @@ class ProfileScreen extends ConsumerWidget {
             _Tile(
               icon: Icons.delete_outline_rounded,
               iconColor: AppColors.intensityHigh,
-              title: 'Delete account',
-              subtitle: 'Permanently erase your account and data',
+              title: l.profileDeleteTitle,
+              subtitle: l.profileDeleteSub,
               onTap: () => _deleteAccount(context, ref),
             ),
           const SizedBox(height: Insets.lg),
           Center(
             child: Text(
-              'Rung · practice, not therapy. Your data is yours.',
+              l.profileFooter,
               style: t.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -278,38 +286,37 @@ class ProfileScreen extends ConsumerWidget {
 
   Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('Delete account?'),
-        content: const Text(
-            'This permanently deletes your account, your pod messages, and your '
-            'saved progress. This cannot be undone.'),
+        title: Text(l.profileDeleteConfirmTitle),
+        content: Text(l.profileDeleteConfirmBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: const Text('Cancel')),
+              child: Text(l.commonCancel)),
           FilledButton(
             style:
                 FilledButton.styleFrom(backgroundColor: AppColors.intensityHigh),
             onPressed: () => Navigator.of(dialogCtx).pop(true),
-            child: const Text('Delete'),
+            child: Text(l.profileDelete),
           ),
         ],
       ),
     );
     if (confirmed != true) return;
-    messenger.showSnackBar(const SnackBar(
+    messenger.showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
-      content: Text('Deleting your account…'),
+      content: Text(l.profileDeleting),
     ));
     try {
       await ref.read(cloudRepositoryProvider).deleteAccount();
     } catch (_) {
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Could not delete your account. Try again.'),
+        content: Text(l.profileDeleteFail),
       ));
       return;
     }
@@ -331,6 +338,89 @@ class ProfileScreen extends ConsumerWidget {
 /// and a finer "pod message alerts" toggle (mirrored to the cloud so the notify
 /// function skips muted users). Hidden entirely when cloud is off.
 /// Master haptics (vibration) on/off. Gates every haptic in the app.
+/// Supported UI languages: locale code → native name. Add a language by adding
+/// an app_<code>.arb and a line here.
+const _languages = <String, String>{
+  'en': 'English',
+  'es': 'Español',
+  'de': 'Deutsch',
+  'fr': 'Français',
+  'it': 'Italiano',
+  'nl': 'Nederlands',
+  'pl': 'Polski',
+  'pt': 'Português (Brasil)',
+  'pt_PT': 'Português (Portugal)',
+  'sv': 'Svenska',
+  'nb': 'Norsk',
+  'da': 'Dansk',
+  'ja': '日本語',
+  'ko': '한국어',
+  'ar': 'العربية',
+  'id': 'Bahasa Indonesia',
+  'ms': 'Bahasa Melayu',
+};
+
+/// Language picker — sets the app locale (null = follow the device). Changing it
+/// re-localizes the whole app live via settingsChanges → MaterialApp rebuild.
+class _LanguageControl extends ConsumerWidget {
+  const _LanguageControl();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(settingsChangesProvider);
+    final settings = ref.watch(settingsRepositoryProvider);
+    final l = AppLocalizations.of(context);
+    final code = settings.localeCode;
+    final current =
+        code == null ? l.languageSystemDefault : (_languages[code] ?? code);
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Radii.card,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: ListTile(
+        leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+        title: Text(current),
+        trailing: const Icon(Icons.expand_more_rounded),
+        onTap: () => _pick(context, ref, code),
+      ),
+    );
+  }
+
+  Future<void> _pick(BuildContext context, WidgetRef ref, String? current) {
+    final settings = ref.read(settingsRepositoryProvider);
+    final l = AppLocalizations.of(context);
+    return showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      showDragHandle: true,
+      builder: (sheetCtx) {
+        Widget row(String? value, String label) => ListTile(
+              title: Text(label),
+              trailing: value == current
+                  ? const Icon(Icons.check_rounded, color: AppColors.primary)
+                  : null,
+              onTap: () {
+                settings.setLocaleCode(value);
+                Navigator.of(sheetCtx).pop();
+              },
+            );
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              row(null, l.languageSystemDefault),
+              const Divider(height: 1),
+              for (final e in _languages.entries) row(e.key, e.value),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _HapticsControl extends ConsumerWidget {
   const _HapticsControl();
 
@@ -338,6 +428,7 @@ class _HapticsControl extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(settingsChangesProvider);
     final settings = ref.watch(settingsRepositoryProvider);
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -347,8 +438,8 @@ class _HapticsControl extends ConsumerWidget {
       child: SwitchListTile(
         secondary:
             const Icon(Icons.vibration_rounded, color: AppColors.primary),
-        title: const Text('Haptics'),
-        subtitle: const Text('Gentle vibration on taps and wins'),
+        title: Text(l.profileHaptics),
+        subtitle: Text(l.profileHapticsSub),
         value: settings.hapticsEnabled,
         onChanged: (v) async {
           Haptics.enabled = v;
@@ -369,6 +460,7 @@ class _NotificationControls extends ConsumerWidget {
     if (!ref.watch(cloudEnabledProvider)) return const SizedBox.shrink();
     final settings = ref.watch(settingsRepositoryProvider);
     final pushOn = settings.pushEnabled;
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -380,8 +472,8 @@ class _NotificationControls extends ConsumerWidget {
           SwitchListTile(
             secondary: const Icon(Icons.notifications_active_outlined,
                 color: AppColors.primary),
-            title: const Text('Notifications'),
-            subtitle: const Text('Alerts from Rung on this device'),
+            title: Text(l.profileNotifications),
+            subtitle: Text(l.profileNotificationsSub),
             value: pushOn,
             onChanged: (v) async {
               await settings.setPushEnabled(v);
@@ -397,8 +489,8 @@ class _NotificationControls extends ConsumerWidget {
           SwitchListTile(
             secondary:
                 const Icon(Icons.forum_outlined, color: AppColors.primary),
-            title: const Text('Pod message alerts'),
-            subtitle: const Text('Tell me when someone posts in my pods'),
+            title: Text(l.profilePodAlerts),
+            subtitle: Text(l.profilePodAlertsSub),
             value: pushOn && settings.podAlertsEnabled,
             onChanged: pushOn
                 ? (v) async {
@@ -420,17 +512,18 @@ class _ReminderControl extends ConsumerWidget {
   Future<void> _enable(BuildContext context, WidgetRef ref) async {
     final granted = await NotificationService.instance.requestPermission();
     if (!context.mounted) return;
+    final l = AppLocalizations.of(context);
     if (!granted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Enable notifications in Settings to get reminders.'),
+        content: Text(l.profileEnableNotifs),
       ));
       return;
     }
     final picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 9, minute: 0),
-      helpText: 'When should we nudge you?',
+      helpText: l.profileReminderHelp,
     );
     if (picked == null) return;
     await NotificationService.instance.scheduleDaily(picked);
@@ -449,6 +542,7 @@ class _ReminderControl extends ConsumerWidget {
     ref.watch(settingsChangesProvider);
     final time = ref.watch(settingsRepositoryProvider).reminderTime;
     final on = time != null;
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -460,10 +554,10 @@ class _ReminderControl extends ConsumerWidget {
         onChanged: (v) => v ? _enable(context, ref) : _disable(ref),
         secondary: const Icon(Icons.notifications_none_rounded,
             color: AppColors.primary),
-        title: const Text('Gentle daily reminder'),
+        title: Text(l.profileReminderTitle),
         subtitle: Text(on
-            ? 'Every day at ${time.format(context)} · tap the switch to turn off'
-            : 'A calm, no-guilt nudge to take one small step'),
+            ? l.profileReminderOn(time.format(context))
+            : l.profileReminderOff),
       ),
     );
   }
@@ -535,10 +629,10 @@ Future<void> showAvatarPickerSheet(BuildContext context, WidgetRef ref) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Choose your avatar',
+            Text(AppLocalizations.of(sheetCtx).profileAvatarTitle,
                 style: Theme.of(sheetCtx).textTheme.titleLarge),
             const SizedBox(height: Insets.xs),
-            Text('Only you can change it — pod-mates see it too.',
+            Text(AppLocalizations.of(sheetCtx).profileAvatarSub,
                 style: Theme.of(sheetCtx)
                     .textTheme
                     .bodyMedium

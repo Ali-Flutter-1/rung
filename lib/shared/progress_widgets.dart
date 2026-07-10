@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../app/providers.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
+import '../l10n/app_localizations.dart';
 import 'track_visuals.dart';
 
 String _dayKey(DateTime d) =>
@@ -26,6 +28,7 @@ class ProgressStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
@@ -33,7 +36,7 @@ class ProgressStatsRow extends StatelessWidget {
             icon: Icons.done_all_rounded,
             tint: AppColors.primary,
             value: '$challenges',
-            label: 'Challenges',
+            label: l.progressChallenges,
           ),
         ),
         const SizedBox(width: Insets.md),
@@ -42,7 +45,7 @@ class ProgressStatsRow extends StatelessWidget {
             icon: Icons.local_fire_department_rounded,
             tint: AppColors.accentDeep,
             value: '$currentStreak',
-            label: 'Current Streak',
+            label: l.progressCurrentStreak,
           ),
         ),
         const SizedBox(width: Insets.md),
@@ -51,7 +54,7 @@ class ProgressStatsRow extends StatelessWidget {
             icon: Icons.emoji_events_outlined,
             tint: AppColors.accentDeep,
             value: '$bestStreak',
-            label: 'Best Streak',
+            label: l.progressBestStreak,
           ),
         ),
       ],
@@ -114,11 +117,15 @@ class WeekStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
+    // Locale-aware NARROW weekday initials (S/M/T · D/S/T · 日/月/火) via intl.
+    // Abbreviated names (DateFormat.E) overflow the 34px dot in languages with
+    // long day names — Portuguese "seg."/"ter.", Polish "pon."/"wt." etc.
+    final localeName = Localizations.localeOf(context).toString();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     // Start from Sunday of the current week.
     final startOfWeek = today.subtract(Duration(days: today.weekday % 7));
-    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return Container(
       padding: const EdgeInsets.all(Insets.lg),
@@ -130,14 +137,15 @@ class WeekStrip extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('This Week', style: t.titleMedium),
+          Text(l.progressThisWeek, style: t.titleMedium),
           const SizedBox(height: Insets.md),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               for (var i = 0; i < 7; i++)
                 _DayDot(
-                  label: labels[i],
+                  label: DateFormat.EEEEE(localeName)
+                      .format(startOfWeek.add(Duration(days: i))),
                   active: activeDays.contains(
                       _dayKey(startOfWeek.add(Duration(days: i)))),
                   isToday: startOfWeek.add(Duration(days: i)) == today,
@@ -180,9 +188,19 @@ class _DayDot extends StatelessWidget {
               : null,
         ),
         const SizedBox(height: 6),
-        Text(label,
-            style: t.bodyMedium?.copyWith(
-                fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+        // Belt-and-braces: a couple of locales return multi-character narrow
+        // forms, so scale down rather than overflow.
+        SizedBox(
+          width: 34,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(label,
+                maxLines: 1,
+                softWrap: false,
+                style: t.bodyMedium?.copyWith(
+                    fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+          ),
+        ),
       ],
     );
   }
@@ -195,6 +213,7 @@ class CategoryBreakdown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final tracks = ref.watch(tracksProvider).asData?.value ?? const [];
     final cleared = ref.watch(clearedRungIdsProvider).asData?.value ?? const {};
     if (tracks.isEmpty) return const SizedBox.shrink();
@@ -209,7 +228,7 @@ class CategoryBreakdown extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Category Breakdown', style: t.titleMedium),
+          Text(l.progressCategoryBreakdown, style: t.titleMedium),
           const SizedBox(height: Insets.md),
           for (final track in tracks)
             Consumer(builder: (context, ref, _) {

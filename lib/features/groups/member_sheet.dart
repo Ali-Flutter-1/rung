@@ -4,8 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/avatars.dart';
 import 'pod_models.dart';
+
+/// Localized display for a canonical (English) report reason. The English value
+/// is what gets sent to the server, so moderators always see a stable string.
+String _reasonLabel(AppLocalizations l, String reason) => switch (reason) {
+      'Harassment or bullying' => l.reportHarassment,
+      'Hate or harmful language' => l.reportHate,
+      'Spam or scam' => l.reportSpam,
+      'Makes me feel unsafe' => l.reportUnsafe,
+      'Something else' => l.reportOther,
+      _ => reason,
+    };
 
 /// WhatsApp-style member detail sheet. Honours the privacy lock, and (when
 /// opened from a real cloud message) wires real Block + Report via Supabase.
@@ -62,6 +74,7 @@ class _MemberSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final cloud = ref.watch(cloudEnabledProvider);
     return SafeArea(
       child: Padding(
@@ -77,11 +90,10 @@ class _MemberSheet extends ConsumerWidget {
             ),
             const SizedBox(height: Insets.md),
             if (member.locked) ...[
-              Text('Private profile', style: t.titleLarge),
+              Text(l.memberPrivateTitle, style: t.titleLarge),
               const SizedBox(height: Insets.sm),
               Text(
-                'This member keeps their profile private. You can still chat '
-                'with them — and report or block if needed.',
+                l.memberPrivateBody,
                 textAlign: TextAlign.center,
                 style: t.bodyMedium,
               ),
@@ -110,18 +122,18 @@ class _MemberSheet extends ConsumerWidget {
                 children: [
                   _Chip(
                       icon: Icons.local_fire_department_rounded,
-                      text: '${member.streak}-day streak'),
+                      text: l.memberStreak(member.streak)),
                   const SizedBox(width: Insets.sm),
                   _Chip(
                       icon: Icons.done_all_rounded,
-                      text: '${member.challenges} challenges'),
+                      text: l.memberChallenges(member.challenges)),
                 ],
               ),
               if (member.climbing.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
                 _Chip(
                     icon: Icons.stairs_rounded,
-                    text: 'Climbing: ${member.climbing}'),
+                    text: l.memberClimbing(member.climbing)),
               ],
             ],
             const SizedBox(height: Insets.lg),
@@ -131,7 +143,7 @@ class _MemberSheet extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     onPressed: () => _report(context, ref, cloud),
                     icon: const Icon(Icons.flag_outlined, size: 18),
-                    label: const Text('Report'),
+                    label: Text(l.memberReport),
                   ),
                 ),
                 const SizedBox(width: Insets.md),
@@ -141,7 +153,7 @@ class _MemberSheet extends ConsumerWidget {
                         foregroundColor: AppColors.intensityHigh),
                     onPressed: () => _block(context, ref, cloud),
                     icon: const Icon(Icons.block_rounded, size: 18),
-                    label: const Text('Block'),
+                    label: Text(l.memberBlock),
                   ),
                 ),
               ],
@@ -153,8 +165,9 @@ class _MemberSheet extends ConsumerWidget {
   }
 
   Future<void> _report(BuildContext context, WidgetRef ref, bool cloud) async {
+    final l = AppLocalizations.of(context);
     if (!_cloudActions || !cloud) {
-      _soon(context, 'Reporting');
+      _soon(context, l.memberSoonReporting);
       return;
     }
     final reason = await showModalBottomSheet<String>(
@@ -177,21 +190,21 @@ class _MemberSheet extends ConsumerWidget {
         messenger.showSnackBar(SnackBar(
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 6),
-          content: const Text("Thanks — we'll review this."),
+          content: Text(l.memberReportThanks),
           action: SnackBarAction(
-            label: 'Block too',
+            label: l.memberBlockToo,
             onPressed: () async {
               try {
                 await repo.blockUser(userId!);
                 onBlocked?.call(userId!);
-                messenger.showSnackBar(const SnackBar(
+                messenger.showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text("Blocked. You won't see their messages."),
+                  content: Text(l.memberBlocked),
                 ));
               } catch (_) {
-                messenger.showSnackBar(const SnackBar(
+                messenger.showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  content: Text('Could not block. Try again.'),
+                  content: Text(l.memberBlockError),
                 ));
               }
             },
@@ -199,29 +212,29 @@ class _MemberSheet extends ConsumerWidget {
         ));
       }
     } catch (_) {
-      if (context.mounted) _toast(context, 'Could not send report. Try again.');
+      if (context.mounted) _toast(context, l.memberReportError);
     }
   }
 
   Future<void> _block(BuildContext context, WidgetRef ref, bool cloud) async {
+    final l = AppLocalizations.of(context);
     if (!_cloudActions || !cloud) {
-      _soon(context, 'Blocking');
+      _soon(context, l.memberSoonBlocking);
       return;
     }
     final ok = await showDialog<bool>(
       context: context,
       useRootNavigator: true,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('Block this member?'),
-        content: const Text(
-            "You won't see each other's messages. You can undo this later."),
+        title: Text(l.memberBlockConfirmTitle),
+        content: Text(l.memberBlockConfirmBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: const Text('Cancel')),
+              child: Text(l.commonCancel)),
           FilledButton(
               onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: const Text('Block')),
+              child: Text(l.memberBlock)),
         ],
       ),
     );
@@ -235,21 +248,21 @@ class _MemberSheet extends ConsumerWidget {
       await repo.blockUser(userId!);
       onBlocked?.call(userId!);
       navigator.pop();
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text("Blocked. You won't see their messages."),
+        content: Text(l.memberBlocked),
       ));
     } catch (_) {
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Could not block. Try again.'),
+        content: Text(l.memberBlockError),
       ));
     }
   }
 
-  void _soon(BuildContext context, String what) {
+  void _soon(BuildContext context, String message) {
     Navigator.of(context).pop();
-    _toast(context, '$what goes live in moderated pods (sign in to use it).');
+    _toast(context, message);
   }
 
   void _toast(BuildContext context, String msg) =>
@@ -273,7 +286,7 @@ class _PremiumTag extends StatelessWidget {
         children: [
           const Text('✨', style: TextStyle(fontSize: 11)),
           const SizedBox(width: 3),
-          Text('Premium',
+          Text(AppLocalizations.of(context).profilePremium,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: AppColors.accentDeep, fontWeight: FontWeight.w700)),
         ],
@@ -286,6 +299,7 @@ class _ReasonPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -293,11 +307,11 @@ class _ReasonPicker extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.sm),
-            child: Text("What's wrong?", style: t.titleLarge),
+            child: Text(l.memberWhatsWrong, style: t.titleLarge),
           ),
           for (final r in _reportReasons)
             ListTile(
-              title: Text(r),
+              title: Text(_reasonLabel(l, r)),
               onTap: () => Navigator.of(context).pop(r),
             ),
           const SizedBox(height: Insets.sm),

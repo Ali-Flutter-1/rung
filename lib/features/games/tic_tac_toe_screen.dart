@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
@@ -161,33 +162,34 @@ class _TicTacToeState extends State<TicTacToeScreen> {
   }
 
   // ── Labels ──────────────────────────────────────────────────────────────
-  String get _status {
+  String _statusText(AppLocalizations l) {
     if (_winner == 1) {
-      return _mode == _Mode.ai ? 'You win! 🎉' : 'Player 1 (X) wins! 🎉';
+      return _mode == _Mode.ai ? l.gameYouWin : l.tttP1Wins;
     }
     if (_winner == 2) {
-      return _mode == _Mode.ai ? 'The phone wins' : 'Player 2 (O) wins! 🎉';
+      return _mode == _Mode.ai ? l.gamePhoneWins : l.tttP2Wins;
     }
-    if (_winner == 0) return "It's a draw 🤝";
-    if (_aiThinking) return 'The phone is thinking…';
-    if (_mode == _Mode.ai) return 'Your turn';
-    return _turn == 1 ? 'Player 1 · X' : 'Player 2 · O';
+    if (_winner == 0) return l.gameDraw;
+    if (_aiThinking) return l.gamePhoneThinking;
+    if (_mode == _Mode.ai) return l.tttYourTurn;
+    return _turn == 1 ? l.tttP1Turn : l.tttP2Turn;
   }
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final xLabel = _mode == _Mode.ai ? 'You' : 'P1 (X)';
-    final oLabel = _mode == _Mode.ai ? 'Phone' : 'P2 (O)';
+    final l = AppLocalizations.of(context);
+    final xLabel = _mode == _Mode.ai ? l.gameYou : l.tttP1Label;
+    final oLabel = _mode == _Mode.ai ? l.gamePhone : l.tttP2Label;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tic-Tac-Toe'),
         actions: [
-          gameHelpAction(context, 'Tic-Tac-Toe', const [
-            'Take turns placing your mark on the 3×3 grid.',
-            'Get three of your marks in a row — across, down, or diagonally — to win.',
-            '"Play the phone" is you vs a simple AI. "2 players" passes the phone each turn.',
+          gameHelpAction(context, 'Tic-Tac-Toe', [
+            l.tttRule1,
+            l.tttRule2,
+            l.tttRule3,
           ]),
         ],
       ),
@@ -200,14 +202,14 @@ class _TicTacToeState extends State<TicTacToeScreen> {
               Row(
                 children: [
                   _ModeChip(
-                    label: 'Play the phone',
+                    label: l.gamePlayPhone,
                     icon: Icons.smartphone_rounded,
                     selected: _mode == _Mode.ai,
                     onTap: () => _setMode(_Mode.ai),
                   ),
                   const SizedBox(width: Insets.sm),
                   _ModeChip(
-                    label: '2 players',
+                    label: l.game2Players,
                     icon: Icons.people_alt_rounded,
                     selected: _mode == _Mode.pass,
                     onTap: () => _setMode(_Mode.pass),
@@ -215,8 +217,8 @@ class _TicTacToeState extends State<TicTacToeScreen> {
                 ],
               ),
               const SizedBox(height: Insets.lg),
-              Text(_status, style: t.titleLarge)
-                  .animate(key: ValueKey(_status))
+              Text(_statusText(l), style: t.titleLarge)
+                  .animate(key: ValueKey(_statusText(l)))
                   .fadeIn(duration: 250.ms)
                   .slideY(begin: 0.2, end: 0, curve: Curves.easeOut),
               const SizedBox(height: Insets.lg),
@@ -256,7 +258,7 @@ class _TicTacToeState extends State<TicTacToeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _Score(label: xLabel, value: _xWins, color: AppColors.primary),
-                  _Score(label: 'Draws', value: _draws, color: AppColors.inkMuted),
+                  _Score(label: l.gameDraws, value: _draws, color: AppColors.inkMuted),
                   _Score(label: oLabel, value: _oWins, color: AppColors.accentDeep),
                 ],
               ),
@@ -273,9 +275,9 @@ class _TicTacToeState extends State<TicTacToeScreen> {
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: const Text(
-                    'New game',
-                    style: TextStyle(
+                  child: Text(
+                    l.gameNewGame,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 15),

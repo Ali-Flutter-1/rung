@@ -1,0 +1,7 @@
+# Flutter gen-l10n config. Runs automatically on build / `flutter gen-l10n`.
+# Add a new language by dropping an app_<code>.arb into arb-dir and translating.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false

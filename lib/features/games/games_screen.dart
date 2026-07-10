@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'connect_four_screen.dart';
 import 'game_2048_screen.dart';
 import 'game_scores.dart';
@@ -23,7 +24,7 @@ class GamesScreen extends StatefulWidget {
 }
 
 class _GamesScreenState extends State<GamesScreen> {
-  Map<String, String> _bests = {};
+  Map<String, int?> _bestVals = {};
 
   @override
   void initState() {
@@ -41,32 +42,53 @@ class _GamesScreenState extends State<GamesScreen> {
     final c4 = await GameScores.best('connect4');
     if (!mounted) return;
     setState(() {
-      _bests = {
-        'reaction': r == null ? '' : 'Best $r ms',
-        'sequence': s == null ? '' : 'Best level $s',
-        '2048': g == null ? '' : 'Best ${_short(g)}',
-        'quickmath': q == null ? '' : 'Best $q',
-        'memory': m == null ? '' : 'Best $m moves',
-        'tictactoe': (ttt ?? 0) == 0 ? '' : '$ttt wins vs phone',
-        'connect4': (c4 ?? 0) == 0 ? '' : '$c4 wins vs phone',
+      _bestVals = {
+        'reaction': r,
+        'sequence': s,
+        '2048': g,
+        'quickmath': q,
+        'memory': m,
+        'tictactoe': ttt,
+        'connect4': c4,
       };
     });
   }
 
   String _short(int v) => v >= 1000 ? '${(v / 1000).toStringAsFixed(1)}k' : '$v';
 
+  /// Localized "best" label for a game, or null when there's no score yet.
+  String? _bestLabel(AppLocalizations l, String id, int? v) {
+    if (v == null) return null;
+    switch (id) {
+      case 'reaction':
+        return l.gamesBestMs(v);
+      case 'sequence':
+        return l.gamesBestLevel(v);
+      case '2048':
+        return l.gamesBest(_short(v));
+      case 'quickmath':
+        return l.gamesBest('$v');
+      case 'memory':
+        return l.gamesBestMoves(v);
+      case 'tictactoe':
+      case 'connect4':
+        return v == 0 ? null : l.gamesWinsVsPhone(v);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Take a break')),
+      appBar: AppBar(title: Text(l.dashTakeABreak)),
       body: ListView(
         padding:
             const EdgeInsets.fromLTRB(Insets.lg, Insets.md, Insets.lg, Insets.xl),
         children: [
           Text(
-            'Quiet games for focus and a calm mind — the kind of brain-training '
-            'people find grounding. Play the phone, or pass it to a friend.',
+            l.gamesIntro,
             style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
           ),
           const SizedBox(height: Insets.lg),
@@ -74,9 +96,9 @@ class _GamesScreenState extends State<GamesScreen> {
             _GameCard(
               id: g.id,
               emoji: g.emoji,
-              title: g.title,
-              subtitle: g.subtitle,
-              best: _bests[g.id],
+              title: _gameTitle(l, g.id),
+              subtitle: _gameSub(l, g.id),
+              best: _bestLabel(l, g.id, _bestVals[g.id]),
               colors: g.colors,
               builder: g.builder,
               onPlayed: _loadBests,
@@ -92,35 +114,56 @@ class _GamesScreenState extends State<GamesScreen> {
   }
 }
 
-/// The catalogue. Add a game by appending one entry.
+/// The catalogue. Add a game by appending one entry. Titles/subtitles are
+/// resolved per-locale in [_gameTitle] / [_gameSub] keyed by [id].
 final _games = <_GameSpec>[
-  _GameSpec('reaction', '⚡', 'Reaction speed', 'focus · tap when it turns green',
+  _GameSpec('reaction', '⚡',
       const [Color(0xFF3FA46A), Color(0xFF2C6B48)], (_) => const ReactionScreen()),
-  _GameSpec('sequence', '🔵', 'Sequence memory', 'memory · watch and repeat',
+  _GameSpec('sequence', '🔵',
       const [Color(0xFF6B8FC9), Color(0xFF33507E)],
       (_) => const SequenceMemoryScreen()),
-  _GameSpec('2048', '🔢', '2048', 'strategy · swipe to merge',
+  _GameSpec('2048', '🔢',
       const [Color(0xFFE0574F), Color(0xFF9E3B36)], (_) => const Game2048Screen()),
-  _GameSpec('quickmath', '🧮', 'Quick Math', 'mental speed · 30-second sprint',
+  _GameSpec('quickmath', '🧮',
       const [Color(0xFF4C9A6B), Color(0xFF2C6B48)], (_) => const QuickMathScreen()),
-  _GameSpec('tictactoe', '⭕', 'Tic-Tac-Toe', 'vs the phone · or 2 players',
+  _GameSpec('tictactoe', '⭕',
       const [Color(0xFF3AA8A0), Color(0xFF23736D)],
       (_) => const TicTacToeScreen()),
-  _GameSpec('connect4', '🔴', 'Connect 4', 'vs the phone · or 2 players',
+  _GameSpec('connect4', '🔴',
       const [Color(0xFFF2A65A), Color(0xFFC97B3D)],
       (_) => const ConnectFourScreen()),
-  _GameSpec('memory', '🧠', 'Memory match', 'solo · find the pairs',
+  _GameSpec('memory', '🧠',
       const [Color(0xFFB187C9), Color(0xFF7C5296)],
       (_) => const MemoryMatchScreen()),
 ];
 
+// 2048 / Tic-Tac-Toe / Connect 4 are universal game names — kept untranslated.
+String _gameTitle(AppLocalizations l, String id) => switch (id) {
+      'reaction' => l.gameTitleReaction,
+      'sequence' => l.gameTitleSequence,
+      '2048' => '2048',
+      'quickmath' => l.gameTitleQuickMath,
+      'tictactoe' => 'Tic-Tac-Toe',
+      'connect4' => 'Connect 4',
+      'memory' => l.gameTitleMemory,
+      _ => id,
+    };
+
+String _gameSub(AppLocalizations l, String id) => switch (id) {
+      'reaction' => l.gameSubReaction,
+      'sequence' => l.gameSubSequence,
+      '2048' => l.gameSub2048,
+      'quickmath' => l.gameSubQuickMath,
+      'tictactoe' => l.gameSubTicTacToe,
+      'connect4' => l.gameSubConnect4,
+      'memory' => l.gameSubMemory,
+      _ => '',
+    };
+
 class _GameSpec {
-  const _GameSpec(
-      this.id, this.emoji, this.title, this.subtitle, this.colors, this.builder);
+  const _GameSpec(this.id, this.emoji, this.colors, this.builder);
   final String id;
   final String emoji;
-  final String title;
-  final String subtitle;
   final List<Color> colors;
   final WidgetBuilder builder;
 }

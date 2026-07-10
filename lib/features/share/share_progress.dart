@@ -12,6 +12,7 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/subscription.dart';
 
 /// A card look. The first is free; the rest are a Premium perk (the basic share
@@ -64,12 +65,13 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
       // by the time the SnackBar action fires.
       final messenger = ScaffoldMessenger.of(context);
       final router = GoRouter.of(context);
+      final l = AppLocalizations.of(context);
       Navigator.of(context).pop();
       messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: const Text('✨ More card styles are a Premium perk.'),
+        content: Text(l.sharePremiumPerk),
         action: SnackBarAction(
-          label: 'See Premium',
+          label: l.shareSeePremium,
           onPressed: () => router.go(Routes.subscription),
         ),
       ));
@@ -80,6 +82,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
 
   Future<void> _share() async {
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
       final boundary = _cardKey.currentContext?.findRenderObject()
@@ -94,12 +97,12 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
       ref.read(analyticsProvider).capture('progress_shared');
       await SharePlus.instance.share(ShareParams(
         files: [XFile(file.path, mimeType: 'image/png')],
-        text: 'Small brave steps, one rung at a time. 🌱 #Rung',
+        text: l.shareText,
       ));
     } catch (_) {
-      messenger.showSnackBar(const SnackBar(
+      messenger.showSnackBar(SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Could not open share. Try again.'),
+        content: Text(l.shareError),
       ));
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -110,6 +113,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
   Widget build(BuildContext context) {
     ref.watch(settingsChangesProvider);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final isPremium = ref.watch(settingsRepositoryProvider).subscriptionTier.isPremium;
     final streak = ref.watch(streakProvider).asData?.value ?? 0;
     final cleared = ref.watch(totalClearedProvider).asData?.value ?? 0;
@@ -121,9 +125,9 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Share your progress', style: t.titleLarge),
+            Text(l.shareTitle, style: t.titleLarge),
             const SizedBox(height: Insets.xs),
-            Text('Just your numbers — nothing private.',
+            Text(l.shareSubtitle,
                 style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
             const SizedBox(height: Insets.lg),
             RepaintBoundary(
@@ -164,7 +168,7 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.ios_share_rounded, size: 18),
-                label: const Text('Share'),
+                label: Text(l.shareCta),
               ),
             ),
           ],
@@ -188,6 +192,7 @@ class _ShareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     // Fixed size → a predictable, crisp share image regardless of screen.
     return Container(
       width: 320,
@@ -216,7 +221,7 @@ class _ShareCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Text('My brave steps',
+          Text(l.shareCardHeadline,
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.85), fontSize: 15)),
           const SizedBox(height: 6),
@@ -233,7 +238,7 @@ class _ShareCard extends StatelessWidget {
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text('fears faced',
+                child: Text(l.shareCardFearsFaced,
                     style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 16,
@@ -244,15 +249,15 @@ class _ShareCard extends StatelessWidget {
           const SizedBox(height: 20),
           Row(
             children: [
-              _Stat(label: 'Current streak', value: '🔥 $streak'),
+              _Stat(label: l.shareCardCurrentStreak, value: '🔥 $streak'),
               const SizedBox(width: 12),
-              _Stat(label: 'Best streak', value: '⭐ $best'),
+              _Stat(label: l.shareCardBestStreak, value: '⭐ $best'),
             ],
           ),
           const SizedBox(height: 22),
           Container(height: 1, color: Colors.white.withValues(alpha: 0.2)),
           const SizedBox(height: 14),
-          Text('Facing social fears, one small rung at a time.',
+          Text(l.shareCardTagline,
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 13,

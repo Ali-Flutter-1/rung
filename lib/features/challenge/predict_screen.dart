@@ -7,8 +7,10 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/suds_slider.dart';
 import '../../shared/track_visuals.dart';
+import '../breathing/breathing_screen.dart';
 
 /// PREDICT — "How bad do you think this'll be?" The slider is the hero (§3.2).
 class PredictScreen extends ConsumerStatefulWidget {
@@ -39,11 +41,12 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
         );
     ref.read(analyticsProvider).capture(Ev.predictStarted, {'predicted': _suds});
     if (!mounted) return;
+    final l = AppLocalizations.of(context);
     context.go(Routes.dashboard);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text("Saved. Go do it — then come back to log how it went."),
+        content: Text(l.predictSaved),
       ),
     );
   }
@@ -55,9 +58,10 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
         rung == null ? null : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
     final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Before you go')),
+      appBar: AppBar(title: Text(l.predictAppBar)),
       body: rung == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -69,7 +73,7 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                       children: [
                         Text(rung.title, style: t.headlineSmall),
                         const SizedBox(height: Insets.xl),
-                        Text("How bad do you think this'll be?",
+                        Text(l.predictQuestion,
                             textAlign: TextAlign.center, style: t.titleMedium),
                         const SizedBox(height: Insets.lg),
                         SudsSlider(
@@ -82,17 +86,29 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                           controller: _note,
                           textCapitalization: TextCapitalization.sentences,
                           maxLines: 2,
-                          decoration: const InputDecoration(
-                            labelText: 'What do you predict happens? (optional)',
-                            hintText: "e.g. They'll think I'm awkward",
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l.predictNoteLabel,
+                            hintText: l.predictNoteHint,
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                         const SizedBox(height: Insets.sm),
                         Text(
-                          "We'll compare this to how it actually goes. That gap "
-                          'is the whole point.',
+                          l.predictCompare,
                           style: t.bodyMedium,
+                        ),
+                        const SizedBox(height: Insets.lg),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: () {
+                              ref
+                                  .read(analyticsProvider)
+                                  .capture(Ev.breathingStarted);
+                              openBreathing(context);
+                            },
+                            icon: const Icon(Icons.air_rounded),
+                            label: Text(l.breatheCta),
+                          ),
                         ),
                       ],
                     ),
@@ -108,7 +124,7 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
-                          : const Text("I'll do it"),
+                          : Text(l.predictDoIt),
                     ),
                   ),
                 ],

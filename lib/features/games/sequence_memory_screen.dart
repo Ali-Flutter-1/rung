@@ -5,6 +5,7 @@ import 'package:rung/core/haptics.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
 
@@ -105,27 +106,28 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
     }
   }
 
-  String get _status => switch (_phase) {
-        _Phase.idle => 'Watch the pattern, then repeat it.',
-        _Phase.showing => 'Watch…',
-        _Phase.input => 'Your turn · ${_userIdx + 1} of ${_seq.length}',
+  String _statusText(AppLocalizations l) => switch (_phase) {
+        _Phase.idle => l.smWatchRepeat,
+        _Phase.showing => l.smWatch,
+        _Phase.input => l.smYourTurn(_userIdx + 1, _seq.length),
         _Phase.over => _best != null
-            ? 'You reached $_reached · best $_best'
-            : 'You reached $_reached',
+            ? l.smReachedBest(_reached, _best!)
+            : l.smReached(_reached),
       };
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final showStart = _phase == _Phase.idle || _phase == _Phase.over;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sequence memory'),
+        title: Text(l.gameTitleSequence),
         actions: [
-          gameHelpAction(context, 'Sequence memory', const [
-            'Watch the tiles light up one by one.',
-            'Repeat the exact same order by tapping the tiles.',
-            'Each round adds one more step — see how far you can go.',
+          gameHelpAction(context, l.gameTitleSequence, [
+            l.smRule1,
+            l.smRule2,
+            l.smRule3,
           ]),
         ],
       ),
@@ -135,10 +137,11 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
           child: Column(
             children: [
               const SizedBox(height: Insets.sm),
-              Text('Round ${_seq.isEmpty ? 0 : _seq.length}',
+              Text(l.smRound(_seq.isEmpty ? 0 : _seq.length),
                   style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
               const SizedBox(height: 4),
-              Text(_status, style: t.titleLarge, textAlign: TextAlign.center),
+              Text(_statusText(l),
+                  style: t.titleLarge, textAlign: TextAlign.center),
               const SizedBox(height: Insets.lg),
               Expanded(
                 child: Center(
@@ -202,7 +205,7 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
                       color: AppColors.primary,
                       borderRadius: Radii.pill,
                     ),
-                    child: Text(_phase == _Phase.over ? 'Play again' : 'Start',
+                    child: Text(_phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
                         style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

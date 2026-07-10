@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
 import '../features/profile/safety_screen.dart';
+import '../l10n/app_localizations.dart';
 
 /// A calm, non-alarming support prompt shown when distress signals appear
 /// (spec §1.9 — surface help, never diagnose, never punish).
@@ -13,6 +14,7 @@ Future<void> showSupportSheet(BuildContext context) {
     isScrollControlled: true,
     builder: (sheetCtx) {
       final t = Theme.of(sheetCtx).textTheme;
+      final l = AppLocalizations.of(sheetCtx);
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.xl),
@@ -23,13 +25,10 @@ Future<void> showSupportSheet(BuildContext context) {
               const Icon(Icons.favorite_outline_rounded,
                   color: AppColors.primary, size: 32),
               const SizedBox(height: Insets.md),
-              Text('This sounds like a lot to carry.', style: t.headlineSmall),
+              Text(l.supportTitle, style: t.headlineSmall),
               const SizedBox(height: Insets.sm),
               Text(
-                "Rung is a practice tool, not a crisis service. If you're "
-                "going through something heavy, please reach out to someone who "
-                "can help right now — a trusted person, or a local crisis line. "
-                "You deserve real support.",
+                l.supportBody,
                 style: t.bodyLarge,
               ),
               const SizedBox(height: Insets.lg),
@@ -39,12 +38,12 @@ Future<void> showSupportSheet(BuildContext context) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => const SafetyScreen()));
                 },
-                child: const Text('See support resources'),
+                child: Text(l.supportResources),
               ),
               const SizedBox(height: Insets.xs),
               TextButton(
                 onPressed: () => Navigator.of(sheetCtx).pop(),
-                child: const Text('Close'),
+                child: Text(l.commonClose),
               ),
             ],
           ),

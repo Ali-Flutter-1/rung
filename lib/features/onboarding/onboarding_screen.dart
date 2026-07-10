@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/track.dart';
 import '../../domain/repositories/settings_repository.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/rung_logo.dart';
 import '../../shared/track_visuals.dart';
 
@@ -62,7 +63,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   if (_page >= 2)
                     TextButton(
                       onPressed: () => _finish(tracks),
-                      child: const Text('Skip'),
+                      child: Text(AppLocalizations.of(context).onbSkip),
                     ),
                 ],
               ),
@@ -175,6 +176,7 @@ class _WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(Insets.lg),
       child: Column(
@@ -183,15 +185,13 @@ class _WelcomePage extends StatelessWidget {
           const RungLogo(size: 96),
           const SizedBox(height: Insets.xl),
           Text(
-            'Face the moments you used to dread — one small step at a time.',
+            l.onbWelcomeTitle,
             textAlign: TextAlign.center,
             style: t.displaySmall,
           ),
           const SizedBox(height: Insets.md),
           Text(
-            'Rung helps you build social confidence through gentle, private '
-            'practice. Predict, do it, reflect — and watch your worst-case '
-            'fears come apart in your own numbers.',
+            l.onbWelcomeBody,
             textAlign: TextAlign.center,
             style: t.bodyLarge?.copyWith(color: AppColors.inkMuted),
           ),
@@ -200,7 +200,7 @@ class _WelcomePage extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: onNext,
-              child: const Text('Get started'),
+              child: Text(l.onbGetStarted),
             ),
           ),
         ],
@@ -216,22 +216,21 @@ class _SafetyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return _Scaffold(
-      title: 'Practice, not therapy.',
-      cta: 'I understand',
+      title: l.onbSafetyTitle,
+      cta: l.onbUnderstand,
       onCta: onAgree,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Rung is a confidence and practice tool — not therapy, not medical '
-            'treatment, and not a diagnosis.',
+            l.onbSafetyBody1,
             style: t.bodyLarge,
           ),
           const SizedBox(height: Insets.lg),
           Text(
-            'The goal is to feel more comfortable in moments you used to dread — '
-            'not to become someone you\'re not. Skipping is always okay.',
+            l.onbSafetyBody2,
             style: t.bodyLarge,
           ),
           const SizedBox(height: Insets.lg),
@@ -242,9 +241,7 @@ class _SafetyPage extends StatelessWidget {
               borderRadius: Radii.card,
             ),
             child: Text(
-              'If anxiety is severely affecting your life, or you ever have '
-              'thoughts of harming yourself, please reach out to a professional '
-              'or a local crisis line.',
+              l.onbSafetyCrisis,
               style: t.bodyLarge?.copyWith(color: AppColors.ink),
             ),
           ),
@@ -269,15 +266,15 @@ class _FearPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return _Scaffold(
-      title: 'Where would you like to start?',
+      title: l.onbFearTitle,
       body: tracks.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               children: [
                 Text(
-                  'Just to suggest a first step — you can climb any of these any '
-                  'time. Nothing here locks you in.',
+                  l.onbFearBody,
                   style: t.bodyMedium,
                 ),
                 const SizedBox(height: Insets.md),
@@ -305,7 +302,7 @@ class _FearPage extends StatelessWidget {
                             color: AppColors.primaryDeep),
                         const SizedBox(width: Insets.md),
                         Expanded(
-                          child: Text("I'll explore on my own",
+                          child: Text(l.onbExploreOwn,
                               style: t.titleMedium
                                   ?.copyWith(color: AppColors.primaryDeep)),
                         ),
@@ -359,25 +356,26 @@ class _TonePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return _Scaffold(
-      title: 'Which sounds more like you?',
+      title: l.onbToneTitle,
       body: Column(
         children: [
           _ToneOption(
-            title: 'I\'m more of an introvert',
-            body: 'I want to feel comfortable, not become a different person.',
+            title: l.onbToneIntrovertTitle,
+            body: l.onbToneIntrovertBody,
             icon: Icons.spa_outlined,
             onTap: () => onSelect(ToneMode.introvert),
           ),
           const SizedBox(height: Insets.md),
           _ToneOption(
-            title: 'I get situationally anxious',
-            body: 'I\'m outgoing sometimes, but certain moments trip me up.',
+            title: l.onbToneSituationalTitle,
+            body: l.onbToneSituationalBody,
             icon: Icons.bolt_outlined,
             onTap: () => onSelect(ToneMode.situational),
           ),
           const Spacer(),
-          Text('You can change this any time in Profile.',
+          Text(l.onbToneFootnote,
               style: t.bodyMedium, textAlign: TextAlign.center),
         ],
       ),
@@ -453,17 +451,18 @@ class _StartingPointPage extends ConsumerWidget {
         track == null ? null : ref.watch(ladderProvider(track.id)).asData?.value;
     final firstRung = (ladder != null && ladder.isNotEmpty) ? ladder.first : null;
     final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final l = AppLocalizations.of(context);
 
     return _Scaffold(
-      title: 'Here\'s how it works.',
-      cta: 'Start climbing',
+      title: l.onbHowTitle,
+      cta: l.onbStartClimbing,
       onCta: onStart,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Step(n: '1', text: 'Predict how bad it\'ll feel (0–10).'),
-          _Step(n: '2', text: 'Go do it in real life — the app can be closed.'),
-          _Step(n: '3', text: 'Come back and log how it actually went.'),
+          _Step(n: '1', text: l.onbStep1),
+          _Step(n: '2', text: l.onbStep2),
+          _Step(n: '3', text: l.onbStep3),
           const SizedBox(height: Insets.lg),
           if (track != null && firstRung != null)
             Container(
@@ -478,8 +477,8 @@ class _StartingPointPage extends ConsumerWidget {
                 children: [
                   Text(
                       trackSlug == null
-                          ? 'A GENTLE FIRST STEP'
-                          : 'A GOOD PLACE TO START',
+                          ? l.onbGentleFirstStep
+                          : l.onbGoodPlaceToStart,
                       style: t.bodyMedium?.copyWith(
                           color: accent,
                           letterSpacing: 1,
@@ -492,8 +491,7 @@ class _StartingPointPage extends ConsumerWidget {
               ),
             ),
           const SizedBox(height: Insets.md),
-          Text('All six areas are on your home screen — start anywhere.',
-              style: t.bodyMedium),
+          Text(l.onbAllAreas, style: t.bodyMedium),
         ],
       ),
     );

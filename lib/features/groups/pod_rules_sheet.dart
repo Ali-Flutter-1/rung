@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Community rules shown before a user's first pod. Returns true if accepted.
 /// Consent + clear rules are a baseline safety + store-review requirement.
@@ -12,6 +13,7 @@ Future<bool> showPodRulesSheet(BuildContext context) async {
     showDragHandle: true,
     builder: (ctx) {
       final t = Theme.of(ctx).textTheme;
+      final l = AppLocalizations.of(ctx);
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
@@ -19,40 +21,25 @@ Future<bool> showPodRulesSheet(BuildContext context) async {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pod rules', style: t.headlineSmall),
+              Text(l.podRulesTitle, style: t.headlineSmall),
               const SizedBox(height: Insets.xs),
-              Text('Pods only work if everyone feels safe. By joining you agree:',
-                  style: t.bodyMedium),
+              Text(l.podRulesIntro, style: t.bodyMedium),
               const SizedBox(height: Insets.lg),
-              const _Rule(
-                  icon: Icons.favorite_outline_rounded,
-                  text: 'Be kind. Everyone here is practicing something hard.'),
-              const _Rule(
-                  icon: Icons.block_rounded,
-                  text:
-                      'No harassment, hate, or harmful content. Ever.'),
-              const _Rule(
-                  icon: Icons.flag_outlined,
-                  text:
-                      'Report or block anyone who makes you uncomfortable.'),
-              const _Rule(
-                  icon: Icons.lock_outline_rounded,
-                  text:
-                      'Respect privacy — what\'s shared here stays here.'),
-              const _Rule(
-                  icon: Icons.health_and_safety_outlined,
-                  text:
-                      'Pods are peer support, not a crisis service. In an '
-                      'emergency, contact a professional or local crisis line.'),
+              _Rule(icon: Icons.favorite_outline_rounded, text: l.podRule1),
+              _Rule(icon: Icons.block_rounded, text: l.podRule2),
+              _Rule(icon: Icons.flag_outlined, text: l.podRule3),
+              _Rule(icon: Icons.lock_outline_rounded, text: l.podRule4),
+              _Rule(
+                  icon: Icons.health_and_safety_outlined, text: l.podRule5),
               const SizedBox(height: Insets.lg),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('I agree — take me in'),
+                child: Text(l.podRulesAgree),
               ),
               const SizedBox(height: Insets.xs),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Not now'),
+                child: Text(l.commonNotNow),
               ),
             ],
           ),

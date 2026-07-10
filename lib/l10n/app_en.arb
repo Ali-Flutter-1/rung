@@ -1,0 +1,946 @@
+{
+  "@@locale": "en",
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Bottom nav tab: dashboard/home"
+  },
+  "navGroups": "Groups",
+  "navPremium": "Premium",
+  "navProfile": "Profile",
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "todayStepIntro": "Here's one small step for today.",
+  "commonContinue": "Continue",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonDone": "Done",
+  "commonNotNow": "Not now",
+  "profileTitle": "Profile",
+  "language": "Language",
+  "languageSystemDefault": "System default",
+  "yourTone": "Your tone",
+  "appearance": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "onbSkip": "Skip",
+  "onbWelcomeTitle": "Face the moments you used to dread — one small step at a time.",
+  "onbWelcomeBody": "Rung helps you build social confidence through gentle, private practice. Predict, do it, reflect — and watch your worst-case fears come apart in your own numbers.",
+  "onbGetStarted": "Get started",
+  "onbSafetyTitle": "Practice, not therapy.",
+  "onbUnderstand": "I understand",
+  "onbSafetyBody1": "Rung is a confidence and practice tool — not therapy, not medical treatment, and not a diagnosis.",
+  "onbSafetyBody2": "The goal is to feel more comfortable in moments you used to dread — not to become someone you're not. Skipping is always okay.",
+  "onbSafetyCrisis": "If anxiety is severely affecting your life, or you ever have thoughts of harming yourself, please reach out to a professional or a local crisis line.",
+  "onbFearTitle": "Where would you like to start?",
+  "onbFearBody": "Just to suggest a first step — you can climb any of these any time. Nothing here locks you in.",
+  "onbExploreOwn": "I'll explore on my own",
+  "onbToneTitle": "Which sounds more like you?",
+  "onbToneIntrovertTitle": "I'm more of an introvert",
+  "onbToneIntrovertBody": "I want to feel comfortable, not become a different person.",
+  "onbToneSituationalTitle": "I get situationally anxious",
+  "onbToneSituationalBody": "I'm outgoing sometimes, but certain moments trip me up.",
+  "onbToneFootnote": "You can change this any time in Profile.",
+  "onbHowTitle": "Here's how it works.",
+  "onbStartClimbing": "Start climbing",
+  "onbStep1": "Predict how bad it'll feel (0–10).",
+  "onbStep2": "Go do it in real life — the app can be closed.",
+  "onbStep3": "Come back and log how it actually went.",
+  "onbGentleFirstStep": "A GENTLE FIRST STEP",
+  "onbGoodPlaceToStart": "A GOOD PLACE TO START",
+  "onbAllAreas": "All six areas are on your home screen — start anywhere.",
+  "predictAppBar": "Before you go",
+  "predictSaved": "Saved. Go do it — then come back to log how it went.",
+  "predictQuestion": "How bad do you think this'll be?",
+  "predictNoteLabel": "What do you predict happens? (optional)",
+  "predictNoteHint": "e.g. They'll think I'm awkward",
+  "predictCompare": "We'll compare this to how it actually goes. That gap is the whole point.",
+  "predictDoIt": "I'll do it",
+  "reflectAppBar": "How did it go?",
+  "reflectDidYouDoIt": "Did you do it?",
+  "reflectHowAnxious": "How anxious did the thought of it feel?",
+  "reflectHowBad": "How bad was it, actually?",
+  "reflectNoteLabel": "Anything you want to remember? (optional)",
+  "reflectOutcomeDone": "Done",
+  "reflectOutcomePartial": "Partial",
+  "reflectOutcomeNotToday": "Not today",
+  "resultQuietDelight": "Quiet delight in every step.",
+  "resultBackToLadder": "Back to ladder",
+  "resultGapHeadline": "You braced for {predicted}. It came in at {actual}.",
+  "@resultGapHeadline": {
+    "placeholders": {
+      "predicted": {
+        "type": "int"
+      },
+      "actual": {
+        "type": "int"
+      }
+    }
+  },
+  "resultGapSub": "Your heart prepared for a heavy {predicted}, but the world met you with a gentler {actual}. Worth remembering.",
+  "@resultGapSub": {
+    "placeholders": {
+      "predicted": {
+        "type": "int"
+      },
+      "actual": {
+        "type": "int"
+      }
+    }
+  },
+  "resultRightHeadline": "Right where you guessed.",
+  "resultRightSub": "You called it — and you still showed up. That's the win.",
+  "resultTougherHeadline": "Tougher than you guessed — and you did it.",
+  "resultTougherSub": "Some moments ask more of us. Showing up anyway is the whole point.",
+  "resultPredicted": "Predicted",
+  "resultActual": "Actual",
+  "resultLighter": "This moment was {reduction}% lighter than you feared",
+  "@resultLighter": {
+    "placeholders": {
+      "reduction": {
+        "type": "int"
+      }
+    }
+  },
+  "resultSkippedHeadline": "Logged — no pressure.",
+  "resultSkippedSub": "Not today is a perfectly good answer. This rung is still here whenever you're ready.",
+  "resultWinCopied": "Win copied — paste it wherever you like.",
+  "resultCopyWin": "Copy my win",
+  "resultShareText": "I just did something I used to avoid: {rung}. One small rung climbed. 🪜 #Rung",
+  "@resultShareText": {
+    "placeholders": {
+      "rung": {
+        "type": "String"
+      }
+    }
+  },
+  "tracksTitle": "Your tracks",
+  "tracksSubtitle": "Small steps toward big confidence.",
+  "menuInsights": "Insights",
+  "menuIsThisRight": "Is this right for me?",
+  "tracksRungsCount": "{done} of {total} rungs",
+  "@tracksRungsCount": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tracksClimbedCount": "{done} of {total} climbed",
+  "@tracksClimbedCount": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tracksContinueLabel": "CONTINUE WHERE YOU LEFT OFF",
+  "tracksNextStepLabel": "YOUR NEXT STEP",
+  "tracksLoadError": "Could not load tracks.",
+  "todayResume": "Pick up where you left off",
+  "todayNext": "Your next step",
+  "todayVariety": "Something a little different",
+  "todayFresh": "Your starting point",
+  "todayResumeCta": "Finish logging",
+  "todayStartCta": "Start",
+  "todayMinutes": "~{min} min",
+  "@todayMinutes": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "dashShareTooltip": "Share my progress",
+  "dashWeeklyGoal": "Weekly goal",
+  "dashStepsPerWeek": "{count} steps/week",
+  "@dashStepsPerWeek": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashGoalPerWeek": "{count}/week",
+  "@dashGoalPerWeek": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashWeeklyProgress": "{done} of {goal} steps completed this week",
+  "@dashWeeklyProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "dashYourGrowth": "Your growth",
+  "dashTodayError": "Couldn't load today's step. Pull to retry.",
+  "dashTodayAllClear": "You've cleared everything available — add a custom rung or revisit one to keep the streak going.",
+  "dashTakeABreak": "Take a break",
+  "dashTakeABreakSub": "A few quiet games — vs the phone or a friend.",
+  "ladderTitleFallback": "Ladder",
+  "ladderLoadError": "Could not load ladder.",
+  "ladderAddOwn": "Add your own rung",
+  "ladderOfClimbed": "of {total} climbed",
+  "@ladderOfClimbed": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "detailLoadError": "Could not load.",
+  "detailNotExist": "This rung no longer exists.",
+  "detailWhatToDo": "What to do",
+  "detailWhyHelps": "Why this helps",
+  "detailPastAttempts": "Your past attempts",
+  "detailDoThis": "I'll do this",
+  "detailReattempt": "Re-attempting is encouraged — it builds your data.",
+  "detailHistoryStat": "predicted {predicted} · actual {actual}",
+  "@detailHistoryStat": {
+    "placeholders": {
+      "predicted": {
+        "type": "int"
+      },
+      "actual": {
+        "type": "int"
+      }
+    }
+  },
+  "customLimitPremium": "You've reached this month's limit of {cap} custom rungs — it resets next month.",
+  "@customLimitPremium": {
+    "placeholders": {
+      "cap": {
+        "type": "int"
+      }
+    }
+  },
+  "customLimitFree": "Free plan includes 5 custom rungs — upgrade for more each month.",
+  "customDefaultWhat": "A challenge you set for yourself.",
+  "customDefaultWhy": "You named this one — that makes it count.",
+  "customSubtitle": "Your situation is specific — this rung is just for you.",
+  "customWhatLabel": "What will you do?",
+  "customWhatHint": "e.g. Ask my manager for feedback",
+  "customNoteLabel": "A note to yourself (optional)",
+  "customDifficulty": "How hard does it feel? {value}/10",
+  "@customDifficulty": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "customAddToLadder": "Add to ladder",
+  "paywallSwitchToFree": "Switch to Free",
+  "paywallHeroTitle": "You don't have to face it alone.",
+  "paywallHeroBody": "The daily practice is always free. Premium adds a private coach in your corner — and a bigger community beside you — for when you're ready to go further.",
+  "paywallWhatsIncluded": "What's included",
+  "paywallPlusHeader": "Plus, every subscriber gets",
+  "paywallBenefitCoach": "A private coach, any time — rehearse something coming up or talk through how it went",
+  "paywallBenefitPods": "You're not doing this alone — join more support pods (3 on monthly, unlimited on yearly)",
+  "paywallBenefitCustom": "Build unlimited ladders of your own — no cap on custom steps",
+  "paywallBenefitDepth": "Go deeper when you're ready — up to 40 steps a track (free is a full 10-step arc)",
+  "paywallPlusStreak": "Streak protection — a missed day won't break your streak",
+  "paywallPlusInsights": "Deeper insights — your month at a glance",
+  "paywallPlusShare": "Personal share-card styles",
+  "paywallPlusPrivacy": "Always private, always ad-free",
+  "paywallYearly": "Yearly",
+  "paywallPerYear": "per year · best value",
+  "paywallSave": "Save 33%",
+  "paywallMonthly": "Monthly",
+  "paywallPerMonth": "per month",
+  "paywallSwitchYearly": "Switch to yearly",
+  "paywallSwitchMonthly": "Switch to monthly",
+  "paywallStartYearly": "Start yearly — {price}",
+  "@paywallStartYearly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "paywallStartMonthly": "Start monthly — {price}",
+  "@paywallStartMonthly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "paywallRestore": "Restore purchases",
+  "paywallCurrentPlan": "Current plan: {plan}. Cancel anytime.",
+  "@paywallCurrentPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "paywallCancelAnytime": "Cancel anytime. The core loop stays free forever.",
+  "paywallSimulated": "Premium active (simulated — add RevenueCat keys for real purchases).",
+  "paywallPlanUnavailable": "That plan isn't available right now. Try again shortly.",
+  "paywallThankYou": "Premium active — thank you. 🌱",
+  "paywallPurchaseFailed": "The purchase didn't complete. You haven't been charged.",
+  "paywallRestored": "Purchases restored.",
+  "paywallNoRestore": "No previous purchases found on this account.",
+  "paywallRestoreFailed": "Couldn't restore right now. Try again shortly.",
+  "profileAddName": "Add your name",
+  "profileLockTitle": "Lock my profile",
+  "profileLockedSub": "Hidden — pod members can't open your details.",
+  "profileUnlockedSub": "Pod members can tap your avatar to see your details.",
+  "profilePlanTitle": "Your plan",
+  "profilePremium": "Premium",
+  "profileUpgrade": "Upgrade",
+  "profileToneDesc": "Rung speaks gently by default. If your anxiety is more situational, a slightly bolder tone may suit you better.",
+  "profileToneIntrovert": "Introvert",
+  "profileToneSituational": "Situational",
+  "profileSafetySub": "How Rung fits — and when to seek more",
+  "profileBlockedTitle": "Blocked members",
+  "profileBlockedSub": "See and unblock people you've blocked",
+  "profileRestoreTitle": "Restore my progress",
+  "profileRestoreSub": "Pull your streak & challenges from the cloud",
+  "profileRestoring": "Restoring…",
+  "profileRestoreOk": "Progress restored from the cloud.",
+  "profileRestoreFail": "Restore failed: {error}",
+  "@profileRestoreFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "profileLogout": "Log out",
+  "profileSignedIn": "Signed in",
+  "profileLogoutConfirmTitle": "Log out?",
+  "profileLogoutConfirmBody": "Your progress is saved to the cloud and comes back when you sign in again.",
+  "profileLoggingOut": "Logging out…",
+  "profileRateTitle": "Rate Rung",
+  "profileRateSub": "Tell us how it's going — it really helps",
+  "profilePrivacyTitle": "Privacy Policy",
+  "profilePrivacySub": "What we store — and what stays on your device",
+  "profileTermsTitle": "Terms of Service",
+  "profileTermsSub": "The agreement for using Rung",
+  "profileDeleteTitle": "Delete account",
+  "profileDeleteSub": "Permanently erase your account and data",
+  "profileFooter": "Rung · practice, not therapy. Your data is yours.",
+  "profileDeleteConfirmTitle": "Delete account?",
+  "profileDeleteConfirmBody": "This permanently deletes your account, your pod messages, and your saved progress. This cannot be undone.",
+  "profileDelete": "Delete",
+  "profileDeleting": "Deleting your account…",
+  "profileDeleteFail": "Could not delete your account. Try again.",
+  "profileBioPlaceholder": "A quiet climber.",
+  "profileHaptics": "Haptics",
+  "profileHapticsSub": "Gentle vibration on taps and wins",
+  "profileNotifications": "Notifications",
+  "profileNotificationsSub": "Alerts from Rung on this device",
+  "profilePodAlerts": "Pod message alerts",
+  "profilePodAlertsSub": "Tell me when someone posts in my pods",
+  "profileEnableNotifs": "Enable notifications in Settings to get reminders.",
+  "profileReminderHelp": "When should we nudge you?",
+  "profileReminderTitle": "Gentle daily reminder",
+  "profileReminderOn": "Every day at {time} · tap the switch to turn off",
+  "@profileReminderOn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "profileReminderOff": "A calm, no-guilt nudge to take one small step",
+  "profileAvatarTitle": "Choose your avatar",
+  "profileAvatarSub": "Only you can change it — pod-mates see it too.",
+  "commonClose": "Close",
+  "checkInMoodCalm": "Calm",
+  "checkInMoodOkay": "Okay",
+  "checkInMoodAnxious": "Anxious",
+  "checkInMoodLow": "Low",
+  "checkInMoodTense": "Tense",
+  "checkInTitle": "How are you arriving today?",
+  "checkInDismiss": "Dismiss",
+  "checkInCalmCta": "Try a calm moment",
+  "checkInStepCta": "See today's step",
+  "supportTitle": "This sounds like a lot to carry.",
+  "supportBody": "Rung is a practice tool, not a crisis service. If you're going through something heavy, please reach out to someone who can help right now — a trusted person, or a local crisis line. You deserve real support.",
+  "supportResources": "See support resources",
+  "progressChallenges": "Challenges",
+  "progressCurrentStreak": "Current Streak",
+  "progressBestStreak": "Best Streak",
+  "progressThisWeek": "This Week",
+  "progressCategoryBreakdown": "Category Breakdown",
+  "insightsHistory": "History",
+  "checkInAckTitle": "Checked in — feeling {mood}",
+  "@checkInAckTitle": {
+    "placeholders": {
+      "mood": {
+        "type": "String"
+      }
+    }
+  },
+  "checkInAckGentle": "Thanks for being honest. Let's keep today gentle — one small, kind thing is enough.",
+  "checkInAckStep": "Love that. When you're ready, one small step keeps the momentum going.",
+  "sharePremiumPerk": "✨ More card styles are a Premium perk.",
+  "shareSeePremium": "See Premium",
+  "shareText": "Small brave steps, one rung at a time. 🌱 #Rung",
+  "shareError": "Could not open share. Try again.",
+  "shareTitle": "Share your progress",
+  "shareSubtitle": "Just your numbers — nothing private.",
+  "shareCta": "Share",
+  "shareCardHeadline": "My brave steps",
+  "shareCardFearsFaced": "fears faced",
+  "shareCardCurrentStreak": "Current streak",
+  "shareCardBestStreak": "Best streak",
+  "shareCardTagline": "Facing social fears, one small rung at a time.",
+  "helpNow": "Help now",
+  "helpCalmMoment": "A calm moment",
+  "helpTabBreathe": "Breathe",
+  "helpTabGround": "Ground",
+  "helpTabSay": "Say this",
+  "helpBreatheIn": "Breathe in…",
+  "helpBreatheOut": "Breathe out…",
+  "helpBreatheHint": "Follow the circle. There is no rush.",
+  "helpGround5": "things you can see",
+  "helpGround4": "things you can touch",
+  "helpGround3": "things you can hear",
+  "helpGround2": "things you can smell",
+  "helpGround1": "thing you can taste",
+  "helpGroundTitle": "Name, quietly to yourself…",
+  "helpGroundHint": "This brings you back to right now — where you are safe.",
+  "helpOpener1": "How do you know the people here?",
+  "helpOpener2": "I love this spot — have you been before?",
+  "helpOpener3": "I'm hopeless with names — could you remind me?",
+  "helpOpener4": "What have you been up to this week?",
+  "helpExit1": "I'm going to grab a drink — it was good talking to you.",
+  "helpExit2": "I need to say a quick hello to someone, excuse me a sec.",
+  "helpExit3": "I'll let you mingle — catch you later.",
+  "helpOpenersTitle": "Easy openers",
+  "helpExitsTitle": "Graceful exits",
+  "authEnterEmail": "Enter your email",
+  "authBadEmail": "That email doesn't look right",
+  "authEnterPassword": "Enter a password",
+  "authMin6": "At least 6 characters",
+  "authPwMismatch": "Passwords don't match",
+  "authConfirmEmail": "Check your email to confirm, then sign in. (Or disable email confirmation in Supabase Auth settings for quick testing.)",
+  "authGenericError": "Something went wrong. Try again.",
+  "authCreateTitle": "Create your account",
+  "authWelcomeBack": "Welcome back",
+  "authSignUpSub": "Join the pods and keep your progress safe across devices.",
+  "authSignInSub": "Sign in to your pods and synced progress.",
+  "authDisplayName": "Display name (optional)",
+  "authEmail": "Email",
+  "authPassword": "Password",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
+  "authConfirmPassword": "Confirm password",
+  "authCreateCta": "Create account",
+  "authSignInCta": "Sign in",
+  "authHaveAccount": "I already have an account",
+  "authNewAccount": "I'm new — create an account",
+  "authLegalPrefixSignUp": "By creating an account you agree to our ",
+  "authLegalPrefixSignIn": "By continuing you agree to our ",
+  "authTerms": "Terms",
+  "authAnd": " and ",
+  "gamesIntro": "Quiet games for focus and a calm mind — the kind of brain-training people find grounding. Play the phone, or pass it to a friend.",
+  "gamesBestMs": "Best {ms} ms",
+  "@gamesBestMs": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "gamesBestLevel": "Best level {level}",
+  "@gamesBestLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "gamesBest": "Best {score}",
+  "@gamesBest": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "gamesBestMoves": "Best {moves} moves",
+  "@gamesBestMoves": {
+    "placeholders": {
+      "moves": {
+        "type": "int"
+      }
+    }
+  },
+  "gamesWinsVsPhone": "{count} wins vs phone",
+  "@gamesWinsVsPhone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gameTitleReaction": "Reaction speed",
+  "gameTitleSequence": "Sequence memory",
+  "gameTitleQuickMath": "Quick Math",
+  "gameTitleMemory": "Memory match",
+  "gameSubReaction": "focus · tap when it turns green",
+  "gameSubSequence": "memory · watch and repeat",
+  "gameSub2048": "strategy · swipe to merge",
+  "gameSubQuickMath": "mental speed · 30-second sprint",
+  "gameSubTicTacToe": "vs the phone · or 2 players",
+  "gameSubConnect4": "vs the phone · or 2 players",
+  "gameSubMemory": "solo · find the pairs",
+  "gameHelpTooltip": "How to play",
+  "gameHelpTitle": "How to play · {game}",
+  "@gameHelpTitle": {
+    "placeholders": {
+      "game": {
+        "type": "String"
+      }
+    }
+  },
+  "gameGotIt": "Got it",
+  "tierFree": "Free",
+  "tierMonthly": "Premium · Monthly",
+  "tierYearly": "Premium · Yearly",
+  "podsUnlimited": "unlimited pods",
+  "podsCount": "{count, plural, one{1 pod} other{{count} pods}}",
+  "@podsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "groupsSignedOutTitle": "Join a small, kind pod",
+  "groupsSignedOutBody": "Groups need a quick account so pods are safe and yours. Your practice stays private and account-free.",
+  "groupsSignInCta": "Sign in to continue",
+  "groupsLoadError": "Could not load pods. Pull to retry.",
+  "groupsJoined": "Joined {pod}. Say hi when you're ready.",
+  "@groupsJoined": {
+    "placeholders": {
+      "pod": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsJoinedNew": "Joined a new pod. Say hi when you're ready.",
+  "groupsNoPodFound": "Could not find a pod right now. Try again.",
+  "groupsLeaveTitle": "Leave {pod}?",
+  "@groupsLeaveTitle": {
+    "placeholders": {
+      "pod": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsLeave": "Leave",
+  "groupsLeft": "You left {pod}.",
+  "@groupsLeft": {
+    "placeholders": {
+      "pod": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsLeaveError": "Could not leave the pod. Try again.",
+  "groupsHeader": "Small pods, kind people",
+  "groupsYourPods": "YOUR PODS",
+  "groupsDiscoverPods": "DISCOVER PODS",
+  "groupsJoinAnother": "Join another pod",
+  "groupsNoOthers": "No other pods to join right now.",
+  "groupsJoinedShort": "Joined {pod}.",
+  "@groupsJoinedShort": {
+    "placeholders": {
+      "pod": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsJoin": "Join",
+  "groupsPodOptions": "Pod options",
+  "groupsLeavePod": "Leave pod",
+  "groupsMembers": "{count}/{capacity} members",
+  "@groupsMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "groupsTierPods": "On {tier} you can be in {pods}.",
+  "@groupsTierPods": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      },
+      "pods": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsCapacityTierPods": "Up to {capacity} per pod. On {tier} you can be in {pods}.",
+  "@groupsCapacityTierPods": {
+    "placeholders": {
+      "capacity": {
+        "type": "int"
+      },
+      "tier": {
+        "type": "String"
+      },
+      "pods": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsInYourPods": "You're in your {pods}",
+  "@groupsInYourPods": {
+    "placeholders": {
+      "pods": {
+        "type": "String"
+      }
+    }
+  },
+  "groupsUpgradeBody": "Go Premium to join more — monthly unlocks 3 pods, yearly unlocks as many as you like.",
+  "groupsSafetyLive": "Be kind. You can report or block anyone from their profile. Locked profiles stay private.",
+  "groupsSafetyPreview": "Preview. Pods become live, moderated chats once sign-in is configured.",
+  "groupsLeaveBody": "You'll stop seeing this pod's messages. You can join again later.",
+  "podRulesTitle": "Pod rules",
+  "podRulesIntro": "Pods only work if everyone feels safe. By joining you agree:",
+  "podRule1": "Be kind. Everyone here is practicing something hard.",
+  "podRule2": "No harassment, hate, or harmful content. Ever.",
+  "podRule3": "Report or block anyone who makes you uncomfortable.",
+  "podRule4": "Respect privacy — what's shared here stays here.",
+  "podRule5": "Pods are peer support, not a crisis service. In an emergency, contact a professional or local crisis line.",
+  "podRulesAgree": "I agree — take me in",
+  "chatIntrosBeKind": "{count}/{capacity} introverts · be kind",
+  "@chatIntrosBeKind": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "chatHint": "Say something kind…",
+  "chatPreviewBanner": "Preview · messages stay on your device for now. Real, moderated pods arrive with accounts.",
+  "chatYou": "You",
+  "reportHarassment": "Harassment or bullying",
+  "reportHate": "Hate or harmful language",
+  "reportSpam": "Spam or scam",
+  "reportUnsafe": "Makes me feel unsafe",
+  "reportOther": "Something else",
+  "memberPrivateTitle": "Private profile",
+  "memberPrivateBody": "This member keeps their profile private. You can still chat with them — and report or block if needed.",
+  "memberStreak": "{days}-day streak",
+  "@memberStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "memberChallenges": "{count} challenges",
+  "@memberChallenges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memberClimbing": "Climbing: {track}",
+  "@memberClimbing": {
+    "placeholders": {
+      "track": {
+        "type": "String"
+      }
+    }
+  },
+  "memberReport": "Report",
+  "memberBlock": "Block",
+  "memberReportThanks": "Thanks — we'll review this.",
+  "memberBlockToo": "Block too",
+  "memberBlocked": "Blocked. You won't see their messages.",
+  "memberBlockError": "Could not block. Try again.",
+  "memberReportError": "Could not send report. Try again.",
+  "memberBlockConfirmTitle": "Block this member?",
+  "memberBlockConfirmBody": "You won't see each other's messages. You can undo this later.",
+  "memberSoonReporting": "Reporting goes live in moderated pods (sign in to use it).",
+  "memberSoonBlocking": "Blocking goes live in moderated pods (sign in to use it).",
+  "memberWhatsWrong": "What's wrong?",
+  "memberFallback": "Member",
+  "blockedUnblockError": "Could not unblock. Try again.",
+  "blockedUnblocked": "Unblocked {name}. You'll see their messages again.",
+  "@blockedUnblocked": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockedIntro": "Blocking hides a member's messages from you — and yours from them, both ways. Unblock anyone below to undo it.",
+  "blockedLabel": "Blocked",
+  "blockedUnblock": "Unblock",
+  "blockedEmptyTitle": "No one blocked",
+  "blockedEmptyBody": "You haven't blocked anyone. Blocking hides a member's messages from you, both ways — and you can always undo it here.",
+  "chatCheckInPosted": "Nice work. Pod check-in posted.",
+  "chatCheckInError": "Could not check in right now. Try again.",
+  "chatDeleteMsgTitle": "Delete message?",
+  "chatDeleteMsgBody": "This removes it for everyone in the pod.",
+  "chatReply": "Reply",
+  "chatEdit": "Edit",
+  "chatDailyPrompt": "Daily pod prompt",
+  "chatCheckedInToday": "Checked in today",
+  "chatDidMyStep": "I did my step",
+  "chatCheckedInCount": "{count} checked in",
+  "@chatCheckedInCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNoMessages": "No messages yet. A simple \"hi\" is a brave first rung.",
+  "chatEditingMessage": "Editing your message",
+  "chatReplyingTo": "Replying to {name}",
+  "@chatReplyingTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatYourself": "yourself",
+  "chatMsgDeleted": "This message was deleted",
+  "chatPrivateMember": "Private member",
+  "chatBeKind": "{count}/{capacity} · be kind",
+  "@chatBeKind": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDeletedMessageShort": "deleted message",
+  "gameYouWin": "You win! 🎉",
+  "gamePhoneWins": "The phone wins",
+  "gamePhoneThinking": "The phone is thinking…",
+  "gamePlayPhone": "Play the phone",
+  "game2Players": "2 players",
+  "gameNewGame": "New game",
+  "gameYou": "You",
+  "gamePhone": "Phone",
+  "gameDraws": "Draws",
+  "tttP1Wins": "Player 1 (X) wins! 🎉",
+  "tttP2Wins": "Player 2 (O) wins! 🎉",
+  "tttYourTurn": "Your turn",
+  "tttP1Turn": "Player 1 · X",
+  "tttP2Turn": "Player 2 · O",
+  "tttP1Label": "P1 (X)",
+  "tttP2Label": "P2 (O)",
+  "tttRule1": "Take turns placing your mark on the 3×3 grid.",
+  "tttRule2": "Get three of your marks in a row — across, down, or diagonally — to win.",
+  "tttRule3": "\"Play the phone\" is you vs a simple AI. \"2 players\" passes the phone each turn.",
+  "c4P1Wins": "Player 1 wins! 🎉",
+  "c4P2Wins": "Player 2 wins! 🎉",
+  "c4Turn": "Your turn — tap a column",
+  "c4P1Turn": "Player 1 · red",
+  "c4P2Turn": "Player 2 · yellow",
+  "c4P1Label": "P1",
+  "c4P2Label": "P2",
+  "c4Rule1": "Tap a column to drop your token — it falls to the lowest free slot.",
+  "c4Rule2": "Line up four of your colour — across, down, or diagonally — to win.",
+  "c4Rule3": "\"Play the phone\" is you vs a simple AI. \"2 players\" passes the phone.",
+  "gameDraw": "It's a draw 🤝",
+  "gamePlayAgain": "Play again",
+  "gameStart": "Start",
+  "g2048Rule1": "Swipe up, down, left or right to slide all tiles.",
+  "g2048Rule2": "Two tiles with the same number merge into one that doubles.",
+  "g2048Rule3": "Keep merging to build a 2048 tile. The board fills — plan ahead!",
+  "g2048Score": "Score",
+  "g2048Best": "Best",
+  "g2048GameOver": "Game over",
+  "g2048Won": "You made 2048! 🎉",
+  "g2048SwipeToMerge": "Swipe to merge",
+  "qmRule1": "You have 30 seconds — solve as many as you can.",
+  "qmRule2": "Tap the correct answer from the four choices.",
+  "qmRule3": "A wrong tap costs 2 seconds, so read carefully.",
+  "qmTimeScored": "Time! You scored {score}",
+  "qmBestSub": "Best {best} · 30 seconds, answer as many as you can.",
+  "qmStartSub": "30 seconds. A wrong tap costs 2 seconds.",
+  "qmCorrect": "correct",
+  "mmRule1": "Tap a card to flip it, then flip a second one.",
+  "mmRule2": "If the two emojis match, they stay face-up; if not, they flip back.",
+  "mmRule3": "Find all the pairs — in as few moves as you can.",
+  "mmAllMatched": "All matched in {moves} moves! 🎉",
+  "mmFindPairs": "Find the pairs · {moves} moves",
+  "mmBest": "Best: {best} moves",
+  "mmShuffle": "Shuffle",
+  "rxTapStart": "Tap to start",
+  "rxWaitGreen": "Wait for green, then tap fast",
+  "rxWait": "Wait…",
+  "rxTapMoment": "Tap the moment it turns green",
+  "rxBestRetry": "Best {ms} ms · tap to retry",
+  "rxTapRetry": "Tap to retry",
+  "rxTooSoon": "Too soon!",
+  "rxWaitRetry": "Wait for green · tap to retry",
+  "rxTap": "TAP!",
+  "rxRule1": "Tap the screen to start, then wait — it will turn amber.",
+  "rxRule2": "The instant it turns green, tap as fast as you can.",
+  "rxRule3": "Tapping too early resets it. A lower time (ms) is better.",
+  "smWatchRepeat": "Watch the pattern, then repeat it.",
+  "smWatch": "Watch…",
+  "smYourTurn": "Your turn · {current} of {total}",
+  "smReachedBest": "You reached {reached} · best {best}",
+  "smReached": "You reached {reached}",
+  "smRule1": "Watch the tiles light up one by one.",
+  "smRule2": "Repeat the exact same order by tapping the tiles.",
+  "smRule3": "Each round adds one more step — see how far you can go.",
+  "smRound": "Round {round}",
+  "safetyScreenTitle": "Is this right for me?",
+  "safetyPracticeTitle": "Rung is practice, not therapy.",
+  "safetyIntro": "Rung is a confidence and practice tool. It helps you face everyday social situations gradually, at your own pace. It is not therapy, not a medical treatment, and not a diagnosis.",
+  "safetyPoint1": "The goal is manageable dread — feeling more comfortable in the moments you used to avoid. Not becoming a different person.",
+  "safetyPoint2": "Skipping is always okay and never counts against you. There are no shame mechanics here.",
+  "safetyPoint3": "Your data is yours. Everything works offline, with no account required.",
+  "safetyMoreTitle": "If this is more than nerves",
+  "safetyMoreBody": "If anxiety is severely affecting your daily life, or you ever have thoughts of harming yourself, please reach out to a qualified professional or a local crisis line. That is a strong, healthy step — and Rung is not a substitute for it.",
+  "legalLastUpdated": "Last updated: June 2026",
+  "legalQuestions": "Questions? Contact us at {email}.",
+  "privacyTitle": "Privacy Policy",
+  "privacyIntro": "Rung is a private practice tool for building social confidence. We collect as little as possible, and the most personal things you write never leave your phone. This policy explains what we store and why.",
+  "ppWhatStaysHead": "What stays only on your device",
+  "ppWhatStaysBody": "Your reflection notes and prediction notes — the private things you write about how a moment felt — are stored only in the app on your device. They are never uploaded to our servers.",
+  "ppCloudHead": "What we store in the cloud",
+  "ppCloudBody": "When you create an account we store: your email address (for sign-in; your password is encrypted and we never see it), an optional display name and bio, and your privacy-lock setting. To run the community (“pods”) we store the messages you post and any blocks or reports you make. To keep your progress safe across devices we back up numbers only — your streak, challenges completed, and anxiety ratings (predicted vs actual) — plus any custom steps you create. Note text is never included.",
+  "ppAnalyticsHead": "Analytics",
+  "ppAnalyticsBody": "We use privacy-respecting product analytics (PostHog) to understand which features help, using anonymous usage events such as “opened a screen” or “completed a step”. We never send the content of your notes or messages to analytics.",
+  "ppUseHead": "How we use your information",
+  "ppUseBody": "Only to provide the app: to sign you in, run the pods, restore your progress, and improve Rung using aggregate, anonymous trends. We do not sell your data or use it for advertising.",
+  "ppProcessHead": "Who processes your data",
+  "ppProcessBody": "We use Supabase (authentication, database, and hosting) and PostHog (analytics) as data processors. They handle data on our behalf under their own security and privacy commitments.",
+  "ppRightsHead": "Your rights & choices",
+  "ppRightsBody": "You can edit your profile, lock it so other members can’t see it, and permanently delete your account and all associated cloud data at any time from Profile → Delete account. You can also email us to request access to or deletion of your data.",
+  "ppSecurityHead": "Security & retention",
+  "ppSecurityBody": "Data is encrypted in transit, and every table is protected by row-level security so you can only ever access your own data (and pod messages you’re a member of). We keep your data until you delete your account or ask us to remove it.",
+  "ppChildrenHead": "Children",
+  "ppChildrenBody": "Rung is not intended for anyone under 16. If you believe a child has created an account, contact us and we will remove it.",
+  "ppMedicalHead": "Not medical care",
+  "ppMedicalBody": "Rung supports gradual practice but is not therapy, diagnosis, or medical advice. If you are in crisis, contact your local emergency services or a crisis line.",
+  "ppChangesHead": "Changes",
+  "ppChangesBody": "If we update this policy we’ll change the date above and, for material changes, let you know in the app.",
+  "termsTitle": "Terms of Service",
+  "termsIntro": "These terms are the agreement between you and Rung when you use the app. By creating an account or using Rung, you agree to them.",
+  "tosMedicalHead": "Not a medical service",
+  "tosMedicalBody": "Rung is a self-help practice tool, not therapy or medical care, and does not replace professional help. It cannot guarantee any particular outcome. If you are in crisis or may harm yourself or others, contact your local emergency services immediately.",
+  "tosEligibilityHead": "Eligibility",
+  "tosEligibilityBody": "You must be at least 16 years old to use Rung and have the right to agree to these terms.",
+  "tosAccountHead": "Your account",
+  "tosAccountBody": "Keep your login details safe — you’re responsible for activity on your account. Tell us promptly if you suspect unauthorised use.",
+  "tosCommunityHead": "Community rules (pods)",
+  "tosCommunityBody": "Pods are for kindness and support. You agree not to harass, threaten, demean, spam, or post hateful or illegal content, and not to share other people’s private information. We may remove content or suspend accounts that break these rules. You can block and report other members at any time.",
+  "tosContentHead": "Content you post",
+  "tosContentBody": "You keep ownership of what you write. By posting in a pod you grant us permission to store and show it to the members of that pod so the community works. Don’t post anything you don’t have the right to share.",
+  "tosSubsHead": "Subscriptions",
+  "tosSubsBody": "Some features and extra practice content are available with a paid subscription. When billing is live, purchases and renewals are handled by the app store, and you can manage or cancel through your app-store account. Prices and inclusions may change with notice.",
+  "tosDisclaimerHead": "Disclaimers & liability",
+  "tosDisclaimerBody": "Rung is provided “as is”, without warranties of any kind. To the fullest extent permitted by law, we are not liable for indirect or consequential losses arising from your use of the app.",
+  "tosEndingHead": "Ending your use",
+  "tosEndingBody": "You can delete your account at any time from Profile → Delete account. We may suspend or end access if these terms are seriously or repeatedly broken.",
+  "tosChangesHead": "Changes",
+  "tosChangesBody": "We may update these terms; we’ll update the date above and, for significant changes, notify you in the app. Continuing to use Rung means you accept the updated terms.",
+  "@legalQuestions": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "breatheCta": "Feeling the dread? Breathe first",
+  "breatheIntro": "Sixty seconds. Just follow the circle.",
+  "breatheIn": "Breathe in",
+  "breatheHold": "Hold",
+  "breatheOut": "Breathe out",
+  "breatheSkip": "Skip",
+  "breatheDoneTitle": "That’s it.",
+  "breatheDoneSub": "Feel a little steadier? Go do your rung whenever you’re ready.",
+  "breatheDoneBtn": "Done",
+  "insightsDeeperTitle": "Deeper insights",
+  "insightsLockedBody": "See your month at a glance — how much your fear ran hotter than reality, and how often you over-predicted it. A Premium perk.",
+  "insightsUnlockCta": "Unlock with Premium",
+  "insightsNoSteps": "No steps logged yet this month. Face a couple and your summary appears here.",
+  "insightsFearsFacedMonth": "fears faced this month",
+  "insightsGapHotter": "Your fear ran {points} points hotter than reality, on average.",
+  "insightsGapTougher": "Reality was a bit tougher than you predicted this month — that's brave data too.",
+  "insightsGapSpotOn": "Your predictions were about spot-on this month.",
+  "insightsOverPredicted": "You over-predicted the fear {rate}% of the time.",
+  "insightsTrendSame": "Same as last month",
+  "insightsTrendMore": "{count} more than last month",
+  "insightsTrendFewer": "{count} fewer than last month",
+  "rateTitle": "Enjoying Rung?",
+  "ratePromptNone": "How is Rung feeling for you?",
+  "ratePromptLow": "We're sorry it's not landing. What's missing?",
+  "ratePromptMid": "Thanks — what would make it a 5?",
+  "ratePromptHigh": "That means a lot. What do you love?",
+  "rateHintLove": "Anything you love? (optional)",
+  "rateHintMore": "Tell us more (optional)",
+  "rateSend": "Send",
+  "rateThanksHigh": "Thank you — it truly helps. 🌱",
+  "rateThanksLow": "Thank you for the honesty — we'll use it to improve.",
+  "editProfileTitle": "Edit profile",
+  "editDisplayName": "Display name",
+  "editDisplayNameHint": "What should pods call you?",
+  "editBio": "Short bio (optional)",
+  "editBioHint": "A line about you — kept private if you lock your profile.",
+  "@insightsGapHotter": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "@insightsOverPredicted": {
+    "placeholders": {
+      "rate": {
+        "type": "int"
+      }
+    }
+  },
+  "@insightsTrendMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@insightsTrendFewer": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

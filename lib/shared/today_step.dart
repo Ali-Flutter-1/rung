@@ -6,6 +6,7 @@ import '../app/router.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
 import '../domain/entities/today_suggestion.dart';
+import '../l10n/app_localizations.dart';
 import 'difficulty_badge.dart';
 import 'track_visuals.dart';
 
@@ -15,26 +16,26 @@ class TodayStepCard extends StatelessWidget {
 
   final TodaySuggestion suggestion;
 
-  ({String label, String cta, IconData icon}) get _framing =>
+  ({String label, String cta, IconData icon}) _framing(AppLocalizations l) =>
       switch (suggestion.reason) {
         TodayReason.resumeInProgress => (
-            label: 'Pick up where you left off',
-            cta: 'Finish logging',
+            label: l.todayResume,
+            cta: l.todayResumeCta,
             icon: Icons.play_circle_outline_rounded,
           ),
         TodayReason.nextInActiveTrack => (
-            label: 'Your next step',
-            cta: 'Start',
+            label: l.todayNext,
+            cta: l.todayStartCta,
             icon: Icons.arrow_forward_rounded,
           ),
         TodayReason.varietyFromOtherTrack => (
-            label: 'Something a little different',
-            cta: 'Start',
+            label: l.todayVariety,
+            cta: l.todayStartCta,
             icon: Icons.auto_awesome_outlined,
           ),
         TodayReason.freshStart => (
-            label: 'Your starting point',
-            cta: 'Start',
+            label: l.todayFresh,
+            cta: l.todayStartCta,
             icon: Icons.flag_outlined,
           ),
       };
@@ -45,7 +46,8 @@ class TodayStepCard extends StatelessWidget {
     final track = suggestion.track;
     final rung = suggestion.rung;
     final accent = TrackVisuals.color(track);
-    final f = _framing;
+    final l = AppLocalizations.of(context);
+    final f = _framing(l);
 
     return Container(
       padding: const EdgeInsets.all(Insets.lg),
@@ -94,7 +96,7 @@ class TodayStepCard extends StatelessWidget {
               const Icon(Icons.schedule_rounded,
                   size: 15, color: AppColors.inkFaint),
               const SizedBox(width: 4),
-              Text('~${rung.estMinutes} min', style: t.bodyMedium),
+              Text(l.todayMinutes(rung.estMinutes), style: t.bodyMedium),
             ],
           ),
           const SizedBox(height: Insets.lg),

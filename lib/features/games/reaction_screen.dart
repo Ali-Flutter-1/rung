@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
 
@@ -76,45 +77,47 @@ class _ReactionState extends State<ReactionScreen> {
     });
   }
 
-  ({Color bg, String big, String small}) get _look => switch (_phase) {
+  ({Color bg, String big, String small}) _look(AppLocalizations l) =>
+      switch (_phase) {
         _Phase.idle => (
             bg: AppColors.primary,
-            big: 'Tap to start',
-            small: 'Wait for green, then tap fast',
+            big: l.rxTapStart,
+            small: l.rxWaitGreen,
           ),
         _Phase.waiting => (
             bg: AppColors.accentDeep,
-            big: 'Wait…',
-            small: 'Tap the moment it turns green',
+            big: l.rxWait,
+            small: l.rxTapMoment,
           ),
         _Phase.go => (
             bg: const Color(0xFF3FA46A),
-            big: 'TAP!',
+            big: l.rxTap,
             small: '',
           ),
         _Phase.result => (
             bg: AppColors.primary,
             big: '$_lastMs ms',
-            small: _bestMs != null ? 'Best $_bestMs ms · tap to retry' : 'Tap to retry',
+            small: _bestMs != null ? l.rxBestRetry(_bestMs!) : l.rxTapRetry,
           ),
         _Phase.tooSoon => (
             bg: AppColors.intensityHigh,
-            big: 'Too soon!',
-            small: 'Wait for green · tap to retry',
+            big: l.rxTooSoon,
+            small: l.rxWaitRetry,
           ),
       };
 
   @override
   Widget build(BuildContext context) {
-    final look = _look;
+    final l = AppLocalizations.of(context);
+    final look = _look(l);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reaction speed'),
+        title: Text(l.gameTitleReaction),
         actions: [
-          gameHelpAction(context, 'Reaction speed', const [
-            'Tap the screen to start, then wait — it will turn amber.',
-            'The instant it turns green, tap as fast as you can.',
-            'Tapping too early resets it. A lower time (ms) is better.',
+          gameHelpAction(context, l.gameTitleReaction, [
+            l.rxRule1,
+            l.rxRule2,
+            l.rxRule3,
           ]),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
@@ -93,14 +94,15 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memory match'),
+        title: Text(l.gameTitleMemory),
         actions: [
-          gameHelpAction(context, 'Memory match', const [
-            'Tap a card to flip it, then flip a second one.',
-            'If the two emojis match, they stay face-up; if not, they flip back.',
-            'Find all the pairs — in as few moves as you can.',
+          gameHelpAction(context, l.gameTitleMemory, [
+            l.mmRule1,
+            l.mmRule2,
+            l.mmRule3,
           ]),
         ],
       ),
@@ -110,13 +112,11 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
           child: Column(
             children: [
               Text(
-                _won
-                    ? 'All matched in $_moves moves! 🎉'
-                    : 'Find the pairs · $_moves moves',
+                _won ? l.mmAllMatched(_moves) : l.mmFindPairs(_moves),
                 style: t.titleMedium,
               ),
               if (_best != null)
-                Text('Best: $_best moves',
+                Text(l.mmBest(_best!),
                     style: t.bodySmall?.copyWith(color: AppColors.inkMuted)),
               const SizedBox(height: Insets.lg),
               Expanded(
@@ -153,7 +153,7 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: Text(_won ? 'Play again' : 'Shuffle',
+                  child: Text(_won ? l.gamePlayAgain : l.mmShuffle,
                       style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,

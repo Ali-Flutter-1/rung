@@ -17,6 +17,7 @@ class PrefsSettingsRepository implements SettingsRepository {
   static const _kDisclaimer = 'accepted_disclaimer';
   static const _kTone = 'tone_mode';
   static const _kTheme = 'theme_mode';
+  static const _kLocale = 'locale_code';
   static const _kStartTrack = 'starting_track_slug';
   static const _kDisplayName = 'display_name';
   static const _kBio = 'bio';
@@ -86,6 +87,15 @@ class PrefsSettingsRepository implements SettingsRepository {
   @override
   Future<void> setThemeMode(ThemeMode mode) async {
     await _prefs.setString(_kTheme, mode.name);
+    _bump();
+  }
+
+  @override
+  String? get localeCode => _str(_kLocale);
+
+  @override
+  Future<void> setLocaleCode(String? code) async {
+    await _setStr(_kLocale, code);
     _bump();
   }
 

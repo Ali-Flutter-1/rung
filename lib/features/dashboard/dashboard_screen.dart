@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
 import '../../domain/entities/subscription.dart';
 import '../../shared/gap_insight.dart';
@@ -21,15 +22,16 @@ import '../../shared/today_step.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  String get _greeting {
+  String _greeting(AppLocalizations l) {
     final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning';
-    if (h < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return l.greetingMorning;
+    if (h < 18) return l.greetingAfternoon;
+    return l.greetingEvening;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final today = ref.watch(todaysRungProvider);
     final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
     final t = Theme.of(context).textTheme;
@@ -69,32 +71,26 @@ class DashboardScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(_greeting,
+                  child: Text(_greeting(l),
                       style: t.headlineMedium, overflow: TextOverflow.ellipsis),
                 ),
                 if (streak > 0) StreakPill(days: streak),
                 IconButton(
-                  tooltip: 'Share my progress',
+                  tooltip: l.dashShareTooltip,
                   icon: const Icon(Icons.ios_share_rounded),
                   onPressed: () => showShareProgressSheet(context, ref),
                 ),
               ],
             ),
             const SizedBox(height: Insets.xs),
-            Text("Here's one small step for today.", style: t.bodyMedium),
+            Text(l.todayStepIntro, style: t.bodyMedium),
             const SizedBox(height: Insets.lg),
             const DailyCheckIn(),
             today.when(
               loading: () => const TodayStepSkeleton(),
-              error: (_, _) => const TodayStepEmpty(
-                message: "Couldn't load today's step. Pull to retry.",
-              ),
+              error: (_, _) => TodayStepEmpty(message: l.dashTodayError),
               data: (s) => s == null
-                  ? const TodayStepEmpty(
-                      message:
-                          "You've cleared everything available — add a custom "
-                          'rung or revisit one to keep the streak going.',
-                    )
+                  ? TodayStepEmpty(message: l.dashTodayAllClear)
                   : TodayStepCard(suggestion: s),
             ),
             const SizedBox(height: Insets.lg),
@@ -112,16 +108,15 @@ class DashboardScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Text('Weekly goal', style: t.titleMedium),
+                      Text(l.dashWeeklyGoal, style: t.titleMedium),
                       const Spacer(),
                       PopupMenuButton<int>(
-                        tooltip: 'Set weekly goal',
+                        tooltip: l.dashWeeklyGoal,
                         onSelected: settings.setWeeklyGoalSteps,
-                        itemBuilder: (_) => const [
-                          PopupMenuItem(value: 2, child: Text('2 steps/week')),
-                          PopupMenuItem(value: 3, child: Text('3 steps/week')),
-                          PopupMenuItem(value: 5, child: Text('5 steps/week')),
-                          PopupMenuItem(value: 7, child: Text('7 steps/week')),
+                        itemBuilder: (_) => [
+                          for (final n in const [2, 3, 5, 7])
+                            PopupMenuItem(
+                                value: n, child: Text(l.dashStepsPerWeek(n))),
                         ],
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -131,7 +126,7 @@ class DashboardScreen extends ConsumerWidget {
                             borderRadius: Radii.pill,
                           ),
                           child: Text(
-                            '$weeklyGoal/week',
+                            l.dashGoalPerWeek(weeklyGoal),
                             style: t.bodyMedium?.copyWith(
                                 color: AppColors.primaryDeep,
                                 fontWeight: FontWeight.w700),
@@ -142,7 +137,7 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: Insets.sm),
                   Text(
-                    '$weeklyDone of $weeklyGoal steps completed this week',
+                    l.dashWeeklyProgress(weeklyDone, weeklyGoal),
                     style: t.bodyMedium,
                   ),
                   const SizedBox(height: Insets.sm),
@@ -158,7 +153,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: Insets.xl),
-            Text('Your growth', style: t.titleMedium),
+            Text(l.dashYourGrowth, style: t.titleMedium),
             const SizedBox(height: Insets.md),
             statsLoading
                 ? const StatsRowSkeleton()
@@ -274,6 +269,7 @@ class _TakeABreakCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute(builder: (_) => const GamesScreen()),
@@ -310,9 +306,9 @@ class _TakeABreakCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Take a break', style: t.titleMedium),
+                  Text(l.dashTakeABreak, style: t.titleMedium),
                   const SizedBox(height: 2),
-                  Text('A few quiet games — vs the phone or a friend.',
+                  Text(l.dashTakeABreakSub,
                       style: t.bodyMedium,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),

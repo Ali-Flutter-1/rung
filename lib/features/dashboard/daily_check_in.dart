@@ -8,7 +8,19 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/help_now.dart';
+
+/// Localized display label for a mood (the English [label] is kept as the stable
+/// analytics value).
+String _moodLabel(AppLocalizations l, String label) => switch (label) {
+      'Calm' => l.checkInMoodCalm,
+      'Okay' => l.checkInMoodOkay,
+      'Anxious' => l.checkInMoodAnxious,
+      'Low' => l.checkInMoodLow,
+      'Tense' => l.checkInMoodTense,
+      _ => label,
+    };
 
 /// A once-a-day arrival prompt on Home — "how are you arriving today?" plus one
 /// gentle next step. Builds the daily habit without pressure; disappears for the
@@ -87,6 +99,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
   }
 
   Widget _prompt(TextTheme t) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -95,7 +108,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
             const Icon(Icons.wb_twilight_rounded,
                 size: 20, color: AppColors.primaryDeep),
             const SizedBox(width: Insets.sm),
-            Text('How are you arriving today?', style: t.titleMedium),
+            Text(l.checkInTitle, style: t.titleMedium),
           ],
         ),
         const SizedBox(height: Insets.md),
@@ -112,10 +125,9 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
   }
 
   Widget _acknowledgement(TextTheme t, _Mood mood) {
+    final l = AppLocalizations.of(context);
     final gentle = mood.gentle;
-    final message = gentle
-        ? "Thanks for being honest. Let's keep today gentle — one small, kind thing is enough."
-        : "Love that. When you're ready, one small step keeps the momentum going.";
+    final message = gentle ? l.checkInAckGentle : l.checkInAckStep;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,10 +136,11 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
             Text(mood.emoji, style: const TextStyle(fontSize: 22)),
             const SizedBox(width: Insets.sm),
             Expanded(
-                child: Text('Checked in — feeling ${mood.label.toLowerCase()}',
+                child: Text(
+                    l.checkInAckTitle(_moodLabel(l, mood.label).toLowerCase()),
                     style: t.titleMedium)),
             IconButton(
-              tooltip: 'Dismiss',
+              tooltip: l.checkInDismiss,
               visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.close_rounded, size: 18),
               onPressed: () => setState(() => _dismissed = true),
@@ -149,7 +162,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
             },
             icon: Icon(gentle ? Icons.spa_outlined : Icons.stairs_rounded,
                 size: 18),
-            label: Text(gentle ? 'Try a calm moment' : "See today's step"),
+            label: Text(gentle ? l.checkInCalmCta : l.checkInStepCta),
           ),
         ),
       ],
@@ -181,7 +194,7 @@ class _MoodChip extends StatelessWidget {
           children: [
             Text(mood.emoji, style: const TextStyle(fontSize: 16)),
             const SizedBox(width: 6),
-            Text(mood.label,
+            Text(_moodLabel(AppLocalizations.of(context), mood.label),
                 style: t.labelLarge?.copyWith(color: AppColors.primaryDeep)),
           ],
         ),

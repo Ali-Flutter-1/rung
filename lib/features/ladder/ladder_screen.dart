@@ -7,6 +7,7 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/rung.dart';
 import '../../shared/difficulty_badge.dart';
 import '../../shared/help_now.dart';
@@ -23,13 +24,14 @@ class LadderScreen extends ConsumerWidget {
     final ladder = ref.watch(ladderProvider(trackId));
     final cleared = ref.watch(clearedRungIdsProvider).asData?.value ?? const {};
     final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(track?.title ?? 'Ladder')),
+      appBar: AppBar(title: Text(track?.title ?? l.ladderTitleFallback)),
       floatingActionButton: const HelpNowButton(),
       body: ladder.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Could not load ladder.\n$e')),
+        error: (e, _) => Center(child: Text('${l.ladderLoadError}\n$e')),
         data: (rungs) {
           // The current focus = first uncleared rung.
           final currentIndex =
@@ -55,7 +57,7 @@ class LadderScreen extends ConsumerWidget {
                     onPressed: () =>
                         showAddCustomRungSheet(context, ref, trackId),
                     icon: const Icon(Icons.add_rounded),
-                    label: const Text('Add your own rung'),
+                    label: Text(l.ladderAddOwn),
                   ),
                 );
               }
@@ -122,7 +124,8 @@ class _LadderHeader extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text('$done', style: t.headlineMedium?.copyWith(color: accent)),
-              Text(' of $total climbed', style: t.headlineSmall),
+              Text(' ${AppLocalizations.of(context).ladderOfClimbed(total)}',
+                  style: t.headlineSmall),
             ],
           ),
           const SizedBox(height: Insets.sm),
@@ -247,7 +250,7 @@ class _RungRow extends StatelessWidget {
                                 difficulty: rung.difficulty, color: accent),
                             const Spacer(),
                             if (isCurrent)
-                              Text('Your next step',
+                              Text(AppLocalizations.of(context).todayNext,
                                   style: t.bodyMedium?.copyWith(
                                       color: accent,
                                       fontWeight: FontWeight.w600)),

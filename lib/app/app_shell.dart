@@ -5,7 +5,21 @@ import 'package:go_router/go_router.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
+import '../l10n/app_localizations.dart';
 import 'providers.dart';
+
+/// Maps a nav item's English label to the active language. "Rung" is the brand
+/// name and stays untranslated.
+String _localizedLabel(BuildContext context, String label) {
+  final l = AppLocalizations.of(context);
+  return switch (label) {
+    'Home' => l.navHome,
+    'Groups' => l.navGroups,
+    'Premium' => l.navPremium,
+    'Profile' => l.navProfile,
+    _ => label,
+  };
+}
 
 /// Bottom-nav shell. The daily practice ("Rung") sits at index 1 so it's one
 /// tap away. Custom, calm, branded bar — a soft teal pill marks the selection.
@@ -134,7 +148,7 @@ class _NavItem extends StatelessWidget {
           ),
           const SizedBox(height: 3),
           Text(
-            data.label,
+            _localizedLabel(context, data.label),
             style: TextStyle(
               fontSize: 11,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

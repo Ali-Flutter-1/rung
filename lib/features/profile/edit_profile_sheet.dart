@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'profile_sync.dart';
 
 /// Edit display name + short bio. Stored locally now; will upsert into the
@@ -56,21 +57,22 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Edit profile', style: t.titleLarge),
+          Text(l.editProfileTitle, style: t.titleLarge),
           const SizedBox(height: Insets.lg),
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Display name',
-              hintText: 'What should pods call you?',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.editDisplayName,
+              hintText: l.editDisplayNameHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: Insets.md),
@@ -79,14 +81,14 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
             textCapitalization: TextCapitalization.sentences,
             maxLines: 3,
             maxLength: 140,
-            decoration: const InputDecoration(
-              labelText: 'Short bio (optional)',
-              hintText: 'A line about you — kept private if you lock your profile.',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.editBio,
+              hintText: l.editBioHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: Insets.sm),
-          FilledButton(onPressed: _save, child: const Text('Save')),
+          FilledButton(onPressed: _save, child: Text(l.commonSave)),
         ],
       ),
     );

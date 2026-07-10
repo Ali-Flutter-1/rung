@@ -9,6 +9,7 @@ import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
 import '../../domain/entities/rung.dart';
 import '../../shared/track_visuals.dart';
@@ -58,6 +59,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     final track = ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
     final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
     final cleared = a.outcome != null && a.outcome!.counts;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -72,7 +74,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               ),
               if (cleared) ...[
                 _CopyWinButton(rung: rung),
-                Text('Quiet delight in every step.',
+                Text(l.resultQuietDelight,
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium
@@ -85,7 +87,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => context.go(Routes.ladder(rung.trackId)),
-                      child: const Text('Back to ladder'),
+                      child: Text(l.resultBackToLadder),
                     ),
                   ),
                   const SizedBox(width: Insets.md),
@@ -93,7 +95,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                     child: FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: accent),
                       onPressed: () => context.go(Routes.dashboard),
-                      child: const Text('Done'),
+                      child: Text(l.commonDone),
                     ),
                   ),
                 ],
@@ -119,6 +121,7 @@ class _ClearedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final predicted = attempt.predictedSuds;
     final actual = attempt.actualSuds ?? predicted;
     final gap = predicted - actual;
@@ -126,18 +129,11 @@ class _ClearedView extends StatelessWidget {
     final reduction = predicted == 0 ? 0 : ((gap / predicted) * 100).round();
     final (headline, sub) = switch (gap) {
       > 0 => (
-          'You braced for $predicted. It came in at $actual.',
-          'Your heart prepared for a heavy $predicted, but the world met you with a '
-              'gentler $actual. Worth remembering.'
+          l.resultGapHeadline(predicted, actual),
+          l.resultGapSub(predicted, actual),
         ),
-      0 => (
-          'Right where you guessed.',
-          "You called it — and you still showed up. That's the win."
-        ),
-      _ => (
-          'Tougher than you guessed — and you did it.',
-          'Some moments ask more of us. Showing up anyway is the whole point.'
-        ),
+      0 => (l.resultRightHeadline, l.resultRightSub),
+      _ => (l.resultTougherHeadline, l.resultTougherSub),
     };
 
     return Column(
@@ -185,12 +181,15 @@ class _ClearedView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _GapStat(label: 'Predicted', value: predicted, color: AppColors.inkMuted),
+            _GapStat(
+                label: l.resultPredicted,
+                value: predicted,
+                color: AppColors.inkMuted),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
               child: Icon(Icons.arrow_forward_rounded, color: accent),
             ),
-            _GapStat(label: 'Actual', value: actual, color: accent),
+            _GapStat(label: l.resultActual, value: actual, color: accent),
           ],
         ).animate().fadeIn(delay: 350.ms).slideY(begin: 0.15, end: 0),
         if (gap > 0) ...[
@@ -202,7 +201,7 @@ class _ClearedView extends StatelessWidget {
               color: AppColors.primarySoft,
               borderRadius: Radii.pill,
             ),
-            child: Text('This moment was $reduction% lighter than you feared',
+            child: Text(l.resultLighter(reduction),
                 style: t.titleMedium?.copyWith(color: AppColors.primaryDeep)),
           ).animate().fadeIn(delay: 450.ms),
         ],
@@ -243,6 +242,7 @@ class _SkippedView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -252,12 +252,11 @@ class _SkippedView extends StatelessWidget {
           child: Icon(Icons.nightlight_outlined, color: accent, size: 36),
         ),
         const SizedBox(height: Insets.xl),
-        Text('Logged — no pressure.',
+        Text(l.resultSkippedHeadline,
             textAlign: TextAlign.center, style: t.headlineSmall),
         const SizedBox(height: Insets.md),
         Text(
-          "Not today is a perfectly good answer. This rung is still here "
-          "whenever you're ready.",
+          l.resultSkippedSub,
           textAlign: TextAlign.center,
           style: t.bodyLarge,
         ),
@@ -272,21 +271,20 @@ class _CopyWinButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return TextButton.icon(
       onPressed: () {
-        final text =
-            'I just did something I used to avoid: ${rung.title.toLowerCase()}. '
-            'One small rung climbed. 🪜 #Rung';
+        final text = l.resultShareText(rung.title.toLowerCase());
         Clipboard.setData(ClipboardData(text: text));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             behavior: SnackBarBehavior.floating,
-            content: Text('Win copied — paste it wherever you like.'),
+            content: Text(l.resultWinCopied),
           ),
         );
       },
       icon: const Icon(Icons.ios_share_rounded, size: 18),
-      label: const Text('Copy my win'),
+      label: Text(l.resultCopyWin),
     );
   }
 }

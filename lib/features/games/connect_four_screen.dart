@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
@@ -167,33 +168,34 @@ class _ConnectFourState extends State<ConnectFourScreen> {
     return null;
   }
 
-  String get _status {
+  String _statusText(AppLocalizations l) {
     if (_winner == 1) {
-      return _mode == _Mode.ai ? 'You win! 🎉' : 'Player 1 wins! 🎉';
+      return _mode == _Mode.ai ? l.gameYouWin : l.c4P1Wins;
     }
     if (_winner == 2) {
-      return _mode == _Mode.ai ? 'The phone wins' : 'Player 2 wins! 🎉';
+      return _mode == _Mode.ai ? l.gamePhoneWins : l.c4P2Wins;
     }
-    if (_winner == 0) return "It's a draw 🤝";
-    if (_aiThinking) return 'The phone is thinking…';
-    if (_mode == _Mode.ai) return 'Your turn — tap a column';
-    return _turn == 1 ? 'Player 1 · red' : 'Player 2 · yellow';
+    if (_winner == 0) return l.gameDraw;
+    if (_aiThinking) return l.gamePhoneThinking;
+    if (_mode == _Mode.ai) return l.c4Turn;
+    return _turn == 1 ? l.c4P1Turn : l.c4P2Turn;
   }
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final p1Label = _mode == _Mode.ai ? 'You' : 'P1';
-    final p2Label = _mode == _Mode.ai ? 'Phone' : 'P2';
+    final l = AppLocalizations.of(context);
+    final p1Label = _mode == _Mode.ai ? l.gameYou : l.c4P1Label;
+    final p2Label = _mode == _Mode.ai ? l.gamePhone : l.c4P2Label;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Connect 4'),
         actions: [
-          gameHelpAction(context, 'Connect 4', const [
-            'Tap a column to drop your token — it falls to the lowest free slot.',
-            'Line up four of your colour — across, down, or diagonally — to win.',
-            '"Play the phone" is you vs a simple AI. "2 players" passes the phone.',
+          gameHelpAction(context, 'Connect 4', [
+            l.c4Rule1,
+            l.c4Rule2,
+            l.c4Rule3,
           ]),
         ],
       ),
@@ -205,14 +207,14 @@ class _ConnectFourState extends State<ConnectFourScreen> {
               Row(
                 children: [
                   _ModeChip(
-                    label: 'Play the phone',
+                    label: l.gamePlayPhone,
                     icon: Icons.smartphone_rounded,
                     selected: _mode == _Mode.ai,
                     onTap: () => _setMode(_Mode.ai),
                   ),
                   const SizedBox(width: Insets.sm),
                   _ModeChip(
-                    label: '2 players',
+                    label: l.game2Players,
                     icon: Icons.people_alt_rounded,
                     selected: _mode == _Mode.pass,
                     onTap: () => _setMode(_Mode.pass),
@@ -220,7 +222,7 @@ class _ConnectFourState extends State<ConnectFourScreen> {
                 ],
               ),
               const SizedBox(height: Insets.md),
-              Text(_status, style: t.titleMedium),
+              Text(_statusText(l), style: t.titleMedium),
               const SizedBox(height: Insets.md),
               Expanded(
                 child: Center(
@@ -266,7 +268,7 @@ class _ConnectFourState extends State<ConnectFourScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _Score(label: p1Label, value: _p1, color: const Color(0xFFE0574F)),
-                  _Score(label: 'Draws', value: _draws, color: AppColors.inkMuted),
+                  _Score(label: l.gameDraws, value: _draws, color: AppColors.inkMuted),
                   _Score(label: p2Label, value: _p2, color: const Color(0xFFEBB13E)),
                 ],
               ),
@@ -282,8 +284,8 @@ class _ConnectFourState extends State<ConnectFourScreen> {
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: const Text('New game',
-                      style: TextStyle(
+                  child: Text(l.gameNewGame,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 15)),

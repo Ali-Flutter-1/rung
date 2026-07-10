@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
+import '../l10n/app_localizations.dart';
 
 /// The discreet "Help now" button — instant, in-the-moment grounding tools
 /// (Project Brief §5). Amber, for quiet reassurance, not alarm.
@@ -18,7 +19,7 @@ class HelpNowButton extends StatelessWidget {
       foregroundColor: Colors.white,
       onPressed: () => showHelpNowSheet(context),
       icon: const Icon(Icons.spa_outlined),
-      label: const Text('Help now'),
+      label: Text(AppLocalizations.of(context).helpNow),
     );
   }
 }
@@ -40,6 +41,7 @@ class _HelpNowSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return DefaultTabController(
       length: 3,
       child: SizedBox(
@@ -52,18 +54,18 @@ class _HelpNowSheet extends StatelessWidget {
                 children: [
                   const Icon(Icons.spa_outlined, color: AppColors.accentDeep),
                   const SizedBox(width: Insets.sm),
-                  Text('A calm moment', style: t.titleLarge),
+                  Text(l.helpCalmMoment, style: t.titleLarge),
                 ],
               ),
             ),
-            const TabBar(
+            TabBar(
               labelColor: AppColors.primaryDeep,
               indicatorColor: AppColors.primary,
               unselectedLabelColor: AppColors.inkMuted,
               tabs: [
-                Tab(text: 'Breathe'),
-                Tab(text: 'Ground'),
-                Tab(text: 'Say this'),
+                Tab(text: l.helpTabBreathe),
+                Tab(text: l.helpTabGround),
+                Tab(text: l.helpTabSay),
               ],
             ),
             const Expanded(
@@ -132,10 +134,14 @@ class _BreathePaneState extends State<_BreathePane>
                 ),
               ),
               const SizedBox(height: Insets.xl),
-              Text(breathingIn ? 'Breathe in…' : 'Breathe out…',
+              Text(
+                  breathingIn
+                      ? AppLocalizations.of(context).helpBreatheIn
+                      : AppLocalizations.of(context).helpBreatheOut,
                   style: t.titleLarge),
               const SizedBox(height: Insets.sm),
-              Text('Follow the circle. There is no rush.', style: t.bodyMedium),
+              Text(AppLocalizations.of(context).helpBreatheHint,
+                  style: t.bodyMedium),
             ],
           );
         },
@@ -147,23 +153,23 @@ class _BreathePaneState extends State<_BreathePane>
 class _GroundPane extends StatelessWidget {
   const _GroundPane();
 
-  static const _steps = [
-    ('5', 'things you can see'),
-    ('4', 'things you can touch'),
-    ('3', 'things you can hear'),
-    ('2', 'things you can smell'),
-    ('1', 'thing you can taste'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
+    final steps = [
+      ('5', l.helpGround5),
+      ('4', l.helpGround4),
+      ('3', l.helpGround3),
+      ('2', l.helpGround2),
+      ('1', l.helpGround1),
+    ];
     return ListView(
       padding: const EdgeInsets.all(Insets.lg),
       children: [
-        Text('Name, quietly to yourself…', style: t.titleMedium),
+        Text(l.helpGroundTitle, style: t.titleMedium),
         const SizedBox(height: Insets.md),
-        for (final (n, label) in _steps)
+        for (final (n, label) in steps)
           Padding(
             padding: const EdgeInsets.only(bottom: Insets.md),
             child: Row(
@@ -182,8 +188,7 @@ class _GroundPane extends StatelessWidget {
             ),
           ),
         const SizedBox(height: Insets.sm),
-        Text('This brings you back to right now — where you are safe.',
-            style: t.bodyMedium),
+        Text(l.helpGroundHint, style: t.bodyMedium),
       ],
     );
   }
@@ -192,31 +197,22 @@ class _GroundPane extends StatelessWidget {
 class _LinesPane extends StatelessWidget {
   const _LinesPane();
 
-  static const _openers = [
-    'How do you know the people here?',
-    'I love this spot — have you been before?',
-    "I'm hopeless with names — could you remind me?",
-    'What have you been up to this week?',
-  ];
-  static const _exits = [
-    "I'm going to grab a drink — it was good talking to you.",
-    'I need to say a quick hello to someone, excuse me a sec.',
-    "I'll let you mingle — catch you later.",
-  ];
-
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
+    final openers = [l.helpOpener1, l.helpOpener2, l.helpOpener3, l.helpOpener4];
+    final exits = [l.helpExit1, l.helpExit2, l.helpExit3];
     return ListView(
       padding: const EdgeInsets.all(Insets.lg),
       children: [
-        Text('Easy openers', style: t.titleMedium),
+        Text(l.helpOpenersTitle, style: t.titleMedium),
         const SizedBox(height: Insets.sm),
-        for (final line in _openers) _LineChip(line: line),
+        for (final line in openers) _LineChip(line: line),
         const SizedBox(height: Insets.lg),
-        Text('Graceful exits', style: t.titleMedium),
+        Text(l.helpExitsTitle, style: t.titleMedium),
         const SizedBox(height: Insets.sm),
-        for (final line in _exits) _LineChip(line: line),
+        for (final line in exits) _LineChip(line: line),
       ],
     );
   }

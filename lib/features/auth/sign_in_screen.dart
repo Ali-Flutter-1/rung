@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../app/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/subscription.dart';
 import '../../shared/rung_logo.dart';
 import '../legal/legal_screens.dart';
@@ -52,26 +53,29 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   static final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
   String? _validateEmail(String? v) {
+    final l = AppLocalizations.of(context);
     final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Enter your email';
-    if (!_emailRe.hasMatch(s)) return 'That email doesn\'t look right';
+    if (s.isEmpty) return l.authEnterEmail;
+    if (!_emailRe.hasMatch(s)) return l.authBadEmail;
     return null;
   }
 
   String? _validatePassword(String? v) {
+    final l = AppLocalizations.of(context);
     final s = v ?? '';
-    if (s.isEmpty) return 'Enter a password';
-    if (s.length < 6) return 'At least 6 characters';
+    if (s.isEmpty) return l.authEnterPassword;
+    if (s.length < 6) return l.authMin6;
     return null;
   }
 
   String? _validateConfirm(String? v) {
     if (!_signUp) return null;
-    if ((v ?? '') != _password.text) return 'Passwords don\'t match';
+    if ((v ?? '') != _password.text) return AppLocalizations.of(context).authPwMismatch;
     return null;
   }
 
   Future<void> _submit() async {
+    final l = AppLocalizations.of(context);
     FocusScope.of(context).unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
     Haptics.light();
@@ -102,14 +106,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         // us into the app. When pushed (e.g. re-auth), pop back.
         if (Navigator.of(context).canPop()) Navigator.of(context).pop();
       } else if (mounted) {
-        setState(() => _error =
-            'Check your email to confirm, then sign in. (Or disable email '
-            'confirmation in Supabase Auth settings for quick testing.)');
+        setState(() => _error = l.authConfirmEmail);
       }
     } on AuthException catch (e) {
       if (mounted) setState(() => _error = e.message);
     } catch (_) {
-      if (mounted) setState(() => _error = 'Something went wrong. Try again.');
+      if (mounted) setState(() => _error = l.authGenericError);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -161,6 +163,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -173,13 +176,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               children: [
                 const Center(child: RungLogo(size: 72)),
                 const SizedBox(height: Insets.lg),
-                Text(_signUp ? 'Create your account' : 'Welcome back',
+                Text(_signUp ? l.authCreateTitle : l.authWelcomeBack,
                     textAlign: TextAlign.center, style: t.headlineMedium),
                 const SizedBox(height: Insets.xs),
                 Text(
-                  _signUp
-                      ? 'Join the pods and keep your progress safe across devices.'
-                      : 'Sign in to your pods and synced progress.',
+                  _signUp ? l.authSignUpSub : l.authSignInSub,
                   textAlign: TextAlign.center,
                   style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
                 ),
@@ -191,10 +192,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     textInputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.name],
                     onEditingComplete: () => _emailFocus.requestFocus(),
-                    decoration: const InputDecoration(
-                      labelText: 'Display name (optional)',
-                      prefixIcon: Icon(Icons.badge_outlined),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l.authDisplayName,
+                      prefixIcon: const Icon(Icons.badge_outlined),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: Insets.md),
@@ -210,10 +211,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validateEmail,
                   onEditingComplete: () => _passwordFocus.requestFocus(),
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.mail_outline_rounded),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l.authEmail,
+                    prefixIcon: const Icon(Icons.mail_outline_rounded),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: Insets.md),
@@ -234,14 +235,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       ? _confirmFocus.requestFocus()
                       : FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: l.authPassword,
                     prefixIcon: const Icon(Icons.lock_outline_rounded),
-                    helperText: _signUp ? 'At least 6 characters' : null,
+                    helperText: _signUp ? l.authMin6 : null,
                     suffixIcon: IconButton(
                       icon: Icon(_obscure
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined),
-                      tooltip: _obscure ? 'Show password' : 'Hide password',
+                      tooltip: _obscure ? l.authShowPassword : l.authHidePassword,
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                     border: const OutlineInputBorder(),
@@ -259,10 +260,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     validator: _validateConfirm,
                     // Just close the keyboard; only the button submits.
                     onEditingComplete: () => FocusScope.of(context).unfocus(),
-                    decoration: const InputDecoration(
-                      labelText: 'Confirm password',
-                      prefixIcon: Icon(Icons.lock_outline_rounded),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l.authConfirmPassword,
+                      prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -282,7 +283,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white))
-                      : Text(_signUp ? 'Create account' : 'Sign in'),
+                      : Text(_signUp ? l.authCreateCta : l.authSignInCta),
                 ),
                 const SizedBox(height: Insets.sm),
                 TextButton(
@@ -293,9 +294,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                             _error = null;
                             _formKey.currentState?.reset();
                           }),
-                  child: Text(_signUp
-                      ? 'I already have an account'
-                      : "I'm new — create an account"),
+                  child: Text(_signUp ? l.authHaveAccount : l.authNewAccount),
                 ),
                 const SizedBox(height: Insets.sm),
                 _LegalFooter(signUp: _signUp),
@@ -316,6 +315,7 @@ class _LegalFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final muted = t.bodySmall?.copyWith(color: AppColors.inkMuted);
     final link = t.bodySmall?.copyWith(
         color: AppColors.primaryDeep, fontWeight: FontWeight.w600);
@@ -326,18 +326,16 @@ class _LegalFooter extends StatelessWidget {
         style: muted,
         children: [
           TextSpan(
-              text: signUp
-                  ? 'By creating an account you agree to our '
-                  : 'By continuing you agree to our '),
+              text: signUp ? l.authLegalPrefixSignUp : l.authLegalPrefixSignIn),
           TextSpan(
-            text: 'Terms',
+            text: l.authTerms,
             style: link,
             recognizer: TapGestureRecognizer()
               ..onTap = () => open(const TermsScreen()),
           ),
-          const TextSpan(text: ' and '),
+          TextSpan(text: l.authAnd),
           TextSpan(
-            text: 'Privacy Policy',
+            text: l.profilePrivacyTitle,
             style: link,
             recognizer: TapGestureRecognizer()
               ..onTap = () => open(const PrivacyPolicyScreen()),

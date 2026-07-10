@@ -8,6 +8,7 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
 import '../../shared/suds_slider.dart';
 import '../../shared/track_visuals.dart';
@@ -81,9 +82,10 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
         rung == null ? null : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
     final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('How did it go?')),
+      appBar: AppBar(title: Text(l.reflectAppBar)),
       body: attempt == null || rung == null
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -95,7 +97,7 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                       children: [
                         Text(rung.title, style: t.headlineSmall),
                         const SizedBox(height: Insets.xl),
-                        Text('Did you do it?',
+                        Text(l.reflectDidYouDoIt,
                             textAlign: TextAlign.center, style: t.titleMedium),
                         const SizedBox(height: Insets.md),
                         _OutcomeButtons(
@@ -106,8 +108,8 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                         const SizedBox(height: Insets.xl),
                         Text(
                           _outcome == Outcome.skipped
-                              ? 'How anxious did the thought of it feel?'
-                              : 'How bad was it, actually?',
+                              ? l.reflectHowAnxious
+                              : l.reflectHowBad,
                           textAlign: TextAlign.center,
                           style: t.titleMedium,
                         ),
@@ -122,9 +124,9 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                           controller: _note,
                           textCapitalization: TextCapitalization.sentences,
                           maxLines: 2,
-                          decoration: const InputDecoration(
-                            labelText: 'Anything you want to remember? (optional)',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l.reflectNoteLabel,
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                       ],
@@ -142,7 +144,7 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
-                          : const Text('Save'),
+                          : Text(l.commonSave),
                     ),
                   ),
                 ],
@@ -164,13 +166,17 @@ class _OutcomeButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
-        _btn(context, Outcome.done, 'Done', Icons.check_circle_outline),
+        _btn(context, Outcome.done, l.reflectOutcomeDone,
+            Icons.check_circle_outline),
         const SizedBox(width: Insets.sm),
-        _btn(context, Outcome.partial, 'Partial', Icons.adjust_rounded),
+        _btn(context, Outcome.partial, l.reflectOutcomePartial,
+            Icons.adjust_rounded),
         const SizedBox(width: Insets.sm),
-        _btn(context, Outcome.skipped, 'Not today', Icons.nightlight_outlined),
+        _btn(context, Outcome.skipped, l.reflectOutcomeNotToday,
+            Icons.nightlight_outlined),
       ],
     );
   }

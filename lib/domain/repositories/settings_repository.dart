@@ -19,6 +19,11 @@ abstract interface class SettingsRepository {
   ThemeMode get themeMode;
   Future<void> setThemeMode(ThemeMode mode);
 
+  /// Chosen UI language as a locale code (e.g. 'en', 'es', 'ar'); null = follow
+  /// the device language.
+  String? get localeCode;
+  Future<void> setLocaleCode(String? code);
+
   /// Track slug chosen by the onboarding quiz as the user's starting point.
   String? get startingTrackSlug;
   Future<void> setStartingTrackSlug(String? slug);

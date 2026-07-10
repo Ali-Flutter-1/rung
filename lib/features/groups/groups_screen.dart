@@ -12,6 +12,7 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/skeleton.dart';
 import '../../data/remote/cloud_models.dart';
 import '../../data/remote/cloud_repository.dart';
@@ -22,6 +23,19 @@ import 'cloud_chat_screen.dart';
 import 'group_chat_screen.dart';
 import 'pod_models.dart';
 import 'pod_rules_sheet.dart';
+
+/// Localized subscription-tier name (Free / Premium · Monthly / Premium · Yearly).
+String tierLabelL10n(AppLocalizations l, SubscriptionTier tier) => switch (tier) {
+      SubscriptionTier.free => l.tierFree,
+      SubscriptionTier.monthly => l.tierMonthly,
+      SubscriptionTier.yearly => l.tierYearly,
+    };
+
+/// Localized "how many pods" label for a tier ("1 pod" / "3 pods" / "unlimited pods").
+String podsLabelL10n(AppLocalizations l, SubscriptionTier tier) {
+  final max = GroupRules.maxGroups(tier);
+  return max == null ? l.podsUnlimited : l.podsCount(max);
+}
 
 /// Tab 2 — pods of introverts. Capacity + how many pods you can join are gated
 /// by subscription: free → 1 pod (≤25), monthly → 3 pods (≤50), yearly →
@@ -36,7 +50,7 @@ class GroupsScreen extends ConsumerWidget {
 
     final user = ref.watch(authUserProvider).asData?.value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Groups')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).navGroups)),
       // Key by account id → switching accounts rebuilds a FRESH _CloudGroups
       // (re-runs bootstrap/ensureSystemPod), never reusing the old user's pods.
       body: user == null
@@ -52,6 +66,7 @@ class _SignedOut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(Insets.xl),
@@ -61,12 +76,11 @@ class _SignedOut extends StatelessWidget {
             const Icon(Icons.groups_2_outlined,
                 size: 56, color: AppColors.primary),
             const SizedBox(height: Insets.lg),
-            Text('Join a small, kind pod', style: t.headlineSmall,
+            Text(l.groupsSignedOutTitle, style: t.headlineSmall,
                 textAlign: TextAlign.center),
             const SizedBox(height: Insets.sm),
             Text(
-              'Groups need a quick account so pods are safe and yours. Your '
-              'practice stays private and account-free.',
+              l.groupsSignedOutBody,
               textAlign: TextAlign.center,
               style: t.bodyMedium,
             ),
@@ -74,7 +88,7 @@ class _SignedOut extends StatelessWidget {
             FilledButton(
               onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SignInScreen())),
-              child: const Text('Sign in to continue'),
+              child: Text(l.groupsSignInCta),
             ),
           ],
         ),
@@ -157,7 +171,8 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     } catch (e) {
       // Only surface the error when there's nothing cached on screen.
       if (mounted && _mine.isEmpty && _discover.isEmpty) {
-        setState(() => _error = 'Could not load pods. Pull to retry.\n$e');
+        setState(() =>
+            _error = '${AppLocalizations.of(context).groupsLoadError}\n$e');
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -190,11 +205,12 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
   }
 
   Future<void> _join(CloudPod pod) async {
+    final l = AppLocalizations.of(context);
     if (!await _ensureRules()) return;
     try {
       await _repo.joinPod(pod.id);
       await _reload();
-      _snack('Joined ${pod.name}. Say hi when you\'re ready.');
+      _snack(l.groupsJoined(pod.name));
     } on CloudJoinException catch (e) {
       _snack(e.message);
     }
@@ -203,33 +219,34 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
   /// Joins the next open pod the server offers (matchmaking) — never runs dry,
   /// since the server creates a fresh pod when all are full. Tier-gated.
   Future<void> _joinAnother() async {
+    final l = AppLocalizations.of(context);
     if (!await _ensureRules()) return;
     try {
       final gid = await _repo.matchDiscoverPod();
       await _repo.joinPod(gid);
       await _reload();
-      _snack('Joined a new pod. Say hi when you\'re ready.');
+      _snack(l.groupsJoinedNew);
     } on CloudJoinException catch (e) {
       _snack(e.message);
     } catch (_) {
-      _snack('Could not find a pod right now. Try again.');
+      _snack(l.groupsNoPodFound);
     }
   }
 
   Future<void> _leave(CloudPod pod) async {
+    final l = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: Text('Leave ${pod.name}?'),
-        content: const Text(
-            "You'll stop seeing this pod's messages. You can join again later."),
+        title: Text(l.groupsLeaveTitle(pod.name)),
+        content: Text(l.groupsLeaveBody),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: const Text('Cancel')),
+              child: Text(l.commonCancel)),
           FilledButton(
               onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: const Text('Leave')),
+              child: Text(l.groupsLeave)),
         ],
       ),
     );
@@ -237,9 +254,9 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     try {
       await _repo.leavePod(pod.id);
       await _reload();
-      _snack('You left ${pod.name}.');
+      _snack(l.groupsLeft(pod.name));
     } catch (_) {
-      _snack('Could not leave the pod. Try again.');
+      _snack(l.groupsLeaveError);
     }
   }
 
@@ -263,6 +280,7 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     ref.watch(settingsChangesProvider);
     final tier = ref.watch(settingsRepositoryProvider).subscriptionTier;
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
 
     if (_loading) {
       return ListView(
@@ -298,20 +316,20 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
         padding:
             const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, Insets.xl),
         children: [
-          Text('Small pods, kind people', style: t.headlineSmall),
+          Text(l.groupsHeader, style: t.headlineSmall),
           const SizedBox(height: Insets.xs),
           Text(
-            'On ${tier.label.toLowerCase()} you can be in '
-            '${GroupRules.maxGroupsLabel(tier)}.',
+            l.groupsTierPods(
+                tierLabelL10n(l, tier).toLowerCase(), podsLabelL10n(l, tier)),
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.lg),
-          Text('YOUR PODS', style: _section(t, AppColors.primary)),
+          Text(l.groupsYourPods, style: _section(t, AppColors.primary)),
           const SizedBox(height: Insets.sm),
           for (final (i, pod) in _mine.indexed) ...[
             _PodTile(
               name: pod.name,
-              subtitle: '${pod.memberCount}/${pod.capacity} members',
+              subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
               unreadCount: pod.unreadCount,
               system: pod.isSystem,
               joined: true,
@@ -330,23 +348,23 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
             OutlinedButton.icon(
               onPressed: _joinAnother,
               icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Join another pod'),
+              label: Text(l.groupsJoinAnother),
               style:
                   OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(46)),
             ),
           ],
           const SizedBox(height: Insets.md),
-          Text('DISCOVER PODS', style: _section(t, AppColors.inkMuted)),
+          Text(l.groupsDiscoverPods, style: _section(t, AppColors.inkMuted)),
           const SizedBox(height: Insets.sm),
           if (!canJoinMore)
             _UpgradeBanner(tier: tier)
           else if (_discover.isEmpty)
-            Text('No other pods to join right now.', style: t.bodyMedium)
+            Text(l.groupsNoOthers, style: t.bodyMedium)
           else
             for (final (i, pod) in _discover.indexed) ...[
               _PodTile(
                 name: pod.name,
-                subtitle: '${pod.memberCount}/${pod.capacity} members',
+                subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
                 joined: false,
                 memberCount: pod.memberCount,
                 capacity: pod.capacity,
@@ -384,6 +402,7 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
     final tier = ref.watch(settingsRepositoryProvider).subscriptionTier;
     final capacity = GroupRules.podCapacity(tier);
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     final system = systemPod(capacity);
     final joinedCount = 1 + _joinedExtra.length;
     final canJoinMore = GroupRules.canJoinAnother(tier, joinedCount);
@@ -398,20 +417,20 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
             capacity: pod.capacity)));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Groups')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).navGroups)),
       body: ListView(
         padding:
             const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, Insets.xl),
         children: [
-          Text('Small pods, kind people', style: t.headlineSmall),
+          Text(l.groupsHeader, style: t.headlineSmall),
           const SizedBox(height: Insets.xs),
           Text(
-            'Up to $capacity per pod. On ${tier.label.toLowerCase()} you can be '
-            'in ${GroupRules.maxGroupsLabel(tier)}.',
+            l.groupsCapacityTierPods(capacity,
+                tierLabelL10n(l, tier).toLowerCase(), podsLabelL10n(l, tier)),
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.lg),
-          Text('YOUR PODS', style: _section(t, AppColors.primary)),
+          Text(l.groupsYourPods, style: _section(t, AppColors.primary)),
           const SizedBox(height: Insets.sm),
           _PodTile(
               name: system.name,
@@ -429,7 +448,7 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
                 onOpen: () => open(pod)),
           ],
           const SizedBox(height: Insets.md),
-          Text('DISCOVER PODS', style: _section(t, AppColors.inkMuted)),
+          Text(l.groupsDiscoverPods, style: _section(t, AppColors.inkMuted)),
           const SizedBox(height: Insets.sm),
           if (!canJoinMore)
             _UpgradeBanner(tier: tier)
@@ -443,7 +462,7 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
                   setState(() => _joinedExtra.add(pod.name));
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       behavior: SnackBarBehavior.floating,
-                      content: Text('Joined ${pod.name}.')));
+                      content: Text(l.groupsJoinedShort(pod.name))));
                 },
               ),
               const SizedBox(height: Insets.sm),
@@ -637,23 +656,23 @@ class _PodTile extends StatelessWidget {
                   minimumSize: const Size(72, 40),
                   padding: const EdgeInsets.symmetric(horizontal: Insets.md),
                 ),
-                child: const Text('Join'),
+                child: Text(AppLocalizations.of(context).groupsJoin),
               )
             else if (!system && onLeave != null)
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert_rounded,
                     color: AppColors.inkFaint),
-                tooltip: 'Pod options',
+                tooltip: AppLocalizations.of(context).groupsPodOptions,
                 onSelected: (v) {
                   if (v == 'leave') onLeave!();
                 },
-                itemBuilder: (_) => const [
+                itemBuilder: (_) => [
                   PopupMenuItem(
                     value: 'leave',
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.logout_rounded),
-                      title: Text('Leave pod'),
+                      leading: const Icon(Icons.logout_rounded),
+                      title: Text(AppLocalizations.of(context).groupsLeavePod),
                     ),
                   ),
                 ],
@@ -675,6 +694,7 @@ class _UpgradeBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(Insets.lg),
       decoration: BoxDecoration(
@@ -690,7 +710,7 @@ class _UpgradeBanner extends StatelessWidget {
                   color: AppColors.accentDeep),
               const SizedBox(width: Insets.sm),
               Expanded(
-                child: Text("You're in your ${GroupRules.maxGroupsLabel(tier)}",
+                child: Text(l.groupsInYourPods(podsLabelL10n(l, tier)),
                     style:
                         t.titleMedium?.copyWith(color: AppColors.accentDeep)),
               ),
@@ -698,8 +718,7 @@ class _UpgradeBanner extends StatelessWidget {
           ),
           const SizedBox(height: Insets.sm),
           Text(
-            'Go Premium to join more — monthly unlocks 3 pods, yearly unlocks '
-            'as many as you like.',
+            l.groupsUpgradeBody,
             style: t.bodyMedium?.copyWith(color: AppColors.ink),
           ),
           const SizedBox(height: Insets.md),
@@ -707,7 +726,7 @@ class _UpgradeBanner extends StatelessWidget {
             style:
                 FilledButton.styleFrom(backgroundColor: AppColors.accentDeep),
             onPressed: () => context.go(Routes.subscription),
-            child: const Text('See Premium'),
+            child: Text(l.shareSeePremium),
           ),
         ],
       ),
@@ -736,10 +755,8 @@ class _SafetyNote extends StatelessWidget {
           Expanded(
             child: Text(
               live
-                  ? 'Be kind. You can report or block anyone from their profile. '
-                      'Locked profiles stay private.'
-                  : 'Preview. Pods become live, moderated chats once sign-in is '
-                      'configured.',
+                  ? AppLocalizations.of(context).groupsSafetyLive
+                  : AppLocalizations.of(context).groupsSafetyPreview,
               style: t.bodyMedium,
             ),
           ),
