@@ -183,11 +183,14 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
 
   Future<void> _reload() async {
     // Fire both RPCs together (they don't depend on each other) → one round-trip
-    // of latency instead of two.
-    final mineF = _repo.myPods();
-    final discoverF = _repo.discoverPods();
-    final mine = await mineF;
-    final discover = await discoverF;
+    // of latency instead of two. Future.wait awaits BOTH before completing, so
+    // neither is orphaned if the other throws (awaiting them sequentially would
+    // leave an unhandled rejection that crashes past the caller's try/catch).
+    // Unlike record `.wait`, it rethrows the original exception, so the caller's
+    // isOfflineError() check still recognises an offline failure.
+    final results = await Future.wait([_repo.myPods(), _repo.discoverPods()]);
+    final mine = results[0];
+    final discover = results[1];
     if (mounted) {
       setState(() {
         _mine = mine;

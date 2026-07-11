@@ -252,10 +252,15 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   Future<void> _loadEngagement() async {
     final repo = ref.read(cloudRepositoryProvider);
     try {
-      final promptF = repo.todaysPrompt(widget.pod.id);
-      final stateF = repo.todaysCheckInState(widget.pod.id);
-      final prompt = await promptF;
-      final state = await stateF;
+      // Fire both together, but await them as a pair via record `.wait`. Awaiting
+      // two separately-started futures in sequence orphans the second one if the
+      // first throws (offline, both reject at once) — an unhandled rejection that
+      // crashes the app despite this try/catch. `.wait` awaits both, so a failure
+      // is caught here.
+      final (prompt, state) = await (
+        repo.todaysPrompt(widget.pod.id),
+        repo.todaysCheckInState(widget.pod.id),
+      ).wait;
       if (!mounted) return;
       setState(() {
         _prompt = prompt;
@@ -269,7 +274,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
 
   @override
   void dispose() {
-    unawaited(_repo.markPodSeen(widget.pod.id));
+    // .ignore() — not unawaited() — so an offline rejection is dropped rather
+    // than becoming an unhandled async error that crashes the app.
+    _repo.markPodSeen(widget.pod.id).ignore();
     _reactionSub?.cancel();
     _scroll.removeListener(_onScroll);
     _input.dispose();
@@ -300,7 +307,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         await repo.editMessage(editing.id, text);
       } else {
         await repo.sendMessage(widget.pod.id, text, replyTo: replyingTo?.id);
-        unawaited(repo.markPodSeen(widget.pod.id));
+        repo.markPodSeen(widget.pod.id).ignore(); // fire-and-forget, errors dropped
         ref.read(analyticsProvider).capture(Ev.messageSent); // never log body
       }
     } on CloudActionException catch (e) {
