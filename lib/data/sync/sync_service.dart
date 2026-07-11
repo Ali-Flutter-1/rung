@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/errors.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../local/app_database.dart';
 import '../remote/cloud_repository.dart';
@@ -55,7 +56,10 @@ class SyncService {
       _db.upsertContent(tracks: tracks, rungs: rungs);
       await _settings.setLastContentSyncAt(nowMs);
     } catch (e) {
-      if (kDebugMode) debugPrint('[sync] content pull failed: $e');
+      // Offline is expected and stays silent; log only real failures.
+      if (kDebugMode && !isOfflineError(e)) {
+        debugPrint('[sync] content pull failed: $e');
+      }
       // keep the bundled seed / prior cache
     }
   }
@@ -115,7 +119,9 @@ class SyncService {
       // lastError shown in Profile) so a missing migration (e.g. backup_attempts
       // table) isn't an invisible "dashboard shows 0" symptom.
       lastError = e.toString();
-      if (kDebugMode) debugPrint('[sync] backup/restore failed: $e');
+      if (kDebugMode && !isOfflineError(e)) {
+        debugPrint('[sync] backup/restore failed: $e');
+      }
       return false;
     } finally {
       _running = false;

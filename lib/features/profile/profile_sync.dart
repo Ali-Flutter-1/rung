@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../core/errors.dart';
 
 /// Pushes ONLY identity (name, bio, lock, tier) to the Supabase `profiles` row.
 /// Never touches the stat columns, so it is safe to call right after an account
@@ -20,7 +21,10 @@ Future<void> pushIdentityToCloud(WidgetRef ref) async {
       avatarId: s.avatarId,
     );
   } catch (e) {
-    if (kDebugMode) debugPrint('[profile] identity push failed: $e');
+    // Offline is expected and stays silent; log only real failures.
+    if (kDebugMode && !isOfflineError(e)) {
+      debugPrint('[profile] identity push failed: $e');
+    }
   }
 }
 
@@ -47,6 +51,8 @@ Future<void> pushProfileToCloud(WidgetRef ref) async {
       totalChallenges: challenges,
     );
   } catch (e) {
-    if (kDebugMode) debugPrint('[profile] stats push failed: $e');
+    if (kDebugMode && !isOfflineError(e)) {
+      debugPrint('[profile] stats push failed: $e');
+    }
   }
 }
