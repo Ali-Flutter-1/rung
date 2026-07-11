@@ -31,5 +31,16 @@ class AuthRepository {
     await _auth.signInWithPassword(email: email, password: password);
   }
 
-  Future<void> signOut() => _auth.signOut();
+  /// Signs out. The Supabase SDK clears the local session first, then tries to
+  /// revoke it server-side — that revoke throws when offline. We swallow it:
+  /// the local session is already gone, so the user IS signed out, and the
+  /// stale server token expires on its own. Without this, logging out with no
+  /// connection crashes the app.
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (_) {
+      // Offline / server unreachable — local session already cleared.
+    }
+  }
 }

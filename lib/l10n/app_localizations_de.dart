@@ -1982,4 +1982,12 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get editBioHint =>
       'Eine Zeile über dich — bleibt privat, wenn du dein Profil sperrst.';
+
+  @override
+  String get errorOffline =>
+      'Du bist offline. Stelle eine Internetverbindung her und versuche es erneut.';
+
+  @override
+  String get errorGeneric =>
+      'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
 }

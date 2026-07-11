@@ -1946,4 +1946,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get editBioHint =>
       'A line about you — kept private if you lock your profile.';
+
+  @override
+  String get errorOffline =>
+      'You\'re offline. Connect to the internet and try again.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
 }

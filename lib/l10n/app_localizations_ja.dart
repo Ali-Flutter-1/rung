@@ -1880,4 +1880,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get editBioHint => 'あなたについて一行 — プロフィールをロックすると非公開のままです。';
+
+  @override
+  String get errorOffline => 'オフラインです。インターネットに接続して、もう一度お試しください。';
+
+  @override
+  String get errorGeneric => '問題が発生しました。もう一度お試しください。';
 }

@@ -1970,4 +1970,11 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get editBioHint =>
       'Satu baris tentang anda — kekal peribadi jika anda mengunci profil anda.';
+
+  @override
+  String get errorOffline =>
+      'Anda di luar talian. Sambung ke internet dan cuba lagi.';
+
+  @override
+  String get errorGeneric => 'Sesuatu tidak kena. Cuba lagi.';
 }

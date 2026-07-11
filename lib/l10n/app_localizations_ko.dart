@@ -1887,4 +1887,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get editBioHint => '당신에 대한 한 줄 — 프로필을 잠그면 비공개로 유지돼요.';
+
+  @override
+  String get errorOffline => '오프라인 상태예요. 인터넷에 연결한 뒤 다시 시도해 주세요.';
+
+  @override
+  String get errorGeneric => '문제가 발생했어요. 다시 시도해 주세요.';
 }

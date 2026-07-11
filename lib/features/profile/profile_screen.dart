@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/errors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/analytics/analytics.dart';
@@ -195,8 +196,10 @@ class ProfileScreen extends ConsumerWidget {
                   duration: const Duration(seconds: 6),
                   content: Text(ok
                       ? l.profileRestoreOk
-                      : l.profileRestoreFail(
-                          sync.lastError ?? 'unknown error')),
+                      : isOfflineError(sync.lastError)
+                          ? l.errorOffline
+                          : l.profileRestoreFail(
+                              sync.lastError ?? 'unknown error')),
                 ));
               },
             ),
@@ -232,11 +235,19 @@ class ProfileScreen extends ConsumerWidget {
                 // Flush any unsaved progress to the cloud BEFORE logging out, so
                 // it can be restored next sign-in (no lost rungs on switch), and
                 // remove this device's push token so it stops getting pushes.
-                await ref.read(syncServiceProvider).backupNow();
-                await ref.read(pushServiceProvider).unregister();
-                await ref.read(purchaseServiceProvider).logOut();
-                ref.read(analyticsProvider).reset();
-                await ref.read(authRepositoryProvider).signOut();
+                // Each step is best-effort: offline, the flush/unregister simply
+                // don't happen, but signing out locally must still succeed — so
+                // the whole chain is guarded and never crashes the app.
+                try {
+                  await ref.read(syncServiceProvider).backupNow();
+                  await ref.read(pushServiceProvider).unregister();
+                  await ref.read(purchaseServiceProvider).logOut();
+                  ref.read(analyticsProvider).reset();
+                  await ref.read(authRepositoryProvider).signOut();
+                } catch (_) {
+                  // signOut clears the local session even when offline; the
+                  // auth stream will move us out regardless.
+                }
               },
             ),
           const Divider(height: Insets.lg),

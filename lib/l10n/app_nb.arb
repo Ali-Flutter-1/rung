@@ -567,5 +567,7 @@
   "editDisplayName": "Visningsnavn",
   "editDisplayNameHint": "Hva skal gruppene kalle deg?",
   "editBio": "Kort bio (valgfritt)",
-  "editBioHint": "En linje om deg — holdes privat hvis du låser profilen din."
+  "editBioHint": "En linje om deg — holdes privat hvis du låser profilen din.",
+  "errorOffline": "Du er frakoblet. Koble til internett og prøv igjen.",
+  "errorGeneric": "Noe gikk galt. Prøv igjen."
 }

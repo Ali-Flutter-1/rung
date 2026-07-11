@@ -1972,6 +1972,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get editBioHint =>
       'Uma linha sobre você — fica privada se você bloquear seu perfil.';
+
+  @override
+  String get errorOffline =>
+      'Você está offline. Conecte-se à internet e tente novamente.';
+
+  @override
+  String get errorGeneric => 'Algo deu errado. Tente novamente.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -3941,4 +3948,11 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get editBioHint =>
       'Uma linha sobre ti — fica privada se bloqueares o teu perfil.';
+
+  @override
+  String get errorOffline =>
+      'Estás offline. Liga-te à internet e tenta novamente.';
+
+  @override
+  String get errorGeneric => 'Algo correu mal. Tenta novamente.';
 }

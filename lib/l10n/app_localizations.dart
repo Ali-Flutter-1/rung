@@ -3534,6 +3534,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A line about you — kept private if you lock your profile.'**
   String get editBioHint;
+
+  /// No description provided for @errorOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Connect to the internet and try again.'**
+  String get errorOffline;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
 }
 
 class _AppLocalizationsDelegate

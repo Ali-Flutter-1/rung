@@ -567,5 +567,7 @@
   "editDisplayName": "Anzeigename",
   "editDisplayNameHint": "Wie sollen dich die Pods nennen?",
   "editBio": "Kurze Bio (optional)",
-  "editBioHint": "Eine Zeile über dich — bleibt privat, wenn du dein Profil sperrst."
+  "editBioHint": "Eine Zeile über dich — bleibt privat, wenn du dein Profil sperrst.",
+  "errorOffline": "Du bist offline. Stelle eine Internetverbindung her und versuche es erneut.",
+  "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
 }

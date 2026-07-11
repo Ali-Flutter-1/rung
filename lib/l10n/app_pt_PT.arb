@@ -567,5 +567,7 @@
   "editDisplayName": "Nome a apresentar",
   "editDisplayNameHint": "Como te devem chamar nos grupos?",
   "editBio": "Biografia curta (opcional)",
-  "editBioHint": "Uma linha sobre ti — fica privada se bloqueares o teu perfil."
+  "editBioHint": "Uma linha sobre ti — fica privada se bloqueares o teu perfil.",
+  "errorOffline": "Estás offline. Liga-te à internet e tenta novamente.",
+  "errorGeneric": "Algo correu mal. Tenta novamente."
 }

@@ -1932,4 +1932,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editBioHint => 'سطر عنك — يبقى خاصاً إذا قفلت ملفك الشخصي.';
+
+  @override
+  String get errorOffline =>
+      'أنت غير متصل بالإنترنت. اتصل بالإنترنت وحاول مرة أخرى.';
+
+  @override
+  String get errorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
 }

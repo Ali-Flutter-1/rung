@@ -567,5 +567,7 @@
   "editDisplayName": "Nama tampilan",
   "editDisplayNameHint": "Ingin dipanggil apa di pods?",
   "editBio": "Bio singkat (opsional)",
-  "editBioHint": "Satu baris tentangmu — tetap privat jika kamu mengunci profilmu."
+  "editBioHint": "Satu baris tentangmu — tetap privat jika kamu mengunci profilmu.",
+  "errorOffline": "Kamu sedang offline. Sambungkan ke internet dan coba lagi.",
+  "errorGeneric": "Terjadi kesalahan. Coba lagi."
 }

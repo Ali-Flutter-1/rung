@@ -567,5 +567,7 @@
   "editDisplayName": "Nom affiché",
   "editDisplayNameHint": "Comment les pods doivent-ils t'appeler ?",
   "editBio": "Courte bio (facultatif)",
-  "editBioHint": "Une ligne sur toi — gardée privée si tu verrouilles ton profil."
+  "editBioHint": "Une ligne sur toi — gardée privée si tu verrouilles ton profil.",
+  "errorOffline": "Tu es hors ligne. Connecte-toi à Internet et réessaie.",
+  "errorGeneric": "Une erreur s'est produite. Réessaie."
 }

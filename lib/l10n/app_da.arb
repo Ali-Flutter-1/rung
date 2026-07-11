@@ -567,5 +567,7 @@
   "editDisplayName": "Vist navn",
   "editDisplayNameHint": "Hvad skal grupperne kalde dig?",
   "editBio": "Kort bio (valgfrit)",
-  "editBioHint": "En linje om dig — holdes privat, hvis du låser din profil."
+  "editBioHint": "En linje om dig — holdes privat, hvis du låser din profil.",
+  "errorOffline": "Du er offline. Opret forbindelse til internettet, og prøv igen.",
+  "errorGeneric": "Noget gik galt. Prøv igen."
 }

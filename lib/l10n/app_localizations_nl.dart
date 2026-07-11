@@ -1970,4 +1970,11 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get editBioHint =>
       'Een regel over jou — blijft privé als je je profiel vergrendelt.';
+
+  @override
+  String get errorOffline =>
+      'Je bent offline. Maak verbinding met internet en probeer opnieuw.';
+
+  @override
+  String get errorGeneric => 'Er ging iets mis. Probeer opnieuw.';
 }

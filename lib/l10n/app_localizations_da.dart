@@ -1966,4 +1966,11 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get editBioHint =>
       'En linje om dig — holdes privat, hvis du låser din profil.';
+
+  @override
+  String get errorOffline =>
+      'Du er offline. Opret forbindelse til internettet, og prøv igen.';
+
+  @override
+  String get errorGeneric => 'Noget gik galt. Prøv igen.';
 }

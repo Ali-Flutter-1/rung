@@ -1972,4 +1972,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get editBioHint =>
       'Una línea sobre ti — se mantiene privada si bloqueas tu perfil.';
+
+  @override
+  String get errorOffline =>
+      'Estás sin conexión. Conéctate a internet e inténtalo de nuevo.';
+
+  @override
+  String get errorGeneric => 'Algo salió mal. Inténtalo de nuevo.';
 }

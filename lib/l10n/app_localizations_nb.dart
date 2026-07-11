@@ -1959,4 +1959,11 @@ class AppLocalizationsNb extends AppLocalizations {
   @override
   String get editBioHint =>
       'En linje om deg — holdes privat hvis du låser profilen din.';
+
+  @override
+  String get errorOffline =>
+      'Du er frakoblet. Koble til internett og prøv igjen.';
+
+  @override
+  String get errorGeneric => 'Noe gikk galt. Prøv igjen.';
 }

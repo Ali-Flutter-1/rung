@@ -567,5 +567,7 @@
   "editDisplayName": "표시 이름",
   "editDisplayNameHint": "그룹에서 어떻게 불리고 싶나요?",
   "editBio": "짧은 소개 (선택)",
-  "editBioHint": "당신에 대한 한 줄 — 프로필을 잠그면 비공개로 유지돼요."
+  "editBioHint": "당신에 대한 한 줄 — 프로필을 잠그면 비공개로 유지돼요.",
+  "errorOffline": "오프라인 상태예요. 인터넷에 연결한 뒤 다시 시도해 주세요.",
+  "errorGeneric": "문제가 발생했어요. 다시 시도해 주세요."
 }

@@ -567,5 +567,7 @@
   "editDisplayName": "Nome de exibição",
   "editDisplayNameHint": "Como os pods devem te chamar?",
   "editBio": "Bio curta (opcional)",
-  "editBioHint": "Uma linha sobre você — fica privada se você bloquear seu perfil."
+  "editBioHint": "Uma linha sobre você — fica privada se você bloquear seu perfil.",
+  "errorOffline": "Você está offline. Conecte-se à internet e tente novamente.",
+  "errorGeneric": "Algo deu errado. Tente novamente."
 }

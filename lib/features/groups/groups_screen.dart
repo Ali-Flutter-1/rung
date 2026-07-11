@@ -12,6 +12,7 @@ import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/errors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/skeleton.dart';
 import '../../data/remote/cloud_models.dart';
@@ -171,8 +172,9 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     } catch (e) {
       // Only surface the error when there's nothing cached on screen.
       if (mounted && _mine.isEmpty && _discover.isEmpty) {
-        setState(() =>
-            _error = '${AppLocalizations.of(context).groupsLoadError}\n$e');
+        setState(() => _error = isOfflineError(e)
+            ? AppLocalizations.of(context).errorOffline
+            : AppLocalizations.of(context).groupsLoadError);
       }
     } finally {
       if (mounted) setState(() => _loading = false);

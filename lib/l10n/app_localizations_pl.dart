@@ -1976,4 +1976,11 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get editBioHint =>
       'Jedno zdanie o tobie — pozostaje prywatne, jeśli zablokujesz profil.';
+
+  @override
+  String get errorOffline =>
+      'Jesteś offline. Połącz się z internetem i spróbuj ponownie.';
+
+  @override
+  String get errorGeneric => 'Coś poszło nie tak. Spróbuj ponownie.';
 }

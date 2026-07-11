@@ -1962,4 +1962,11 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get editBioHint =>
       'Satu baris tentangmu — tetap privat jika kamu mengunci profilmu.';
+
+  @override
+  String get errorOffline =>
+      'Kamu sedang offline. Sambungkan ke internet dan coba lagi.';
+
+  @override
+  String get errorGeneric => 'Terjadi kesalahan. Coba lagi.';
 }

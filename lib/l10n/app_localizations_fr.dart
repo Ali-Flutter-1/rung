@@ -1982,4 +1982,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get editBioHint =>
       'Une ligne sur toi — gardée privée si tu verrouilles ton profil.';
+
+  @override
+  String get errorOffline =>
+      'Tu es hors ligne. Connecte-toi à Internet et réessaie.';
+
+  @override
+  String get errorGeneric => 'Une erreur s\'est produite. Réessaie.';
 }

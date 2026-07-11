@@ -1962,4 +1962,11 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get editBioHint =>
       'En rad om dig — hålls privat om du låser din profil.';
+
+  @override
+  String get errorOffline =>
+      'Du är offline. Anslut till internet och försök igen.';
+
+  @override
+  String get errorGeneric => 'Något gick fel. Försök igen.';
 }

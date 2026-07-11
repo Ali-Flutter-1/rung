@@ -567,5 +567,7 @@
   "editDisplayName": "Weergavenaam",
   "editDisplayNameHint": "Hoe moeten de pods je noemen?",
   "editBio": "Korte bio (optioneel)",
-  "editBioHint": "Een regel over jou — blijft privé als je je profiel vergrendelt."
+  "editBioHint": "Een regel over jou — blijft privé als je je profiel vergrendelt.",
+  "errorOffline": "Je bent offline. Maak verbinding met internet en probeer opnieuw.",
+  "errorGeneric": "Er ging iets mis. Probeer opnieuw."
 }

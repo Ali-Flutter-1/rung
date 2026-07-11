@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../core/analytics/analytics.dart';
+import '../../core/errors.dart';
 import '../../core/safety/content_guard.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
@@ -304,6 +305,13 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
       }
     } on CloudActionException catch (e) {
       _snack(e.message);
+      return;
+    } catch (e) {
+      // Any other failure (offline, server) must not crash the chat — and must
+      // not eat the message. Put the text back so the user can retry.
+      if (!mounted) return;
+      _input.text = text;
+      _snack(friendlyError(e, AppLocalizations.of(context)));
       return;
     }
     // Surface support if a NEW message signals distress (never blocks sending).
