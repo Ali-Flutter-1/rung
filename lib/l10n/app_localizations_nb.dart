@@ -1966,4 +1966,8 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Noe gikk galt. Prøv igjen.';
+
+  @override
+  String get errorSaveFailed =>
+      'Kunne ikke lagre — enheten din har kanskje lite lagringsplass. Frigjør plass og prøv igjen.';
 }

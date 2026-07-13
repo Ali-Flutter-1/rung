@@ -180,9 +180,13 @@ final authUserProvider = StreamProvider<User?>((ref) async* {
   }
   final auth = ref.watch(authRepositoryProvider);
   yield auth.currentUser;
-  await for (final _ in auth.authChanges()) {
-    yield auth.currentUser;
-  }
+  // A failed token refresh (offline) pushes an error onto this stream. Ignore
+  // it: the local session is still valid until it genuinely expires, so a
+  // temporary network drop must NOT flip a signed-in user to "signed out".
+  yield* auth
+      .authChanges()
+      .map((_) => auth.currentUser)
+      .handleError((Object _) {});
 });
 
 // ── Repository seam (§12.3) — local impls today, swappable later ──────────

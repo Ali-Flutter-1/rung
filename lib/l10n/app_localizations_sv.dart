@@ -1969,4 +1969,8 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Något gick fel. Försök igen.';
+
+  @override
+  String get errorSaveFailed =>
+      'Kunde inte spara — din enhet kan ha lite lagring. Frigör utrymme och försök igen.';
 }

@@ -1939,4 +1939,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorGeneric => 'حدث خطأ ما. حاول مرة أخرى.';
+
+  @override
+  String get errorSaveFailed =>
+      'تعذّر الحفظ — قد تكون مساحة جهازك منخفضة. أفرِغ بعض المساحة وحاول مرة أخرى.';
 }

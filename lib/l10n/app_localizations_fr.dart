@@ -1989,4 +1989,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Une erreur s\'est produite. Réessaie.';
+
+  @override
+  String get errorSaveFailed =>
+      'Échec de l\'enregistrement — ton appareil manque peut-être d\'espace. Libère de l\'espace et réessaie.';
 }

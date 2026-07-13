@@ -569,5 +569,6 @@
   "editBio": "Courte bio (facultatif)",
   "editBioHint": "Une ligne sur toi — gardée privée si tu verrouilles ton profil.",
   "errorOffline": "Tu es hors ligne. Connecte-toi à Internet et réessaie.",
-  "errorGeneric": "Une erreur s'est produite. Réessaie."
+  "errorGeneric": "Une erreur s'est produite. Réessaie.",
+  "errorSaveFailed": "Échec de l'enregistrement — ton appareil manque peut-être d'espace. Libère de l'espace et réessaie."
 }

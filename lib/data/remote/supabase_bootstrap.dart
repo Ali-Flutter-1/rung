@@ -1,6 +1,8 @@
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/app_config.dart';
+import '../../core/net/timeout_client.dart';
 
 bool _ready = false;
 
@@ -14,6 +16,9 @@ Future<bool> initSupabase() async {
       // Accepts classic anon (eyJ...) or new publishable (sb_publishable_...) keys.
       // ignore: deprecated_member_use
       anonKey: AppConfig.supabaseAnonKey,
+      // Bound every REST call (auth/db/functions) so a slow network fails fast
+      // instead of hanging the UI. Realtime WebSockets are unaffected.
+      httpClient: TimeoutHttpClient(http.Client()),
     );
     _ready = true;
   } catch (_) {

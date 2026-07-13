@@ -1977,4 +1977,8 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Er ging iets mis. Probeer opnieuw.';
+
+  @override
+  String get errorSaveFailed =>
+      'Opslaan mislukt — je apparaat heeft mogelijk weinig opslag. Maak ruimte vrij en probeer opnieuw.';
 }

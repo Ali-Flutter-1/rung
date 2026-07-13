@@ -1979,4 +1979,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get errorSaveFailed =>
+      'No se pudo guardar — puede que tu dispositivo tenga poco espacio. Libera espacio e inténtalo de nuevo.';
 }

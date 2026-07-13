@@ -1968,4 +1968,8 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Qualcosa è andato storto. Riprova.';
+
+  @override
+  String get errorSaveFailed =>
+      'Impossibile salvare — il dispositivo potrebbe avere poco spazio. Libera spazio e riprova.';
 }

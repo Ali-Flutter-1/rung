@@ -1977,4 +1977,8 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Sesuatu tidak kena. Cuba lagi.';
+
+  @override
+  String get errorSaveFailed =>
+      'Tidak dapat menyimpan — storan peranti anda mungkin rendah. Kosongkan ruang dan cuba lagi.';
 }

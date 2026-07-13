@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'core/analytics/analytics_bootstrap.dart';
+import 'core/errors.dart';
 import 'core/haptics.dart';
 import 'core/purchases/purchase_service.dart';
 import 'core/push/push_bootstrap.dart';
@@ -25,6 +26,18 @@ Future<void> main() async {
   FlutterError.onError = (details) {
     if (details.exceptionAsString().contains('parentDataDirty')) return;
     defaultOnError?.call(details);
+  };
+
+  // Supabase auto-refreshes the auth session on a background timer. Offline,
+  // that refresh throws AuthRetryableFetchException from an internal retry loop
+  // we never await — so it surfaces as an UNHANDLED async error that would
+  // crash the app. The same goes for any other cloud call whose rejection
+  // escapes. These are expected and self-heal when the network returns, so
+  // swallow offline errors here (the last-resort net); anything else propagates
+  // to the platform's default handler so real bugs still surface.
+  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+    if (isOfflineError(error)) return true; // handled — do not crash
+    return false; // unknown error → default handling
   };
 
   // Portrait-only — block landscape on every screen (native config in

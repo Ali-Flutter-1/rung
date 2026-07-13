@@ -1973,4 +1973,8 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Noget gik galt. Prøv igen.';
+
+  @override
+  String get errorSaveFailed =>
+      'Kunne ikke gemme — din enhed har måske lidt lagerplads. Frigør plads, og prøv igen.';
 }

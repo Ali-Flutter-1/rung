@@ -1983,4 +1983,8 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Coś poszło nie tak. Spróbuj ponownie.';
+
+  @override
+  String get errorSaveFailed =>
+      'Nie udało się zapisać — na urządzeniu może brakować miejsca. Zwolnij miejsce i spróbuj ponownie.';
 }

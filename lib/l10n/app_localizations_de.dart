@@ -1990,4 +1990,8 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get errorGeneric =>
       'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
+
+  @override
+  String get errorSaveFailed =>
+      'Speichern fehlgeschlagen — dein Gerät hat vielleicht wenig Speicher. Schaffe Platz und versuche es erneut.';
 }

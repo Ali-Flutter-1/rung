@@ -944,5 +944,6 @@
     }
   },
   "errorOffline": "You're offline. Connect to the internet and try again.",
-  "errorGeneric": "Something went wrong. Please try again."
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorSaveFailed": "Couldn't save — your device may be low on storage. Free up space and try again."
 }

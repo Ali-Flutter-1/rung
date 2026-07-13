@@ -1886,4 +1886,8 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get errorGeneric => '問題が発生しました。もう一度お試しください。';
+
+  @override
+  String get errorSaveFailed =>
+      '保存できませんでした — 端末の空き容量が不足している可能性があります。空き容量を増やして、もう一度お試しください。';
 }

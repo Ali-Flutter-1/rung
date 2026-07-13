@@ -569,5 +569,6 @@
   "editBio": "Kort bio (valfritt)",
   "editBioHint": "En rad om dig — hålls privat om du låser din profil.",
   "errorOffline": "Du är offline. Anslut till internet och försök igen.",
-  "errorGeneric": "Något gick fel. Försök igen."
+  "errorGeneric": "Något gick fel. Försök igen.",
+  "errorSaveFailed": "Kunde inte spara — din enhet kan ha lite lagring. Frigör utrymme och försök igen."
 }

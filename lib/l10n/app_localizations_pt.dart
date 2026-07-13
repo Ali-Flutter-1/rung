@@ -1979,6 +1979,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Algo deu errado. Tente novamente.';
+
+  @override
+  String get errorSaveFailed =>
+      'Não foi possível salvar — seu dispositivo pode estar com pouco espaço. Libere espaço e tente novamente.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -3955,4 +3959,8 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get errorGeneric => 'Algo correu mal. Tenta novamente.';
+
+  @override
+  String get errorSaveFailed =>
+      'Não foi possível guardar — o teu dispositivo pode ter pouco espaço. Liberta espaço e tenta novamente.';
 }

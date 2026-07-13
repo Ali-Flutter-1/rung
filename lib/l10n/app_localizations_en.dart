@@ -1953,4 +1953,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get errorSaveFailed =>
+      'Couldn\'t save — your device may be low on storage. Free up space and try again.';
 }

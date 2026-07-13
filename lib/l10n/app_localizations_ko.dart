@@ -1893,4 +1893,8 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get errorGeneric => '문제가 발생했어요. 다시 시도해 주세요.';
+
+  @override
+  String get errorSaveFailed =>
+      '저장하지 못했어요 — 기기의 저장 공간이 부족할 수 있어요. 공간을 확보한 뒤 다시 시도해 주세요.';
 }

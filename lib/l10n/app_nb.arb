@@ -569,5 +569,6 @@
   "editBio": "Kort bio (valgfritt)",
   "editBioHint": "En linje om deg — holdes privat hvis du låser profilen din.",
   "errorOffline": "Du er frakoblet. Koble til internett og prøv igjen.",
-  "errorGeneric": "Noe gikk galt. Prøv igjen."
+  "errorGeneric": "Noe gikk galt. Prøv igjen.",
+  "errorSaveFailed": "Kunne ikke lagre — enheten din har kanskje lite lagringsplass. Frigjør plass og prøv igjen."
 }

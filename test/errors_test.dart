@@ -32,6 +32,10 @@ void main() {
       'ClientException: Connection closed before full header was received',
       'SocketException: Connection refused',
       'AuthRetryableFetchException: Network request failed',
+      // The exact shape Supabase's background token refresh throws offline —
+      // this used to escape as an unhandled async error and crash the app.
+      "AuthRetryableFetchException(message: ClientException with SocketException: "
+          "Failed host lookup: 'proj.supabase.co', statusCode: null)",
       'Connection reset by peer',
       'Network is unreachable',
       'XMLHttpRequest error.', // web

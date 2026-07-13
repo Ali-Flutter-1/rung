@@ -569,5 +569,6 @@
   "editBio": "Biografia curta (opcional)",
   "editBioHint": "Uma linha sobre ti — fica privada se bloqueares o teu perfil.",
   "errorOffline": "Estás offline. Liga-te à internet e tenta novamente.",
-  "errorGeneric": "Algo correu mal. Tenta novamente."
+  "errorGeneric": "Algo correu mal. Tenta novamente.",
+  "errorSaveFailed": "Não foi possível guardar — o teu dispositivo pode ter pouco espaço. Liberta espaço e tenta novamente."
 }

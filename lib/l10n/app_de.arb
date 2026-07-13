@@ -569,5 +569,6 @@
   "editBio": "Kurze Bio (optional)",
   "editBioHint": "Eine Zeile über dich — bleibt privat, wenn du dein Profil sperrst.",
   "errorOffline": "Du bist offline. Stelle eine Internetverbindung her und versuche es erneut.",
-  "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+  "errorSaveFailed": "Speichern fehlgeschlagen — dein Gerät hat vielleicht wenig Speicher. Schaffe Platz und versuche es erneut."
 }

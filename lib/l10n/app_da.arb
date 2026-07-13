@@ -569,5 +569,6 @@
   "editBio": "Kort bio (valgfrit)",
   "editBioHint": "En linje om dig — holdes privat, hvis du låser din profil.",
   "errorOffline": "Du er offline. Opret forbindelse til internettet, og prøv igen.",
-  "errorGeneric": "Noget gik galt. Prøv igen."
+  "errorGeneric": "Noget gik galt. Prøv igen.",
+  "errorSaveFailed": "Kunne ikke gemme — din enhed har måske lidt lagerplads. Frigør plads, og prøv igen."
 }

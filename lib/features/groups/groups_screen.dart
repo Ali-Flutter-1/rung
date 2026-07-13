@@ -49,14 +49,24 @@ class GroupsScreen extends ConsumerWidget {
     final cloud = ref.watch(cloudEnabledProvider);
     if (!cloud) return const _LocalGroupsShell();
 
-    final user = ref.watch(authUserProvider).asData?.value;
+    final userAsync = ref.watch(authUserProvider);
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context).navGroups)),
       // Key by account id → switching accounts rebuilds a FRESH _CloudGroups
       // (re-runs bootstrap/ensureSystemPod), never reusing the old user's pods.
-      body: user == null
-          ? const _SignedOut()
-          : _CloudGroups(key: ValueKey(user.id)),
+      //
+      // While auth is still resolving — the StreamProvider's first frame, or the
+      // session restoring on cold start — show a spinner, NOT the signed-out CTA.
+      // The old `.asData?.value` collapsed "loading" and "signed out" into the
+      // same null, so Groups flashed "sign up" for a frame before the session
+      // arrived. `.when` keeps the two apart.
+      body: userAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, _) => const _SignedOut(),
+        data: (user) => user == null
+            ? const _SignedOut()
+            : _CloudGroups(key: ValueKey(user.id)),
+      ),
     );
   }
 }

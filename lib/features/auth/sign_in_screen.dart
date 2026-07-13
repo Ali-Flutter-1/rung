@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../app/providers.dart';
+import '../../core/errors.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
@@ -109,9 +110,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         setState(() => _error = l.authConfirmEmail);
       }
     } on AuthException catch (e) {
-      if (mounted) setState(() => _error = e.message);
-    } catch (_) {
-      if (mounted) setState(() => _error = l.authGenericError);
+      // Offline sign-in throws AuthRetryableFetchException — which IS an
+      // AuthException — whose .message is the raw "Failed host lookup" string.
+      // Show the friendly offline line instead of leaking that to the user.
+      if (mounted) {
+        setState(() => _error = isOfflineError(e) ? l.errorOffline : e.message);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() =>
+            _error = isOfflineError(e) ? l.errorOffline : l.authGenericError);
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

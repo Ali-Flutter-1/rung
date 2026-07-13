@@ -569,5 +569,6 @@
   "editBio": "Korte bio (optioneel)",
   "editBioHint": "Een regel over jou — blijft privé als je je profiel vergrendelt.",
   "errorOffline": "Je bent offline. Maak verbinding met internet en probeer opnieuw.",
-  "errorGeneric": "Er ging iets mis. Probeer opnieuw."
+  "errorGeneric": "Er ging iets mis. Probeer opnieuw.",
+  "errorSaveFailed": "Opslaan mislukt — je apparaat heeft mogelijk weinig opslag. Maak ruimte vrij en probeer opnieuw."
 }

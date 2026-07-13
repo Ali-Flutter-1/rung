@@ -3546,6 +3546,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get errorGeneric;
+
+  /// No description provided for @errorSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — your device may be low on storage. Free up space and try again.'**
+  String get errorSaveFailed;
 }
 
 class _AppLocalizationsDelegate

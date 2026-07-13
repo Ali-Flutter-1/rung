@@ -49,13 +49,26 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
 
   Future<void> _save(Color accent) async {
     if (_outcome == null) return;
+    final l = AppLocalizations.of(context);
     setState(() => _saving = true);
-    await ref.read(attemptRepositoryProvider).completeChallenge(
-          attemptId: widget.attemptId,
-          actualSuds: _outcome == Outcome.skipped ? _suds : _suds,
-          outcome: _outcome!,
-          reflectionNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
-        );
+    try {
+      await ref.read(attemptRepositoryProvider).completeChallenge(
+            attemptId: widget.attemptId,
+            actualSuds: _outcome == Outcome.skipped ? _suds : _suds,
+            outcome: _outcome!,
+            reflectionNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
+          );
+    } catch (_) {
+      // Local write failed (device storage full, etc). Keep the user on the
+      // reflection with their input intact, rather than losing a cleared rung.
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(l.errorSaveFailed),
+      ));
+      return;
+    }
     final analytics = ref.read(analyticsProvider);
     analytics.capture(Ev.reflectCompleted,
         {'actual': _suds, 'outcome': _outcome!.name});

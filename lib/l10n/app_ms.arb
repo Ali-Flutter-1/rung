@@ -569,5 +569,6 @@
   "editBio": "Bio ringkas (pilihan)",
   "editBioHint": "Satu baris tentang anda — kekal peribadi jika anda mengunci profil anda.",
   "errorOffline": "Anda di luar talian. Sambung ke internet dan cuba lagi.",
-  "errorGeneric": "Sesuatu tidak kena. Cuba lagi."
+  "errorGeneric": "Sesuatu tidak kena. Cuba lagi.",
+  "errorSaveFailed": "Tidak dapat menyimpan — storan peranti anda mungkin rendah. Kosongkan ruang dan cuba lagi."
 }

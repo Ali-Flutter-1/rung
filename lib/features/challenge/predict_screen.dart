@@ -33,15 +33,27 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
   }
 
   Future<void> _submit() async {
+    final l = AppLocalizations.of(context);
     setState(() => _saving = true);
-    await ref.read(attemptRepositoryProvider).startChallenge(
-          rungId: widget.rungId,
-          predictedSuds: _suds,
-          predictedNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
-        );
+    try {
+      await ref.read(attemptRepositoryProvider).startChallenge(
+            rungId: widget.rungId,
+            predictedSuds: _suds,
+            predictedNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
+          );
+    } catch (_) {
+      // Local write failed (e.g. device storage full). Don't navigate away as
+      // if it saved — tell the user and let them retry.
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(l.errorSaveFailed),
+      ));
+      return;
+    }
     ref.read(analyticsProvider).capture(Ev.predictStarted, {'predicted': _suds});
     if (!mounted) return;
-    final l = AppLocalizations.of(context);
     context.go(Routes.dashboard);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

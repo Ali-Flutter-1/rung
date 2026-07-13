@@ -1969,4 +1969,8 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get errorGeneric => 'Terjadi kesalahan. Coba lagi.';
+
+  @override
+  String get errorSaveFailed =>
+      'Tidak dapat menyimpan — penyimpanan perangkatmu mungkin hampir penuh. Kosongkan ruang dan coba lagi.';
 }
