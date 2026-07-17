@@ -43,6 +43,12 @@ Future<void> showShareProgressSheet(BuildContext context, WidgetRef ref) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: Theme.of(context).colorScheme.surface,
+    // isScrollControlled lets the sheet grow to its content — which for the
+    // preview card is taller than a small phone. Cap it so it never takes over
+    // the screen; the content scrolls inside (see the SingleChildScrollView).
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+    ),
     builder: (_) => const _ShareSheet(),
   );
 }
@@ -120,58 +126,62 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
     final best = ref.watch(bestStreakProvider).asData?.value ?? 0;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l.shareTitle, style: t.titleLarge),
-            const SizedBox(height: Insets.xs),
-            Text(l.shareSubtitle,
-                style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
-            const SizedBox(height: Insets.lg),
-            RepaintBoundary(
-              key: _cardKey,
-              child: _ShareCard(
-                streak: streak,
-                cleared: cleared,
-                best: best,
-                gradient: _cardStyles[_style].colors,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l.shareTitle, style: t.titleLarge),
+              const SizedBox(height: Insets.xs),
+              // bodyMedium is ALREADY the theme's muted colour, which flips with
+              // brightness. Overriding it with AppColors.inkMuted (a fixed
+              // light-mode grey) made this unreadable in dark mode.
+              Text(l.shareSubtitle, style: t.bodyMedium),
+              const SizedBox(height: Insets.lg),
+              RepaintBoundary(
+                key: _cardKey,
+                child: _ShareCard(
+                  streak: streak,
+                  cleared: cleared,
+                  best: best,
+                  gradient: _cardStyles[_style].colors,
+                ),
               ),
-            ),
-            const SizedBox(height: Insets.md),
-            // Style picker — first is free, the rest unlock with Premium.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (var i = 0; i < _cardStyles.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: _StyleSwatch(
-                      style: _cardStyles[i],
-                      selected: i == _style,
-                      locked: !_cardStyles[i].free && !isPremium,
-                      onTap: () => _pickStyle(i, isPremium),
+              const SizedBox(height: Insets.md),
+              // Style picker — first is free, the rest unlock with Premium.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < _cardStyles.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: _StyleSwatch(
+                        style: _cardStyles[i],
+                        selected: i == _style,
+                        locked: !_cardStyles[i].free && !isPremium,
+                        onTap: () => _pickStyle(i, isPremium),
+                      ),
                     ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: Insets.lg),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _busy ? null : _share,
-                icon: _busy
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white))
-                    : const Icon(Icons.ios_share_rounded, size: 18),
-                label: Text(l.shareCta),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: Insets.lg),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _busy ? null : _share,
+                  icon: _busy
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white))
+                      : const Icon(Icons.ios_share_rounded, size: 18),
+                  label: Text(l.shareCta),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
