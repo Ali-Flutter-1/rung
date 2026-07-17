@@ -18,7 +18,15 @@ class ContentGuard {
     caseSensitive: false,
   );
 
-  static bool isAbusive(String text) => _profanity.hasMatch(text);
+  // Phone keyboards autocorrect the straight ' into a curly ’ (U+2019), so the
+  // text we actually receive is "can’t", not "can't". Matching only the straight
+  // form silently missed real distress signals — normalize first so every
+  // pattern above works regardless of which apostrophe the keyboard produced.
+  static final RegExp _apostrophes = RegExp(r'[‘’ʼ´`]');
 
-  static bool isDistress(String text) => _distress.hasMatch(text);
+  static String _normalize(String text) => text.replaceAll(_apostrophes, "'");
+
+  static bool isAbusive(String text) => _profanity.hasMatch(_normalize(text));
+
+  static bool isDistress(String text) => _distress.hasMatch(_normalize(text));
 }
