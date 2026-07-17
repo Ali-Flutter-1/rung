@@ -61,8 +61,12 @@ class LocalProgressRepository implements ProgressRepository {
   /// Longest run of consecutive calendar days present in [dayKeys].
   int _bestStreakFrom(Set<String> dayKeys) {
     if (dayKeys.isEmpty) return 0;
+    // Parse as UTC — a bare 'yyyy-MM-dd' parses to LOCAL midnight, and the gap
+    // between two consecutive local midnights across a spring-forward is 23h,
+    // which `.inDays` truncates to 0. The day then counts as neither
+    // consecutive nor a break, silently shortening the best streak.
     final dates = dayKeys
-        .map((k) => DateTime.tryParse(k))
+        .map((k) => DateTime.tryParse('${k}T00:00:00Z'))
         .whereType<DateTime>()
         .toList()
       ..sort();
@@ -95,7 +99,13 @@ class LocalProgressRepository implements ProgressRepository {
   }
 
   int _streakFrom(Set<String> days, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
+    // Date-only stepping happens in UTC. The components come from the user's
+    // LOCAL date (which is what _activeDayKeys records), but the arithmetic must
+    // not run in a zone that observes daylight saving: there a day is 23 or 25
+    // hours, so `subtract(days: 1)` shifts the wall clock and dayKey() lands on
+    // the wrong calendar day — silently skipping one and under-counting the
+    // streak. UTC has no DST, so every step is exactly one calendar day.
+    final today = DateTime.utc(now.year, now.month, now.day);
     bool has(DateTime d) => days.contains(dayKey(d));
     DateTime cursor;
     if (has(today)) {
@@ -280,7 +290,9 @@ class LocalProgressRepository implements ProgressRepository {
     final now = DateTime.now();
     if (_freezesRemaining(now) <= 0) return false;
     // Freeze yesterday — the day that would otherwise break the streak.
-    final missed = dayKey(now.subtract(const Duration(days: 1)));
+    // Calendar arithmetic in UTC (see _streakFrom): DateTime normalises a day
+    // of 0 or less into the previous month, and no DST can shift it.
+    final missed = dayKey(DateTime.utc(now.year, now.month, now.day - 1));
     final frozen = _frozenDays()..add(missed);
     _db.transaction(() {
       _db
@@ -297,9 +309,10 @@ class LocalProgressRepository implements ProgressRepository {
   @override
   Future<void> autoProtectStreak({required int weeklyAllowance}) async {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yKey = dayKey(today.subtract(const Duration(days: 1)));
-    final beforeKey = dayKey(today.subtract(const Duration(days: 2)));
+    // Calendar arithmetic in UTC (see _streakFrom) so a DST day can't shift
+    // which calendar day we treat as "yesterday".
+    final yKey = dayKey(DateTime.utc(now.year, now.month, now.day - 1));
+    final beforeKey = dayKey(DateTime.utc(now.year, now.month, now.day - 2));
     final days = _activeDayKeys(); // already includes frozen days
     if (days.contains(yKey)) return; // yesterday already counts — nothing to do
     if (!days.contains(beforeKey)) return; // no live streak to protect
