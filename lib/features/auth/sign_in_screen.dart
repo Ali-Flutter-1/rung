@@ -77,13 +77,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Future<void> _submit() async {
     final l = AppLocalizations.of(context);
-    FocusScope.of(context).unfocus();
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    Haptics.light();
+    // Engage the busy state on the very first frame after the tap, before the
+    // keyboard dismissal or validation runs, so the button reacts instantly. If
+    // validation then fails we clear it in the same synchronous pass — Flutter
+    // coalesces the two setStates into one rebuild, so an invalid form still
+    // never flashes a spinner.
     setState(() {
       _busy = true;
       _error = null;
     });
+    FocusScope.of(context).unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      setState(() => _busy = false);
+      return;
+    }
+    Haptics.light();
     final auth = ref.read(authRepositoryProvider);
     try {
       if (_signUp) {
@@ -123,6 +131,36 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       }
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// "Forgot password?" — collect the email (prefilled from the form) and email
+  /// a reset link. The confirmation is deliberately the same whether or not the
+  /// address has an account, so we never reveal who is registered.
+  Future<void> _forgotPassword() async {
+    FocusScope.of(context).unfocus();
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final auth = ref.read(authRepositoryProvider);
+    final email = await showDialog<String>(
+      context: context,
+      builder: (_) => _ForgotPasswordDialog(initialEmail: _email.text.trim()),
+    );
+    if (email == null || !mounted) return;
+    try {
+      await auth.resetPassword(email);
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 6),
+        content: Text(l.authResetSent),
+      ));
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(isOfflineError(e) ? l.errorOffline : l.authGenericError),
+      ));
     }
   }
 
@@ -276,6 +314,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     ),
                   ),
                 ],
+                if (!_signUp)
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: TextButton(
+                      onPressed: _busy ? null : _forgotPassword,
+                      child: Text(l.authForgotPassword),
+                    ),
+                  ),
                 if (_error != null) ...[
                   const SizedBox(height: Insets.md),
                   _ErrorBanner(message: _error!),
@@ -312,6 +358,81 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Collects an email and returns it (or null on cancel). Validates the address
+/// before letting the send go through, so we don't fire a reset for garbage.
+class _ForgotPasswordDialog extends StatefulWidget {
+  const _ForgotPasswordDialog({required this.initialEmail});
+  final String initialEmail;
+
+  @override
+  State<_ForgotPasswordDialog> createState() => _ForgotPasswordDialogState();
+}
+
+class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
+  late final TextEditingController _email =
+      TextEditingController(text: widget.initialEmail);
+  final _formKey = GlobalKey<FormState>();
+
+  static final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+  @override
+  void dispose() {
+    _email.dispose();
+    super.dispose();
+  }
+
+  void _send() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    Navigator.of(context).pop(_email.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.authResetTitle),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.authResetBody),
+            const SizedBox(height: Insets.md),
+            TextFormField(
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              enableSuggestions: false,
+              autofocus: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (v) {
+                final s = (v ?? '').trim();
+                if (s.isEmpty) return l.authEnterEmail;
+                if (!_emailRe.hasMatch(s)) return l.authBadEmail;
+                return null;
+              },
+              onFieldSubmitted: (_) => _send(),
+              decoration: InputDecoration(
+                labelText: l.authEmail,
+                prefixIcon: const Icon(Icons.mail_outline_rounded),
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l.commonCancel),
+        ),
+        FilledButton(onPressed: _send, child: Text(l.authResetSend)),
+      ],
     );
   }
 }

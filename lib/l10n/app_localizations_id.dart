@@ -614,6 +614,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get profileLogout => 'Keluar';
 
   @override
+  String get profileChangePwTitle => 'Ubah kata sandi';
+
+  @override
+  String get profileChangePwSub => 'Setel kata sandi baru untuk akunmu';
+
+  @override
+  String get profileChangePwSaved => 'Kata sandi diperbarui';
+
+  @override
   String get profileSignedIn => 'Masuk';
 
   @override
@@ -959,6 +968,32 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Konfirmasi kata sandi';
+
+  @override
+  String get authForgotPassword => 'Lupa kata sandi?';
+
+  @override
+  String get authResetTitle => 'Setel ulang kata sandi';
+
+  @override
+  String get authResetBody =>
+      'Masukkan email akunmu dan kami akan mengirimkan tautan untuk membuat kata sandi baru.';
+
+  @override
+  String get authResetSend => 'Kirim tautan';
+
+  @override
+  String get authResetSent =>
+      'Jika email itu memiliki akun, tautannya sedang dalam perjalanan.';
+
+  @override
+  String get authNewPassword => 'Kata sandi baru';
+
+  @override
+  String get authConfirmNewPassword => 'Konfirmasi kata sandi baru';
+
+  @override
+  String get authUpdatePasswordCta => 'Perbarui kata sandi';
 
   @override
   String get authCreateCta => 'Buat akun';

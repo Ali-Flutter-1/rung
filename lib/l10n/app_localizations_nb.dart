@@ -616,6 +616,15 @@ class AppLocalizationsNb extends AppLocalizations {
   String get profileLogout => 'Logg ut';
 
   @override
+  String get profileChangePwTitle => 'Bytt passord';
+
+  @override
+  String get profileChangePwSub => 'Lag et nytt passord for kontoen din';
+
+  @override
+  String get profileChangePwSaved => 'Passordet er oppdatert';
+
+  @override
   String get profileSignedIn => 'Innlogget';
 
   @override
@@ -957,6 +966,32 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Bekreft passord';
+
+  @override
+  String get authForgotPassword => 'Glemt passord?';
+
+  @override
+  String get authResetTitle => 'Tilbakestill passord';
+
+  @override
+  String get authResetBody =>
+      'Skriv inn e-posten til kontoen din, så sender vi deg en lenke for å lage et nytt passord.';
+
+  @override
+  String get authResetSend => 'Send lenke';
+
+  @override
+  String get authResetSent =>
+      'Hvis den e-posten har en konto, er lenken allerede på vei.';
+
+  @override
+  String get authNewPassword => 'Nytt passord';
+
+  @override
+  String get authConfirmNewPassword => 'Bekreft nytt passord';
+
+  @override
+  String get authUpdatePasswordCta => 'Oppdater passord';
 
   @override
   String get authCreateCta => 'Opprett konto';

@@ -589,6 +589,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileLogout => '로그아웃';
 
   @override
+  String get profileChangePwTitle => '비밀번호 변경';
+
+  @override
+  String get profileChangePwSub => '계정의 새 비밀번호를 설정하세요';
+
+  @override
+  String get profileChangePwSaved => '비밀번호가 업데이트되었습니다';
+
+  @override
   String get profileSignedIn => '로그인됨';
 
   @override
@@ -916,6 +925,30 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get authConfirmPassword => '비밀번호 확인';
+
+  @override
+  String get authForgotPassword => '비밀번호를 잊으셨나요?';
+
+  @override
+  String get authResetTitle => '비밀번호 재설정';
+
+  @override
+  String get authResetBody => '계정 이메일을 입력하면 새 비밀번호를 설정할 수 있는 링크를 보내드립니다.';
+
+  @override
+  String get authResetSend => '링크 보내기';
+
+  @override
+  String get authResetSent => '해당 이메일로 등록된 계정이 있으면 링크를 보내드렸습니다.';
+
+  @override
+  String get authNewPassword => '새 비밀번호';
+
+  @override
+  String get authConfirmNewPassword => '새 비밀번호 확인';
+
+  @override
+  String get authUpdatePasswordCta => '비밀번호 업데이트';
 
   @override
   String get authCreateCta => '계정 만들기';

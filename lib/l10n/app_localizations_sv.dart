@@ -616,6 +616,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get profileLogout => 'Logga ut';
 
   @override
+  String get profileChangePwTitle => 'Byt lösenord';
+
+  @override
+  String get profileChangePwSub => 'Ange ett nytt lösenord för ditt konto';
+
+  @override
+  String get profileChangePwSaved => 'Lösenordet uppdaterat';
+
+  @override
   String get profileSignedIn => 'Inloggad';
 
   @override
@@ -956,6 +965,32 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Bekräfta lösenord';
+
+  @override
+  String get authForgotPassword => 'Glömt lösenordet?';
+
+  @override
+  String get authResetTitle => 'Återställ lösenord';
+
+  @override
+  String get authResetBody =>
+      'Ange e-postadressen för ditt konto så skickar vi en länk för att skapa ett nytt lösenord.';
+
+  @override
+  String get authResetSend => 'Skicka länk';
+
+  @override
+  String get authResetSent =>
+      'Om den e-postadressen har ett konto är länken redan på väg.';
+
+  @override
+  String get authNewPassword => 'Nytt lösenord';
+
+  @override
+  String get authConfirmNewPassword => 'Bekräfta nytt lösenord';
+
+  @override
+  String get authUpdatePasswordCta => 'Uppdatera lösenord';
 
   @override
   String get authCreateCta => 'Skapa konto';

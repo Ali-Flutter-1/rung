@@ -5,6 +5,8 @@
 // (_handleAccountSession) reaches the real backend, and logout/delete-account
 // call Supabase RPCs through a global singleton, so those are integration
 // concerns, not unit-testable here.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,11 +23,17 @@ class _FakeAuth implements AuthRepository {
   _FakeAuth({this.onAuth});
   final Future<void> Function()? onAuth;
 
+  /// The last email a reset link was requested for (null until requested).
+  String? resetEmail;
+
   @override
   User? get currentUser => null;
 
   @override
   bool get isSignedIn => false;
+
+  @override
+  Future<void> resetPassword(String email) async => resetEmail = email;
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -93,6 +101,45 @@ void main() {
       expect(find.text('Welcome back'), findsOneWidget);
       expect(find.text('Confirm password'), findsNothing,
           reason: 'sign-in has no confirm field');
+    });
+  });
+
+  group('the button reacts the instant it is tapped', () {
+    testWidgets('a valid submit shows the spinner while the call is in flight',
+        (tester) async {
+      // A call that never completes lets us observe the in-flight state.
+      final gate = Completer<void>();
+      await pumpAuth(tester, _FakeAuth(onAuth: () => gate.future));
+      await switchToSignIn(tester);
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'a@b.com');
+      await tester.enterText(find.byType(TextFormField).at(1), 'secret123');
+
+      await tester.tap(find.byType(FilledButton));
+      await tester.pump(); // exactly one frame — do NOT settle (the call hangs)
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget,
+          reason: 'the spinner must be up before the backend answers');
+      final button = tester.widget<FilledButton>(find.byType(FilledButton));
+      expect(button.onPressed, isNull, reason: 'a second tap must be blocked');
+
+      gate.complete();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('an invalid form never flashes a spinner', (tester) async {
+      var called = false;
+      await pumpAuth(tester, _FakeAuth(onAuth: () async {
+        called = true;
+      }));
+
+      await tester.tap(find.byType(FilledButton)); // empty form
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing,
+          reason: 'busy engages then clears in one synchronous pass — no flash');
+      expect(find.text('Enter your email'), findsOneWidget);
+      expect(called, isFalse, reason: 'the backend was never reached');
     });
   });
 
@@ -187,6 +234,50 @@ void main() {
       await pumpWithError(tester, const AuthException('Invalid login credentials'));
       final button = tester.widget<FilledButton>(find.byType(FilledButton));
       expect(button.onPressed, isNotNull);
+    });
+  });
+
+  group('forgot password', () {
+    testWidgets('the link is absent in sign-up mode', (tester) async {
+      await pumpAuth(tester, _FakeAuth()); // opens on sign-up
+      expect(find.text('Forgot password?'), findsNothing,
+          reason: 'password recovery is a sign-in concern');
+    });
+
+    testWidgets('sends a reset link for the entered email', (tester) async {
+      final auth = _FakeAuth();
+      await pumpAuth(tester, auth);
+      await switchToSignIn(tester);
+
+      expect(find.text('Forgot password?'), findsOneWidget);
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      // The dialog's email field is the newly-added one.
+      await tester.enterText(find.byType(TextFormField).last, 'reset@me.com');
+      await tester.tap(find.text('Send reset link'));
+      await tester.pumpAndSettle();
+
+      expect(auth.resetEmail, 'reset@me.com',
+          reason: 'the backend was asked to email a link');
+      expect(find.textContaining('reset link is on its way'), findsOneWidget);
+    });
+
+    testWidgets('a malformed email in the dialog blocks the send',
+        (tester) async {
+      final auth = _FakeAuth();
+      await pumpAuth(tester, auth);
+      await switchToSignIn(tester);
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).last, 'nope');
+      await tester.tap(find.text('Send reset link'));
+      await tester.pumpAndSettle();
+
+      expect(auth.resetEmail, isNull, reason: 'invalid email never reaches the backend');
+      expect(find.text('Send reset link'), findsOneWidget,
+          reason: 'the dialog stays open on a bad address');
     });
   });
 

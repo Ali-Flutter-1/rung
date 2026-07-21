@@ -587,6 +587,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileLogout => 'ログアウト';
 
   @override
+  String get profileChangePwTitle => 'パスワードの変更';
+
+  @override
+  String get profileChangePwSub => 'アカウントの新しいパスワードを設定します';
+
+  @override
+  String get profileChangePwSaved => 'パスワードを更新しました';
+
+  @override
   String get profileSignedIn => 'ログイン中';
 
   @override
@@ -914,6 +923,31 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'パスワードを確認';
+
+  @override
+  String get authForgotPassword => 'パスワードをお忘れですか？';
+
+  @override
+  String get authResetTitle => 'パスワードをリセット';
+
+  @override
+  String get authResetBody =>
+      'アカウントのメールアドレスを入力してください。新しいパスワードを設定するためのリンクをお送りします。';
+
+  @override
+  String get authResetSend => 'リンクを送信';
+
+  @override
+  String get authResetSent => 'そのメールアドレスに登録があれば、リンクをお送りしました。';
+
+  @override
+  String get authNewPassword => '新しいパスワード';
+
+  @override
+  String get authConfirmNewPassword => '新しいパスワード（確認）';
+
+  @override
+  String get authUpdatePasswordCta => 'パスワードを更新';
 
   @override
   String get authCreateCta => 'アカウントを作成';

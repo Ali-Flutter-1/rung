@@ -611,6 +611,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLogout => 'Log out';
 
   @override
+  String get profileChangePwTitle => 'Change password';
+
+  @override
+  String get profileChangePwSub => 'Set a new password for your account';
+
+  @override
+  String get profileChangePwSaved => 'Password updated';
+
+  @override
   String get profileSignedIn => 'Signed in';
 
   @override
@@ -950,6 +959,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Confirm password';
+
+  @override
+  String get authForgotPassword => 'Forgot password?';
+
+  @override
+  String get authResetTitle => 'Reset password';
+
+  @override
+  String get authResetBody =>
+      'Enter your account email and we\'ll send you a link to set a new password.';
+
+  @override
+  String get authResetSend => 'Send reset link';
+
+  @override
+  String get authResetSent =>
+      'If that email has an account, a reset link is on its way.';
+
+  @override
+  String get authNewPassword => 'New password';
+
+  @override
+  String get authConfirmNewPassword => 'Confirm new password';
+
+  @override
+  String get authUpdatePasswordCta => 'Update password';
 
   @override
   String get authCreateCta => 'Create account';

@@ -617,6 +617,15 @@ class AppLocalizationsDa extends AppLocalizations {
   String get profileLogout => 'Log ud';
 
   @override
+  String get profileChangePwTitle => 'Skift adgangskode';
+
+  @override
+  String get profileChangePwSub => 'Opret en ny adgangskode til din konto';
+
+  @override
+  String get profileChangePwSaved => 'Adgangskoden er opdateret';
+
+  @override
   String get profileSignedIn => 'Logget ind';
 
   @override
@@ -959,6 +968,32 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Bekræft adgangskode';
+
+  @override
+  String get authForgotPassword => 'Glemt adgangskode?';
+
+  @override
+  String get authResetTitle => 'Nulstil adgangskode';
+
+  @override
+  String get authResetBody =>
+      'Indtast e-mailen på din konto, så sender vi dig et link til at oprette en ny adgangskode.';
+
+  @override
+  String get authResetSend => 'Send link';
+
+  @override
+  String get authResetSent =>
+      'Hvis den e-mail har en konto, er linket allerede på vej.';
+
+  @override
+  String get authNewPassword => 'Ny adgangskode';
+
+  @override
+  String get authConfirmNewPassword => 'Bekræft ny adgangskode';
+
+  @override
+  String get authUpdatePasswordCta => 'Opdater adgangskode';
 
   @override
   String get authCreateCta => 'Opret konto';

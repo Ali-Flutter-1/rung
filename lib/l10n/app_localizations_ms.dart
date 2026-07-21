@@ -619,6 +619,16 @@ class AppLocalizationsMs extends AppLocalizations {
   String get profileLogout => 'Log keluar';
 
   @override
+  String get profileChangePwTitle => 'Tukar kata laluan';
+
+  @override
+  String get profileChangePwSub =>
+      'Tetapkan kata laluan baharu untuk akaun anda';
+
+  @override
+  String get profileChangePwSaved => 'Kata laluan dikemas kini';
+
+  @override
   String get profileSignedIn => 'Log masuk';
 
   @override
@@ -963,6 +973,32 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Sahkan kata laluan';
+
+  @override
+  String get authForgotPassword => 'Lupa kata laluan?';
+
+  @override
+  String get authResetTitle => 'Set semula kata laluan';
+
+  @override
+  String get authResetBody =>
+      'Masukkan e-mel akaun anda dan kami akan menghantar pautan untuk menetapkan kata laluan baharu.';
+
+  @override
+  String get authResetSend => 'Hantar pautan';
+
+  @override
+  String get authResetSent =>
+      'Jika e-mel itu mempunyai akaun, pautan sedang dalam perjalanan.';
+
+  @override
+  String get authNewPassword => 'Kata laluan baharu';
+
+  @override
+  String get authConfirmNewPassword => 'Sahkan kata laluan baharu';
+
+  @override
+  String get authUpdatePasswordCta => 'Kemas kini kata laluan';
 
   @override
   String get authCreateCta => 'Cipta akaun';

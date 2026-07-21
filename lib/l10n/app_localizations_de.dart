@@ -623,6 +623,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profileLogout => 'Abmelden';
 
   @override
+  String get profileChangePwTitle => 'Passwort ändern';
+
+  @override
+  String get profileChangePwSub =>
+      'Lege ein neues Passwort für dein Konto fest';
+
+  @override
+  String get profileChangePwSaved => 'Passwort aktualisiert';
+
+  @override
   String get profileSignedIn => 'Angemeldet';
 
   @override
@@ -970,6 +980,32 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Passwort bestätigen';
+
+  @override
+  String get authForgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get authResetTitle => 'Passwort zurücksetzen';
+
+  @override
+  String get authResetBody =>
+      'Gib die E-Mail deines Kontos ein und wir senden dir einen Link, um ein neues Passwort festzulegen.';
+
+  @override
+  String get authResetSend => 'Link senden';
+
+  @override
+  String get authResetSent =>
+      'Falls diese E-Mail ein Konto hat, ist der Link schon unterwegs.';
+
+  @override
+  String get authNewPassword => 'Neues Passwort';
+
+  @override
+  String get authConfirmNewPassword => 'Neues Passwort bestätigen';
+
+  @override
+  String get authUpdatePasswordCta => 'Passwort aktualisieren';
 
   @override
   String get authCreateCta => 'Konto erstellen';

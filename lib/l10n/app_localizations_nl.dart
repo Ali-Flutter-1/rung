@@ -617,6 +617,16 @@ class AppLocalizationsNl extends AppLocalizations {
   String get profileLogout => 'Uitloggen';
 
   @override
+  String get profileChangePwTitle => 'Wachtwoord wijzigen';
+
+  @override
+  String get profileChangePwSub =>
+      'Stel een nieuw wachtwoord in voor je account';
+
+  @override
+  String get profileChangePwSaved => 'Wachtwoord bijgewerkt';
+
+  @override
   String get profileSignedIn => 'Ingelogd';
 
   @override
@@ -963,6 +973,32 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Wachtwoord bevestigen';
+
+  @override
+  String get authForgotPassword => 'Wachtwoord vergeten?';
+
+  @override
+  String get authResetTitle => 'Wachtwoord opnieuw instellen';
+
+  @override
+  String get authResetBody =>
+      'Voer het e-mailadres van je account in en we sturen je een link om een nieuw wachtwoord in te stellen.';
+
+  @override
+  String get authResetSend => 'Link versturen';
+
+  @override
+  String get authResetSent =>
+      'Als er een account bij dat e-mailadres hoort, is de link al onderweg.';
+
+  @override
+  String get authNewPassword => 'Nieuw wachtwoord';
+
+  @override
+  String get authConfirmNewPassword => 'Nieuw wachtwoord bevestigen';
+
+  @override
+  String get authUpdatePasswordCta => 'Wachtwoord bijwerken';
 
   @override
   String get authCreateCta => 'Account aanmaken';

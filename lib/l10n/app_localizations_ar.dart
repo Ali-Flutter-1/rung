@@ -604,6 +604,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileLogout => 'تسجيل الخروج';
 
   @override
+  String get profileChangePwTitle => 'تغيير كلمة المرور';
+
+  @override
+  String get profileChangePwSub => 'عيّن كلمة مرور جديدة لحسابك';
+
+  @override
+  String get profileChangePwSaved => 'تم تحديث كلمة المرور';
+
+  @override
   String get profileSignedIn => 'مُسجَّل الدخول';
 
   @override
@@ -939,6 +948,32 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get authForgotPassword => 'هل نسيت كلمة المرور؟';
+
+  @override
+  String get authResetTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get authResetBody =>
+      'أدخل البريد الإلكتروني لحسابك وسنرسل إليك رابطًا لتعيين كلمة مرور جديدة.';
+
+  @override
+  String get authResetSend => 'إرسال الرابط';
+
+  @override
+  String get authResetSent =>
+      'إذا كان لهذا البريد الإلكتروني حساب، فإن الرابط في طريقه إليك.';
+
+  @override
+  String get authNewPassword => 'كلمة مرور جديدة';
+
+  @override
+  String get authConfirmNewPassword => 'تأكيد كلمة المرور الجديدة';
+
+  @override
+  String get authUpdatePasswordCta => 'تحديث كلمة المرور';
 
   @override
   String get authCreateCta => 'إنشاء حساب';

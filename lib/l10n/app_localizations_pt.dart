@@ -616,6 +616,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileLogout => 'Sair';
 
   @override
+  String get profileChangePwTitle => 'Alterar senha';
+
+  @override
+  String get profileChangePwSub => 'Defina uma nova senha para sua conta';
+
+  @override
+  String get profileChangePwSaved => 'Senha atualizada';
+
+  @override
   String get profileSignedIn => 'Conectado';
 
   @override
@@ -961,6 +970,32 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Confirmar senha';
+
+  @override
+  String get authForgotPassword => 'Esqueceu a senha?';
+
+  @override
+  String get authResetTitle => 'Redefinir senha';
+
+  @override
+  String get authResetBody =>
+      'Digite o e-mail da sua conta e enviaremos um link para criar uma nova senha.';
+
+  @override
+  String get authResetSend => 'Enviar link';
+
+  @override
+  String get authResetSent =>
+      'Se esse e-mail tiver uma conta, o link já está a caminho.';
+
+  @override
+  String get authNewPassword => 'Nova senha';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmar nova senha';
+
+  @override
+  String get authUpdatePasswordCta => 'Atualizar senha';
 
   @override
   String get authCreateCta => 'Criar conta';
@@ -2597,6 +2632,16 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get profileLogout => 'Terminar sessão';
 
   @override
+  String get profileChangePwTitle => 'Alterar palavra-passe';
+
+  @override
+  String get profileChangePwSub =>
+      'Define uma nova palavra-passe para a tua conta';
+
+  @override
+  String get profileChangePwSaved => 'Palavra-passe atualizada';
+
+  @override
   String get profileSignedIn => 'Sessão iniciada';
 
   @override
@@ -2941,6 +2986,32 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get authConfirmPassword => 'Confirmar palavra-passe';
+
+  @override
+  String get authForgotPassword => 'Esqueceste-te da palavra-passe?';
+
+  @override
+  String get authResetTitle => 'Repor palavra-passe';
+
+  @override
+  String get authResetBody =>
+      'Introduz o e-mail da tua conta e enviamos-te uma ligação para definir uma nova palavra-passe.';
+
+  @override
+  String get authResetSend => 'Enviar ligação';
+
+  @override
+  String get authResetSent =>
+      'Se esse e-mail tiver uma conta, a ligação já vai a caminho.';
+
+  @override
+  String get authNewPassword => 'Nova palavra-passe';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmar nova palavra-passe';
+
+  @override
+  String get authUpdatePasswordCta => 'Atualizar palavra-passe';
 
   @override
   String get authCreateCta => 'Criar conta';

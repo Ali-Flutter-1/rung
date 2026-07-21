@@ -616,6 +616,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get profileLogout => 'Wyloguj się';
 
   @override
+  String get profileChangePwTitle => 'Zmień hasło';
+
+  @override
+  String get profileChangePwSub => 'Ustaw nowe hasło dla swojego konta';
+
+  @override
+  String get profileChangePwSaved => 'Hasło zaktualizowane';
+
+  @override
   String get profileSignedIn => 'Zalogowano';
 
   @override
@@ -961,6 +970,32 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Potwierdź hasło';
+
+  @override
+  String get authForgotPassword => 'Nie pamiętasz hasła?';
+
+  @override
+  String get authResetTitle => 'Zresetuj hasło';
+
+  @override
+  String get authResetBody =>
+      'Podaj adres e-mail swojego konta, a wyślemy Ci link do ustawienia nowego hasła.';
+
+  @override
+  String get authResetSend => 'Wyślij link';
+
+  @override
+  String get authResetSent =>
+      'Jeśli do tego adresu przypisane jest konto, link już do Ciebie zmierza.';
+
+  @override
+  String get authNewPassword => 'Nowe hasło';
+
+  @override
+  String get authConfirmNewPassword => 'Potwierdź nowe hasło';
+
+  @override
+  String get authUpdatePasswordCta => 'Zaktualizuj hasło';
 
   @override
   String get authCreateCta => 'Utwórz konto';

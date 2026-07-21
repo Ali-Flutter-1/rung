@@ -621,6 +621,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileLogout => 'Se déconnecter';
 
   @override
+  String get profileChangePwTitle => 'Changer le mot de passe';
+
+  @override
+  String get profileChangePwSub =>
+      'Définis un nouveau mot de passe pour ton compte';
+
+  @override
+  String get profileChangePwSaved => 'Mot de passe mis à jour';
+
+  @override
   String get profileSignedIn => 'Connecté';
 
   @override
@@ -969,6 +979,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Confirmer le mot de passe';
+
+  @override
+  String get authForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get authResetTitle => 'Réinitialiser le mot de passe';
+
+  @override
+  String get authResetBody =>
+      'Saisis l\'e-mail de ton compte et nous t\'enverrons un lien pour définir un nouveau mot de passe.';
+
+  @override
+  String get authResetSend => 'Envoyer le lien';
+
+  @override
+  String get authResetSent =>
+      'Si cet e-mail correspond à un compte, le lien est déjà en route.';
+
+  @override
+  String get authNewPassword => 'Nouveau mot de passe';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmer le nouveau mot de passe';
+
+  @override
+  String get authUpdatePasswordCta => 'Mettre à jour le mot de passe';
 
   @override
   String get authCreateCta => 'Créer un compte';

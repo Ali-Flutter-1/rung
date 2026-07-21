@@ -12,6 +12,20 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<!-- Custom URL scheme so the password-reset email link opens the app.
+	     Must match `passwordResetRedirect` in auth_repository.dart and the
+	     Supabase dashboard's Redirect URLs. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.rung.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.rung.app</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

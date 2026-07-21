@@ -1189,6 +1189,24 @@ abstract class AppLocalizations {
   /// **'Log out'**
   String get profileLogout;
 
+  /// No description provided for @profileChangePwTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get profileChangePwTitle;
+
+  /// No description provided for @profileChangePwSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password for your account'**
+  String get profileChangePwSub;
+
+  /// No description provided for @profileChangePwSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated'**
+  String get profileChangePwSaved;
+
   /// No description provided for @profileSignedIn.
   ///
   /// In en, this message translates to:
@@ -1830,6 +1848,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm password'**
   String get authConfirmPassword;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get authResetTitle;
+
+  /// No description provided for @authResetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account email and we\'ll send you a link to set a new password.'**
+  String get authResetBody;
+
+  /// No description provided for @authResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get authResetSend;
+
+  /// No description provided for @authResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If that email has an account, a reset link is on its way.'**
+  String get authResetSent;
+
+  /// No description provided for @authNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get authNewPassword;
+
+  /// No description provided for @authConfirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get authConfirmNewPassword;
+
+  /// No description provided for @authUpdatePasswordCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get authUpdatePasswordCta;
 
   /// No description provided for @authCreateCta.
   ///

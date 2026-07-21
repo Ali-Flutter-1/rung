@@ -16,6 +16,15 @@ Future<bool> initSupabase() async {
       // Accepts classic anon (eyJ...) or new publishable (sb_publishable_...) keys.
       // ignore: deprecated_member_use
       anonKey: AppConfig.supabaseAnonKey,
+      // Implicit flow for the password-reset deep link. PKCE stores a code
+      // verifier on the *requesting* device, so the reset link only completes on
+      // that same device/install — it fails otherwise (lands the user back on
+      // the sign-in screen). Implicit carries the recovery session in the link
+      // itself, so it works regardless of where the link is opened and reliably
+      // fires passwordRecovery. Normal email/password sign-in doesn't use a
+      // redirect, so it's unaffected either way.
+      authOptions:
+          const FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
       // Bound every REST call (auth/db/functions) so a slow network fails fast
       // instead of hanging the UI. Realtime WebSockets are unaffected.
       httpClient: TimeoutHttpClient(http.Client()),

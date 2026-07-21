@@ -205,6 +205,13 @@ class ProfileScreen extends ConsumerWidget {
             ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(
+              icon: Icons.password_rounded,
+              title: l.profileChangePwTitle,
+              subtitle: l.profileChangePwSub,
+              onTap: () => context.push(Routes.changePassword),
+            ),
+          if (ref.watch(cloudEnabledProvider))
+            _Tile(
               icon: Icons.logout_rounded,
               title: l.profileLogout,
               subtitle:

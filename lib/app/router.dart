@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/auth/change_password_screen.dart';
 import '../features/auth/sign_in_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/groups/groups_screen.dart';
@@ -29,6 +30,7 @@ class Routes {
   static const tracks = '/tracks'; // the "Rung" tab
   static const subscription = '/subscription';
   static const profile = '/profile';
+  static const changePassword = '/change-password';
   static String ladder(String trackId) => '/tracks/$trackId';
   static String rung(String rungId) => '/rung/$rungId';
   static String predict(String rungId) => '/predict/$rungId';
@@ -153,6 +155,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ]),
         ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootKey,
+        path: Routes.changePassword,
+        builder: (_, _) => const ChangePasswordScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootKey,

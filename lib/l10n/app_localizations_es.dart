@@ -615,6 +615,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLogout => 'Cerrar sesión';
 
   @override
+  String get profileChangePwTitle => 'Cambiar contraseña';
+
+  @override
+  String get profileChangePwSub => 'Crea una nueva contraseña para tu cuenta';
+
+  @override
+  String get profileChangePwSaved => 'Contraseña actualizada';
+
+  @override
   String get profileSignedIn => 'Sesión iniciada';
 
   @override
@@ -961,6 +970,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authConfirmPassword => 'Confirmar contraseña';
+
+  @override
+  String get authForgotPassword => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get authResetTitle => 'Restablecer contraseña';
+
+  @override
+  String get authResetBody =>
+      'Introduce el correo de tu cuenta y te enviaremos un enlace para crear una nueva contraseña.';
+
+  @override
+  String get authResetSend => 'Enviar enlace';
+
+  @override
+  String get authResetSent =>
+      'Si ese correo tiene una cuenta, el enlace ya está en camino.';
+
+  @override
+  String get authNewPassword => 'Nueva contraseña';
+
+  @override
+  String get authConfirmNewPassword => 'Confirmar nueva contraseña';
+
+  @override
+  String get authUpdatePasswordCta => 'Actualizar contraseña';
 
   @override
   String get authCreateCta => 'Crear cuenta';
