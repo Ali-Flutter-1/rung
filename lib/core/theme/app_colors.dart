@@ -31,14 +31,16 @@ class AppColors {
   static const Color background = Color(0xFFF7F4EF); // Warm Neutral
   static const Color border = Color(0xFFE7E1D6);
 
-  // Neutrals (dark)
-  static const Color inkDark = Color(0xFFEDEFF2);
-  static const Color inkMutedDark = Color(0xFFA7AFBC);
-  static const Color inkFaintDark = Color(0xFF6B7280);
-  static const Color surfaceDark = Color(0xFF1B2026);
-  static const Color surfaceAltDark = Color(0xFF232A31);
-  static const Color backgroundDark = Color(0xFF14181C);
-  static const Color borderDark = Color(0xFF2C333B);
+  // Neutrals (dark) — warm graphite, so the light theme's "warm paper" identity
+  // carries into dark mode instead of flipping to a cool, generic slate. A
+  // subtle warm bias (R slightly > B) reads as a warm near-black, not brown.
+  static const Color inkDark = Color(0xFFF0EEE9);
+  static const Color inkMutedDark = Color(0xFFB0A99E);
+  static const Color inkFaintDark = Color(0xFF756E64);
+  static const Color surfaceDark = Color(0xFF1E1B17);
+  static const Color surfaceAltDark = Color(0xFF29251F);
+  static const Color backgroundDark = Color(0xFF14120F);
+  static const Color borderDark = Color(0xFF3C362E);
 
   /// The signature intensity gradient (0 → 10).
   static const List<Color> intensityGradient = [
@@ -59,11 +61,16 @@ class AppColors {
   /// Per-track accent colours keyed by a track's [colorSeed].
   static const Map<String, Color> trackSeeds = {
     'indigo': Color(0xFF5B8DEF), // Speaking — soft blue
-    'teal': Color(0xFF3AA8A0), // Approaching — teal
+    // Approaching — fresh green. Was the brand teal (#3AA8A0), which blended
+    // into app chrome and sat right next to the 'sky' track; a green frees it
+    // from both and reads as "growth".
+    'teal': Color(0xFF40B27C),
     'violet': Color(0xFF8A6BEF), // Social events — violet
     'rose': Color(0xFFD58AA0), // Assertiveness — rose
     'amber': Color(0xFFE9A23B), // Being visible — amber
-    'sky': Color(0xFF49B6C4), // Under pressure — sky/teal
+    // Under pressure — blue-cyan, pushed off the brand teal and the green above
+    // so all six track hues are ≥20° apart on the wheel.
+    'sky': Color(0xFF2E9FC9),
   };
 
   static Color seed(String? colorSeed) => trackSeeds[colorSeed] ?? primary;

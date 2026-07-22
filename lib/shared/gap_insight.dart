@@ -217,7 +217,7 @@ class _GapChart extends StatelessWidget {
                     interval: 5,
                     reservedSize: 22,
                     getTitlesWidget: (v, _) => Text('${v.toInt()}',
-                        style: t.bodySmall?.copyWith(color: AppColors.inkMuted)),
+                        style: t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
                   ),
                 ),
               ),

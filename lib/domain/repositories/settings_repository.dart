@@ -91,6 +91,11 @@ abstract interface class SettingsRepository {
   bool get hapticsEnabled;
   Future<void> setHapticsEnabled(bool value);
 
+  /// Whether the user has opted in to anonymous usage analytics. Default OFF —
+  /// analytics is non-essential, so GDPR requires explicit opt-in.
+  bool get analyticsEnabled;
+  Future<void> setAnalyticsEnabled(bool value);
+
   /// Chosen avatar id (see [Avatars]); null = use the name's initial. Synced to
   /// the cloud profile so pod-mates see it.
   String? get avatarId;

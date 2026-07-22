@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "Een stille klimmer.",
   "profileHaptics": "Trillingen",
   "profileHapticsSub": "Zachte trilling bij tikken en overwinningen",
+  "profileAnalytics": "Anonieme gebruiksgegevens delen",
+  "profileAnalyticsSub": "Helpt Rung te verbeteren. Nooit persoonlijke gegevens.",
   "profileNotifications": "Meldingen",
   "profileNotificationsSub": "Meldingen van Rung op dit apparaat",
   "profilePodAlerts": "Pod-berichtmeldingen",

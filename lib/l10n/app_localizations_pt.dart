@@ -694,6 +694,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileHapticsSub => 'Vibração suave ao tocar e ao vencer';
 
   @override
+  String get profileAnalytics => 'Compartilhar dados de uso anônimos';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Ajuda a melhorar o Rung. Nunca dados pessoais.';
+
+  @override
   String get profileNotifications => 'Notificações';
 
   @override
@@ -2709,6 +2716,13 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get profileHapticsSub => 'Vibração suave em toques e vitórias';
+
+  @override
+  String get profileAnalytics => 'Partilhar dados de utilização anónimos';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Ajuda a melhorar o Rung. Nunca dados pessoais.';
 
   @override
   String get profileNotifications => 'Notificações';

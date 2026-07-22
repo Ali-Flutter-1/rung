@@ -175,6 +175,8 @@
   "profileBioPlaceholder": "Un escalador tranquilo.",
   "profileHaptics": "Vibración",
   "profileHapticsSub": "Vibración suave al tocar y al ganar",
+  "profileAnalytics": "Compartir datos de uso anónimos",
+  "profileAnalyticsSub": "Ayuda a mejorar Rung. Nunca datos personales.",
   "profileNotifications": "Notificaciones",
   "profileNotificationsSub": "Avisos de Rung en este dispositivo",
   "profilePodAlerts": "Avisos de mensajes de grupo",

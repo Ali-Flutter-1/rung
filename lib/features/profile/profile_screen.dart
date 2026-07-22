@@ -10,6 +10,7 @@ import '../../core/errors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/analytics/analytics.dart';
+import '../../core/analytics/analytics_bootstrap.dart';
 import '../../data/notifications/notification_service.dart';
 import '../../domain/entities/subscription.dart';
 import '../../domain/repositories/settings_repository.dart';
@@ -159,6 +160,8 @@ class ProfileScreen extends ConsumerWidget {
           const _ReminderControl(),
           const SizedBox(height: Insets.lg),
           const _HapticsControl(),
+          const SizedBox(height: Insets.lg),
+          const _AnalyticsControl(),
           const Divider(height: Insets.lg),
           _Tile(
             icon: Icons.health_and_safety_outlined,
@@ -469,6 +472,37 @@ class _HapticsControl extends ConsumerWidget {
   }
 }
 
+/// Anonymous-usage analytics opt-in. OFF by default (GDPR): flipping it on is
+/// the only thing that starts PostHog; flipping it off stops it immediately.
+class _AnalyticsControl extends ConsumerWidget {
+  const _AnalyticsControl();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(settingsChangesProvider);
+    final settings = ref.watch(settingsRepositoryProvider);
+    final l = AppLocalizations.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Radii.card,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: SwitchListTile(
+        secondary:
+            const Icon(Icons.insights_outlined, color: AppColors.primary),
+        title: Text(l.profileAnalytics),
+        subtitle: Text(l.profileAnalyticsSub),
+        value: settings.analyticsEnabled,
+        onChanged: (v) async {
+          await settings.setAnalyticsEnabled(v);
+          await setAnalyticsConsent(v); // start/stop the tracker now
+        },
+      ),
+    );
+  }
+}
+
 class _NotificationControls extends ConsumerWidget {
   const _NotificationControls();
 
@@ -651,10 +685,7 @@ Future<void> showAvatarPickerSheet(BuildContext context, WidgetRef ref) {
                 style: Theme.of(sheetCtx).textTheme.titleLarge),
             const SizedBox(height: Insets.xs),
             Text(AppLocalizations.of(sheetCtx).profileAvatarSub,
-                style: Theme.of(sheetCtx)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: AppColors.inkMuted)),
+                style: Theme.of(sheetCtx).textTheme.bodyMedium),
             const SizedBox(height: Insets.lg),
             // Scroll if the grid is taller than the sheet (avoids a Column
             // overflow when there are many avatars / a short sheet).

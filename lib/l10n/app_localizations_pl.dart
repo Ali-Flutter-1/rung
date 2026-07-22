@@ -694,6 +694,13 @@ class AppLocalizationsPl extends AppLocalizations {
       'Delikatna wibracja przy dotknięciach i zwycięstwach';
 
   @override
+  String get profileAnalytics => 'Udostępniaj anonimowe dane o użyciu';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Pomaga ulepszać Rung. Nigdy danych osobowych.';
+
+  @override
   String get profileNotifications => 'Powiadomienia';
 
   @override

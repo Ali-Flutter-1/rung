@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -106,6 +107,18 @@ final pushServiceProvider = Provider<PushService>((ref) => PushService(
       onDelete: (token) =>
           ref.read(cloudRepositoryProvider).deleteDeviceToken(token),
     ));
+
+/// True while a password-reset recovery is in progress: supabase_flutter has
+/// processed the reset deep link (a short-lived session exists) but the user
+/// hasn't set a new password yet. The router pins the user to the
+/// change-password screen while this is true — crucially, that keeps the app
+/// shell (and its auto-sync in [progressSyncProvider]) unmounted, so a recovery
+/// session for a DIFFERENT account than the one whose data is local can never
+/// trigger a backup that would push the wrong data to the wrong cloud account.
+/// Cleared when the flow completes (the change-password screen signs the user
+/// out and requires a fresh login, which runs the normal account-isolation
+/// path). `main()` sets it; the change-password screen clears it.
+final passwordRecoveryActive = ValueNotifier<bool>(false);
 
 /// Registers this device's push token whenever someone is signed in (and on
 /// account switch). Watched in the shell; result ignored.

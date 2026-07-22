@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "En stille klatrer.",
   "profileHaptics": "Vibration",
   "profileHapticsSub": "Blid vibration ved tryk og sejre",
+  "profileAnalytics": "Del anonyme brugsdata",
+  "profileAnalyticsSub": "Hjælper med at forbedre Rung. Aldrig personlige data.",
   "profileNotifications": "Notifikationer",
   "profileNotificationsSub": "Notifikationer fra Rung på denne enhed",
   "profilePodAlerts": "Notifikationer om gruppebeskeder",

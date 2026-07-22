@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "En tyst klättrare.",
   "profileHaptics": "Vibration",
   "profileHapticsSub": "Mjuk vibration vid tryck och vinster",
+  "profileAnalytics": "Dela anonym användningsdata",
+  "profileAnalyticsSub": "Hjälper till att förbättra Rung. Aldrig personuppgifter.",
   "profileNotifications": "Aviseringar",
   "profileNotificationsSub": "Aviseringar från Rung på den här enheten",
   "profilePodAlerts": "Aviseringar om gruppmeddelanden",

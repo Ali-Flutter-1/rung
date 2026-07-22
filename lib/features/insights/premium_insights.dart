@@ -50,7 +50,7 @@ class PremiumInsights extends ConsumerWidget {
           const SizedBox(height: Insets.sm),
           Text(
             l.insightsLockedBody,
-            style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+            style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.md),
           Align(
@@ -90,7 +90,7 @@ class PremiumInsights extends ConsumerWidget {
     if (n == 0) {
       body = Text(
         l.insightsNoSteps,
-        style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+        style: t.bodyMedium,
       );
     } else {
       final avgGap =

@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.4
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      # Run the whole suite in a daylight-saving-observing zone. The streak
+      # tests deliberately span EU/US DST transitions; on a zone without DST
+      # (or a machine that happens to sit outside one) the 23/25-hour day they
+      # rely on never occurs, so the date-math regression they guard can slip
+      # through. Berlin makes that day real on every run.
+      - name: Test (TZ=Europe/Berlin)
+        run: flutter test
+        env:
+          TZ: Europe/Berlin

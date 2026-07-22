@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "Uno scalatore tranquillo.",
   "profileHaptics": "Vibrazione",
   "profileHapticsSub": "Vibrazione delicata a tocchi e vittorie",
+  "profileAnalytics": "Condividi dati d'uso anonimi",
+  "profileAnalyticsSub": "Aiuta a migliorare Rung. Mai dati personali.",
   "profileNotifications": "Notifiche",
   "profileNotificationsSub": "Avvisi da Rung su questo dispositivo",
   "profilePodAlerts": "Avvisi messaggi dei pod",

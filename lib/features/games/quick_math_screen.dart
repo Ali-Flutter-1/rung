@@ -178,7 +178,7 @@ class _QuickMathState extends State<QuickMathScreen> {
           Text(
             _phase == _Phase.over ? l.qmBestSub(_best) : l.qmStartSub,
             textAlign: TextAlign.center,
-            style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+            style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.xl),
           GestureDetector(
@@ -211,7 +211,7 @@ class _QuickMathState extends State<QuickMathScreen> {
                     ?.copyWith(color: AppColors.primaryDeep, fontWeight: FontWeight.w800)),
             const SizedBox(width: 6),
             Text(AppLocalizations.of(context).qmCorrect,
-                style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+                style: t.bodyMedium),
             const Spacer(),
             Icon(Icons.timer_outlined,
                 size: 18,

@@ -194,7 +194,7 @@ class _WelcomePage extends StatelessWidget {
           Text(
             l.onbWelcomeBody,
             textAlign: TextAlign.center,
-            style: t.bodyLarge?.copyWith(color: AppColors.inkMuted),
+            style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color),
           ),
           const Spacer(),
           SizedBox(

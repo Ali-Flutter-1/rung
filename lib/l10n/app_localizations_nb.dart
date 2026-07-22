@@ -693,6 +693,13 @@ class AppLocalizationsNb extends AppLocalizations {
   String get profileHapticsSub => 'Mild vibrasjon ved trykk og seiere';
 
   @override
+  String get profileAnalytics => 'Del anonyme bruksdata';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Hjelper med å forbedre Rung. Aldri personopplysninger.';
+
+  @override
   String get profileNotifications => 'Varsler';
 
   @override

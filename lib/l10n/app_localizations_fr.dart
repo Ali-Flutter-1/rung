@@ -702,6 +702,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Légère vibration aux touchers et aux réussites';
 
   @override
+  String get profileAnalytics => 'Partager des données d\'usage anonymes';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Aide à améliorer Rung. Jamais de données personnelles.';
+
+  @override
   String get profileNotifications => 'Notifications';
 
   @override

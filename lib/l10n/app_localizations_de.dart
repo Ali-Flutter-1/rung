@@ -701,6 +701,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profileHapticsSub => 'Sanfte Vibration bei Tipps und Erfolgen';
 
   @override
+  String get profileAnalytics => 'Anonyme Nutzungsdaten teilen';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Hilft, Rung zu verbessern. Niemals persönliche Daten.';
+
+  @override
   String get profileNotifications => 'Benachrichtigungen';
 
   @override

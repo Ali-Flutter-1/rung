@@ -175,6 +175,8 @@
   "profileBioPlaceholder": "Ein stiller Kletterer.",
   "profileHaptics": "Haptik",
   "profileHapticsSub": "Sanfte Vibration bei Tipps und Erfolgen",
+  "profileAnalytics": "Anonyme Nutzungsdaten teilen",
+  "profileAnalyticsSub": "Hilft, Rung zu verbessern. Niemals persönliche Daten.",
   "profileNotifications": "Benachrichtigungen",
   "profileNotificationsSub": "Hinweise von Rung auf diesem Gerät",
   "profilePodAlerts": "Gruppen-Nachrichtenhinweise",

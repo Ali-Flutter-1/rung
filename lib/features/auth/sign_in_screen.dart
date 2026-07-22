@@ -229,7 +229,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 Text(
                   _signUp ? l.authSignUpSub : l.authSignInSub,
                   textAlign: TextAlign.center,
-                  style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+                  style: t.bodyMedium,
                 ),
                 const SizedBox(height: Insets.xl),
                 if (_signUp) ...[
@@ -446,7 +446,7 @@ class _LegalFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
-    final muted = t.bodySmall?.copyWith(color: AppColors.inkMuted);
+    final muted = t.bodySmall?.copyWith(color: t.bodyMedium?.color);
     final link = t.bodySmall?.copyWith(
         color: AppColors.primaryDeep, fontWeight: FontWeight.w600);
     void open(Widget page) => Navigator.of(context)

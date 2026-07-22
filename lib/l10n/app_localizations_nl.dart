@@ -695,6 +695,13 @@ class AppLocalizationsNl extends AppLocalizations {
   String get profileHapticsSub => 'Zachte trilling bij tikken en overwinningen';
 
   @override
+  String get profileAnalytics => 'Anonieme gebruiksgegevens delen';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Helpt Rung te verbeteren. Nooit persoonlijke gegevens.';
+
+  @override
   String get profileNotifications => 'Meldingen';
 
   @override

@@ -678,6 +678,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileHapticsSub => 'اهتزاز خفيف عند النقر وعند الفوز';
 
   @override
+  String get profileAnalytics => 'مشاركة بيانات الاستخدام المجهولة';
+
+  @override
+  String get profileAnalyticsSub =>
+      'يساعد في تحسين Rung. لا بيانات شخصية إطلاقًا.';
+
+  @override
   String get profileNotifications => 'الإشعارات';
 
   @override

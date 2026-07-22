@@ -687,6 +687,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileHapticsSub => 'Gentle vibration on taps and wins';
 
   @override
+  String get profileAnalytics => 'Share anonymous usage data';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Helps improve Rung. No personal data, ever.';
+
+  @override
   String get profileNotifications => 'Notifications';
 
   @override

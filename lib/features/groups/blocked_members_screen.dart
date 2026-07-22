@@ -123,7 +123,7 @@ class _Intro extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: Insets.md),
       child: Text(
         AppLocalizations.of(context).blockedIntro,
-        style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+        style: t.bodyMedium,
       ),
     );
   }
@@ -169,7 +169,7 @@ class _BlockedCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(AppLocalizations.of(context).blockedLabel,
                         style:
-                            t.bodySmall?.copyWith(color: AppColors.inkMuted)),
+                            t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
                   ],
                 ),
               ],
@@ -230,7 +230,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               AppLocalizations.of(context).blockedEmptyBody,
               textAlign: TextAlign.center,
-              style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+              style: t.bodyMedium,
             ),
           ],
         ),

@@ -175,6 +175,8 @@
   "profileBioPlaceholder": "متسلّق هادئ.",
   "profileHaptics": "الاهتزاز",
   "profileHapticsSub": "اهتزاز خفيف عند النقر وعند الفوز",
+  "profileAnalytics": "مشاركة بيانات الاستخدام المجهولة",
+  "profileAnalyticsSub": "يساعد في تحسين Rung. لا بيانات شخصية إطلاقًا.",
   "profileNotifications": "الإشعارات",
   "profileNotificationsSub": "تنبيهات من Rung على هذا الجهاز",
   "profilePodAlerts": "تنبيهات رسائل المجموعة",

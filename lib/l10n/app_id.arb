@@ -175,6 +175,8 @@
   "profileBioPlaceholder": "Pendaki yang tenang.",
   "profileHaptics": "Getaran",
   "profileHapticsSub": "Getaran lembut saat mengetuk dan menang",
+  "profileAnalytics": "Bagikan data penggunaan anonim",
+  "profileAnalyticsSub": "Membantu menyempurnakan Rung. Tidak pernah data pribadi.",
   "profileNotifications": "Notifikasi",
   "profileNotificationsSub": "Pemberitahuan dari Rung di perangkat ini",
   "profilePodAlerts": "Notifikasi pesan grup",

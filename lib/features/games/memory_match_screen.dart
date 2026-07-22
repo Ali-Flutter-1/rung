@@ -117,7 +117,7 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
               ),
               if (_best != null)
                 Text(l.mmBest(_best!),
-                    style: t.bodySmall?.copyWith(color: AppColors.inkMuted)),
+                    style: t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
               const SizedBox(height: Insets.lg),
               Expanded(
                 child: Center(

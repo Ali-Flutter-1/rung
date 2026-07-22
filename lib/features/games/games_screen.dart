@@ -89,7 +89,7 @@ class _GamesScreenState extends State<GamesScreen> {
         children: [
           Text(
             l.gamesIntro,
-            style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+            style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.lg),
           for (final (i, g) in _games.indexed) ...[
@@ -236,7 +236,7 @@ class _GameCard extends StatelessWidget {
                   Text(title, style: t.titleMedium),
                   const SizedBox(height: 2),
                   Text(subtitle,
-                      style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+                      style: t.bodyMedium),
                   if (hasBest) ...[
                     const SizedBox(height: 6),
                     Row(

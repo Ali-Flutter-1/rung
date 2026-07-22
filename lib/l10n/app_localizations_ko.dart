@@ -662,6 +662,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileHapticsSub => '탭과 성취 시 부드러운 진동';
 
   @override
+  String get profileAnalytics => '익명 사용 데이터 공유';
+
+  @override
+  String get profileAnalyticsSub => 'Rung 개선에 도움이 됩니다. 개인 정보는 절대 수집하지 않습니다.';
+
+  @override
   String get profileNotifications => '알림';
 
   @override

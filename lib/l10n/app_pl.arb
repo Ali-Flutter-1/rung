@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "Cichy wspinacz.",
   "profileHaptics": "Wibracje",
   "profileHapticsSub": "Delikatna wibracja przy dotknięciach i zwycięstwach",
+  "profileAnalytics": "Udostępniaj anonimowe dane o użyciu",
+  "profileAnalyticsSub": "Pomaga ulepszać Rung. Nigdy danych osobowych.",
   "profileNotifications": "Powiadomienia",
   "profileNotificationsSub": "Powiadomienia od Rung na tym urządzeniu",
   "profilePodAlerts": "Powiadomienia o wiadomościach w grupach",

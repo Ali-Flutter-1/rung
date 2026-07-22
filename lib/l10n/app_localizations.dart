@@ -1333,6 +1333,18 @@ abstract class AppLocalizations {
   /// **'Gentle vibration on taps and wins'**
   String get profileHapticsSub;
 
+  /// No description provided for @profileAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Share anonymous usage data'**
+  String get profileAnalytics;
+
+  /// No description provided for @profileAnalyticsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Helps improve Rung. No personal data, ever.'**
+  String get profileAnalyticsSub;
+
   /// No description provided for @profileNotifications.
   ///
   /// In en, this message translates to:

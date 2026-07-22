@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "静かな登り手。",
   "profileHaptics": "触覚フィードバック",
   "profileHapticsSub": "タップや達成時のやさしい振動",
+  "profileAnalytics": "匿名の利用データを共有",
+  "profileAnalyticsSub": "Rung の改善に役立ちます。個人データは一切送信しません。",
   "profileNotifications": "通知",
   "profileNotificationsSub": "この端末での Rung からの通知",
   "profilePodAlerts": "グループのメッセージ通知",

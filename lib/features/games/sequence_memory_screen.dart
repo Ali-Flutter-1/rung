@@ -138,7 +138,7 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
             children: [
               const SizedBox(height: Insets.sm),
               Text(l.smRound(_seq.isEmpty ? 0 : _seq.length),
-                  style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+                  style: t.bodyMedium),
               const SizedBox(height: 4),
               Text(_statusText(l),
                   style: t.titleLarge, textAlign: TextAlign.center),

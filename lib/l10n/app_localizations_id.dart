@@ -691,6 +691,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get profileHapticsSub => 'Getaran lembut saat mengetuk dan menang';
 
   @override
+  String get profileAnalytics => 'Bagikan data penggunaan anonim';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Membantu menyempurnakan Rung. Tidak pernah data pribadi.';
+
+  @override
   String get profileNotifications => 'Notifikasi';
 
   @override

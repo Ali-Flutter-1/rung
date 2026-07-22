@@ -697,6 +697,13 @@ class AppLocalizationsMs extends AppLocalizations {
   String get profileHapticsSub => 'Getaran lembut semasa ketik dan menang';
 
   @override
+  String get profileAnalytics => 'Kongsi data penggunaan tanpa nama';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Membantu menambah baik Rung. Tiada data peribadi.';
+
+  @override
   String get profileNotifications => 'Pemberitahuan';
 
   @override

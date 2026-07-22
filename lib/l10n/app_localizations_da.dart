@@ -693,6 +693,13 @@ class AppLocalizationsDa extends AppLocalizations {
   String get profileHapticsSub => 'Blid vibration ved tryk og sejre';
 
   @override
+  String get profileAnalytics => 'Del anonyme brugsdata';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Hjælper med at forbedre Rung. Aldrig personlige data.';
+
+  @override
   String get profileNotifications => 'Notifikationer';
 
   @override

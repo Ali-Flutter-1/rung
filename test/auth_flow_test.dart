@@ -26,6 +26,10 @@ class _FakeAuth implements AuthRepository {
   /// The last email a reset link was requested for (null until requested).
   String? resetEmail;
 
+  /// When set, resetPassword throws it instead of recording — simulates a send
+  /// that fails (e.g. offline).
+  Object? resetError;
+
   @override
   User? get currentUser => null;
 
@@ -33,7 +37,10 @@ class _FakeAuth implements AuthRepository {
   bool get isSignedIn => false;
 
   @override
-  Future<void> resetPassword(String email) async => resetEmail = email;
+  Future<void> resetPassword(String email) async {
+    if (resetError != null) throw resetError!;
+    resetEmail = email;
+  }
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -278,6 +285,40 @@ void main() {
       expect(auth.resetEmail, isNull, reason: 'invalid email never reaches the backend');
       expect(find.text('Send reset link'), findsOneWidget,
           reason: 'the dialog stays open on a bad address');
+    });
+
+    testWidgets('offline while sending shows the friendly line, not "sent"',
+        (tester) async {
+      final auth = _FakeAuth()
+        ..resetError = AuthRetryableFetchException(
+            message: 'ClientException with SocketException: Failed host lookup');
+      await pumpAuth(tester, auth);
+      await switchToSignIn(tester);
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).last, 'a@b.com');
+      await tester.tap(find.text('Send reset link'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining("You're offline"), findsOneWidget);
+      expect(find.textContaining('reset link is on its way'), findsNothing,
+          reason: 'a failed send must not claim success');
+    });
+
+    testWidgets('cancelling the dialog makes no backend call', (tester) async {
+      final auth = _FakeAuth();
+      await pumpAuth(tester, auth);
+      await switchToSignIn(tester);
+      await tester.tap(find.text('Forgot password?'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(auth.resetEmail, isNull);
+      expect(find.text('Send reset link'), findsNothing,
+          reason: 'the dialog closed');
     });
   });
 

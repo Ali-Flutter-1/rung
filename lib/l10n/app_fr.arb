@@ -175,6 +175,8 @@
   "profileBioPlaceholder": "Un grimpeur tranquille.",
   "profileHaptics": "Retour haptique",
   "profileHapticsSub": "Légère vibration aux touchers et aux réussites",
+  "profileAnalytics": "Partager des données d'usage anonymes",
+  "profileAnalyticsSub": "Aide à améliorer Rung. Jamais de données personnelles.",
   "profileNotifications": "Notifications",
   "profileNotificationsSub": "Alertes de Rung sur cet appareil",
   "profilePodAlerts": "Alertes de messages de groupe",

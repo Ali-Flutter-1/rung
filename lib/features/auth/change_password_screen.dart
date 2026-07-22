@@ -70,17 +70,33 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       await ref.read(authRepositoryProvider).updatePassword(_password.text);
       if (!mounted) return;
       Haptics.medium();
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.profileChangePwSaved),
-      ));
-      // updatePassword fires a `userUpdated` auth event, which trips the
-      // router's refreshListenable. go_router restores an imperatively-pushed
-      // route on refresh, so a plain pop (Navigator OR go_router) is undone and
-      // this screen reappears. Navigate to a definite location instead — that
-      // clears the imperative stack and survives the refresh. Both entry points
-      // (profile + reset-link recovery) are signed in, so Home is safe.
-      context.go(Routes.dashboard);
+      if (passwordRecoveryActive.value) {
+        // Reset-recovery: sign out and require a fresh login. That routes
+        // through the normal sign-in path, which runs account isolation (wipe +
+        // restore if this recovered account differs from the one whose data is
+        // local) and full session setup — all of which the recovery session
+        // bypasses. Clearing the flag lets the router redirect fall through to
+        // the sign-in screen. It also confirms the new password works, since
+        // the user immediately logs in with it.
+        await ref.read(authRepositoryProvider).signOut();
+        passwordRecoveryActive.value = false;
+        if (!mounted) return;
+        messenger.showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.profileChangePwSaved),
+        ));
+        // The router redirect (refresh fires on signOut + the flag change)
+        // moves us to the sign-in screen; nothing else to do.
+      } else {
+        messenger.showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.profileChangePwSaved),
+        ));
+        // go (not pop): updatePassword fires a userUpdated auth event that trips
+        // the router refresh; go_router restores imperatively-pushed routes on
+        // refresh, so replacing the location avoids the screen reappearing.
+        context.go(Routes.dashboard);
+      }
     } on AuthException catch (e) {
       if (mounted) {
         setState(() => _error = isOfflineError(e) ? l.errorOffline : e.message);

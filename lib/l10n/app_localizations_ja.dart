@@ -660,6 +660,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileHapticsSub => 'タップや達成時のやさしい振動';
 
   @override
+  String get profileAnalytics => '匿名の利用データを共有';
+
+  @override
+  String get profileAnalyticsSub => 'Rung の改善に役立ちます。個人データは一切送信しません。';
+
+  @override
   String get profileNotifications => '通知';
 
   @override

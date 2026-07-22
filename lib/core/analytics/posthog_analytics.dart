@@ -1,14 +1,19 @@
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'analytics.dart';
+import 'analytics_bootstrap.dart';
 
 /// PostHog-backed analytics. Every call is guarded so an uninitialized or
-/// offline SDK can never crash the app.
+/// offline SDK can never crash the app. Capture and identify additionally
+/// no-op unless the user has opted in ([analyticsConsentGranted]) — the GDPR
+/// gate: nothing is sent until explicit consent, and it stops the moment
+/// consent is revoked.
 class PostHogAnalytics implements Analytics {
   const PostHogAnalytics();
 
   @override
   void capture(String event, [Map<String, Object?> props = const {}]) {
+    if (!analyticsConsentGranted) return;
     try {
       final clean = <String, Object>{
         for (final e in props.entries)
@@ -20,6 +25,7 @@ class PostHogAnalytics implements Analytics {
 
   @override
   void identify(String userId) {
+    if (!analyticsConsentGranted) return;
     try {
       Posthog().identify(userId: userId);
     } catch (_) {}

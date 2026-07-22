@@ -691,6 +691,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get profileHapticsSub => 'Mjuk vibration vid tryck och vinster';
 
   @override
+  String get profileAnalytics => 'Dela anonym användningsdata';
+
+  @override
+  String get profileAnalyticsSub =>
+      'Hjälper till att förbättra Rung. Aldrig personuppgifter.';
+
+  @override
   String get profileNotifications => 'Aviseringar';
 
   @override

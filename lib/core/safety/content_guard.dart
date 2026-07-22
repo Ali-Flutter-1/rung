@@ -11,10 +11,18 @@ class ContentGuard {
   );
 
   // Distress / self-harm signals — surface help, never punish (spec §1.9).
+  // Because a match only offers a support resource (it never blocks a message),
+  // we err toward catching more. Deliberately EXCLUDED: "don't want to be here"
+  // and similar — in a social-anxiety app that usually means dread of an event,
+  // not self-harm, so it would misfire constantly. "kms" is matched only when
+  // it isn't a number's unit ("5 kms" = kilometres) via the digit lookbehind.
   static final RegExp _distress = RegExp(
-    r'(kill myself|killing myself|end my life|want to die|wanna die|'
-    r'suicid|self[\s-]?harm|hurt myself|cut myself|no reason to live|'
-    r"can'?t go on|better off dead)",
+    r'(kill myself|killing myself|end my life|end it all|'
+    r'tak(e|ing) my (own )?life|want to die|wanna die|'
+    r'suicid|self[\s-]?harm|hurt myself|cut myself|hang(ing)? myself|overdose|'
+    r'no reason to live|no point (in )?living|better off dead|'
+    r'(?<!\d\s)\bkms\b|'
+    r"can'?t go on|don'?t want to live)",
     caseSensitive: false,
   );
 

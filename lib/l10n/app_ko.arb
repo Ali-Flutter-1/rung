@@ -201,6 +201,8 @@
   "profileBioPlaceholder": "조용한 등반가.",
   "profileHaptics": "햅틱",
   "profileHapticsSub": "탭과 성취 시 부드러운 진동",
+  "profileAnalytics": "익명 사용 데이터 공유",
+  "profileAnalyticsSub": "Rung 개선에 도움이 됩니다. 개인 정보는 절대 수집하지 않습니다.",
   "profileNotifications": "알림",
   "profileNotificationsSub": "이 기기에서 받는 Rung 알림",
   "profilePodAlerts": "그룹 메시지 알림",

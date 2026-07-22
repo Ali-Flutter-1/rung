@@ -119,7 +119,7 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
             const SizedBox(height: Insets.xs),
             Text(_promptText(l),
                 textAlign: TextAlign.center,
-                style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+                style: t.bodyMedium),
             const SizedBox(height: Insets.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

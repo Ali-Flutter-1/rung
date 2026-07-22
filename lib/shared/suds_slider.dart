@@ -54,7 +54,7 @@ class SudsSlider extends StatelessWidget {
         ),
         const SizedBox(height: Insets.xs),
         Text(_label,
-            style: t.titleMedium?.copyWith(color: AppColors.inkMuted)),
+            style: t.titleMedium?.copyWith(color: t.bodyMedium?.color)),
         const SizedBox(height: Insets.lg),
         _GradientTrack(value: value, onChanged: onChanged),
         const SizedBox(height: Insets.sm),

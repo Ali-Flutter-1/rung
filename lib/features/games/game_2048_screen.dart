@@ -198,7 +198,7 @@ class _Game2048State extends State<Game2048Screen> {
                         : _won
                             ? l.g2048Won
                             : l.g2048SwipeToMerge,
-                    style: t.bodyMedium?.copyWith(color: AppColors.inkMuted),
+                    style: t.bodyMedium,
                   ),
                 ],
               ),

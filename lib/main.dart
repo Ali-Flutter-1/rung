@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/app.dart';
 import 'app/providers.dart';
@@ -45,16 +46,30 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // Cloud + analytics + notifications are optional and self-guarding (§2.2).
-  await initSupabase();
+  final cloudReady = await initSupabase();
+  // Watch for the password-reset deep link from the earliest possible point.
+  // supabase_flutter processes the link and emits passwordRecovery shortly
+  // after init; subscribing here (before runApp) and latching the result means
+  // a cold start via the link can't miss it — the router reads the latch and
+  // pins the user to the change-password screen. See [passwordRecoveryActive].
+  if (cloudReady) {
+    supabase.auth.onAuthStateChange.listen((s) {
+      if (s.event == AuthChangeEvent.passwordRecovery) {
+        passwordRecoveryActive.value = true;
+      }
+    });
+  }
   await initFirebase();
   await initPurchases();
-  await initAnalytics();
   await NotificationService.instance.init();
 
   // Open the local-first store + settings before the app reads them (§2.2).
   final db = await AppDatabase.open();
   final settings = await PrefsSettingsRepository.create();
   Haptics.enabled = settings.hapticsEnabled; // gate all haptics from here on
+  // Analytics is opt-in (GDPR): with the default (off) the PostHog SDK is never
+  // even initialized. Runs after settings load so it can read the stored choice.
+  await initAnalytics(consent: settings.analyticsEnabled);
 
   // Record the already-signed-in account so the FIRST account switch is
   // detected (otherwise a session that persisted from before has no baseline).

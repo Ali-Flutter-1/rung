@@ -144,7 +144,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         const Spacer(),
         Text(l.breatheIntro,
             textAlign: TextAlign.center,
-            style: t.bodyLarge?.copyWith(color: AppColors.inkMuted)),
+            style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color)),
         const Spacer(),
         SizedBox(
           height: 260,
@@ -197,7 +197,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           const SizedBox(height: Insets.sm),
           Text(l.breatheDoneSub,
               textAlign: TextAlign.center,
-              style: t.bodyLarge?.copyWith(color: AppColors.inkMuted)),
+              style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color)),
           const SizedBox(height: Insets.xl),
           SizedBox(
             width: double.infinity,

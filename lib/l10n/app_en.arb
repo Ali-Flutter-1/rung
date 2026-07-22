@@ -348,6 +348,8 @@
   "profileBioPlaceholder": "A quiet climber.",
   "profileHaptics": "Haptics",
   "profileHapticsSub": "Gentle vibration on taps and wins",
+  "profileAnalytics": "Share anonymous usage data",
+  "profileAnalyticsSub": "Helps improve Rung. No personal data, ever.",
   "profileNotifications": "Notifications",
   "profileNotificationsSub": "Alerts from Rung on this device",
   "profilePodAlerts": "Pod message alerts",

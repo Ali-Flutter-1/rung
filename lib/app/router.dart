@@ -70,10 +70,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: Routes.dashboard,
-    refreshListenable: _GateRefresh(
-      settings.changes,
-      cloudOn ? auth.authChanges() : null,
-    ),
+    refreshListenable: Listenable.merge([
+      _GateRefresh(settings.changes, cloudOn ? auth.authChanges() : null),
+      passwordRecoveryActive,
+    ]),
     redirect: (context, state) {
       final onboarded = settings.hasCompletedOnboarding;
       // Mandatory account once cloud is configured. (If no Supabase keys, we
@@ -82,6 +82,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loc = state.matchedLocation;
       if (!onboarded) {
         return loc == Routes.onboarding ? null : Routes.onboarding;
+      }
+      // Password-reset recovery: a short-lived session exists but the user must
+      // set a new password first. Pin them to change-password (and OFF the
+      // shell) until the flow completes — this takes priority over the
+      // signed-in → dashboard redirect so a recovery session never lands on the
+      // shell and its auto-sync. See [passwordRecoveryActive].
+      if (passwordRecoveryActive.value) {
+        return loc == Routes.changePassword ? null : Routes.changePassword;
       }
       if (!signedIn) {
         return loc == Routes.auth ? null : Routes.auth;

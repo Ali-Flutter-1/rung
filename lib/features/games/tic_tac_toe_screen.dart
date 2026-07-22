@@ -423,7 +423,7 @@ class _Score extends StatelessWidget {
         Text('$value',
             style: t.headlineSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
         const SizedBox(height: 2),
-        Text(label, style: t.bodyMedium?.copyWith(color: AppColors.inkMuted)),
+        Text(label, style: t.bodyMedium),
       ],
     );
   }

@@ -23,8 +23,32 @@ void main() {
       'I cant go on',
       "I can't go on",
       'everyone would be better off dead',
+      // Added phrasings.
+      'I just want to end it all',
+      'thinking about taking my own life',
+      'I might take my life',
+      'I want to hang myself',
+      'been thinking about hanging myself',
+      'thinking about an overdose',
+      "there's no point in living",
+      "I don't want to live anymore",
+      'i want to kms',
+      'honestly kms',
     ]) {
       test('"$text"', () => expect(ContentGuard.isDistress(text), isTrue));
+    }
+  });
+
+  group('"kms" only fires as self-harm slang, not the distance unit', () {
+    // "kms" = kilometres when a number precedes it — must NOT surface a crisis
+    // sheet for "I ran 5 kms".
+    for (final text in const [
+      'I ran 5 kms today',
+      'did 10 kms this morning',
+      'the trail is 3 kms long',
+    ]) {
+      test('"$text" → not distress', () =>
+          expect(ContentGuard.isDistress(text), isFalse));
     }
   });
 
@@ -56,6 +80,10 @@ void main() {
       'This is killing my confidence',
       'I was so nervous I wanted to disappear',
       'I survived the meeting!',
+      // Deliberately NOT distress: in a social-anxiety app this is dread of an
+      // event, not self-harm — matching it would misfire constantly.
+      "I don't want to be here",
+      'I really do not want to be here right now',
     ]) {
       test('"$text"', () => expect(ContentGuard.isDistress(text), isFalse));
     }
