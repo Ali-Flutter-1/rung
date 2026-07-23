@@ -1770,7 +1770,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'We gebruiken privacyrespecterende productanalyse (PostHog) om te begrijpen welke functies helpen, met anonieme gebruiksgebeurtenissen zoals «scherm geopend» of «stap voltooid». We sturen nooit de inhoud van je notities of berichten naar de analyse.';
+      'We gebruiken privacyvriendelijke productanalyse (PostHog) om te begrijpen welke functies helpen — anonieme gebruiksgebeurtenissen zoals ‘scherm geopend’ of ‘stap voltooid’, nooit de inhoud van je notities of berichten. Het staat standaard uit en werkt alleen als je het inschakelt bij Instellingen; je kunt het altijd weer uitschakelen.';
 
   @override
   String get ppUseHead => 'Hoe we je gegevens gebruiken';

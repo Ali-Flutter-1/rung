@@ -1764,7 +1764,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Vi bruger privatlivsrespekterende produktanalyse (PostHog) til at forstå, hvilke funktioner der hjælper, med anonyme brugshændelser som «åbnede en skærm» eller «gennemførte et skridt». Vi sender aldrig indholdet af dine noter eller beskeder til analysen.';
+      'Vi bruger privatlivsvenlig produktanalyse (PostHog) for at forstå, hvilke funktioner der hjælper – anonyme brugshændelser som “åbnede en skærm” eller “gennemførte et trin”, aldrig indholdet af dine noter eller beskeder. Den er slået fra som standard og kører kun, hvis du slår den til i Indstillinger; du kan slå den fra igen når som helst.';
 
   @override
   String get ppUseHead => 'Hvordan vi bruger dine oplysninger';

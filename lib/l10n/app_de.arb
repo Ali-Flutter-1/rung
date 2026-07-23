@@ -510,7 +510,7 @@
   "ppCloudHead": "Was wir in der Cloud speichern",
   "ppCloudBody": "Wenn du ein Konto erstellst, speichern wir: deine E-Mail-Adresse (zur Anmeldung; dein Passwort ist verschlüsselt und wir sehen es nie), einen optionalen Anzeigenamen und eine Bio sowie deine Datenschutz-Einstellung. Um die Community („Pods“) zu betreiben, speichern wir die Nachrichten, die du postest, sowie Blockierungen oder Meldungen. Um deinen Fortschritt geräteübergreifend zu sichern, sichern wir nur Zahlen — deine Serie, abgeschlossene Herausforderungen und Angst-Bewertungen (vorhergesagt vs. tatsächlich) — sowie eigene Schritte, die du erstellst. Notiztext ist niemals enthalten.",
   "ppAnalyticsHead": "Analyse",
-  "ppAnalyticsBody": "Wir nutzen datenschutzfreundliche Produktanalyse (PostHog), um zu verstehen, welche Funktionen helfen, anhand anonymer Nutzungsereignisse wie „Bildschirm geöffnet“ oder „Schritt abgeschlossen“. Wir senden niemals den Inhalt deiner Notizen oder Nachrichten an die Analyse.",
+  "ppAnalyticsBody": "Wir verwenden datenschutzfreundliche Produktanalyse (PostHog), um zu verstehen, welche Funktionen helfen – anonyme Nutzungsereignisse wie „Bildschirm geöffnet“ oder „Schritt abgeschlossen“, niemals den Inhalt deiner Notizen oder Nachrichten. Sie ist standardmäßig aus und läuft nur, wenn du sie in den Einstellungen aktivierst; du kannst sie jederzeit wieder ausschalten.",
   "ppUseHead": "Wie wir deine Daten nutzen",
   "ppUseBody": "Nur, um die App bereitzustellen: dich anzumelden, die Pods zu betreiben, deinen Fortschritt wiederherzustellen und Rung mithilfe aggregierter, anonymer Trends zu verbessern. Wir verkaufen deine Daten nicht und nutzen sie nicht für Werbung.",
   "ppProcessHead": "Wer deine Daten verarbeitet",

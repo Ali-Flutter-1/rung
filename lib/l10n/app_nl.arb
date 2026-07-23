@@ -510,7 +510,7 @@
   "ppCloudHead": "Wat we in de cloud opslaan",
   "ppCloudBody": "Wanneer je een account aanmaakt, slaan we op: je e-mailadres (om in te loggen; je wachtwoord is versleuteld en we zien het nooit), een optionele weergavenaam en bio, en je privacyvergrendeling-instelling. Om de gemeenschap («pods») te laten werken, slaan we de berichten die je plaatst op, evenals blokkeringen of meldingen die je maakt. Om je voortgang veilig te houden op al je apparaten maken we alleen een back-up van cijfers — je reeks, voltooide uitdagingen en angstbeoordelingen (voorspeld vs werkelijk) — plus eventuele eigen stappen die je aanmaakt. Notitietekst wordt nooit opgenomen.",
   "ppAnalyticsHead": "Analyse",
-  "ppAnalyticsBody": "We gebruiken privacyrespecterende productanalyse (PostHog) om te begrijpen welke functies helpen, met anonieme gebruiksgebeurtenissen zoals «scherm geopend» of «stap voltooid». We sturen nooit de inhoud van je notities of berichten naar de analyse.",
+  "ppAnalyticsBody": "We gebruiken privacyvriendelijke productanalyse (PostHog) om te begrijpen welke functies helpen — anonieme gebruiksgebeurtenissen zoals ‘scherm geopend’ of ‘stap voltooid’, nooit de inhoud van je notities of berichten. Het staat standaard uit en werkt alleen als je het inschakelt bij Instellingen; je kunt het altijd weer uitschakelen.",
   "ppUseHead": "Hoe we je gegevens gebruiken",
   "ppUseBody": "Alleen om de app te leveren: je inloggen, de pods laten werken, je voortgang herstellen en Rung verbeteren met geaggregeerde, anonieme trends. We verkopen je gegevens niet en gebruiken ze niet voor advertenties.",
   "ppProcessHead": "Wie je gegevens verwerkt",

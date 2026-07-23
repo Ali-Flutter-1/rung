@@ -1771,7 +1771,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami ciri mana yang membantu, menggunakan peristiwa penggunaan tanpa nama seperti «membuka skrin» atau «menyelesaikan langkah». Kami tidak pernah menghantar kandungan nota atau mesej anda ke analitik.';
+      'Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami ciri yang membantu — peristiwa penggunaan tanpa nama seperti “membuka skrin” atau “menyelesaikan langkah”, tidak sekali-kali kandungan nota atau mesej anda. Ia dimatikan secara lalai dan hanya berjalan jika anda menghidupkannya dalam Tetapan; anda boleh mematikannya semula pada bila-bila masa.';
 
   @override
   String get ppUseHead => 'Bagaimana kami menggunakan maklumat anda';

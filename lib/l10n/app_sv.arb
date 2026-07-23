@@ -510,7 +510,7 @@
   "ppCloudHead": "Vad vi lagrar i molnet",
   "ppCloudBody": "När du skapar ett konto lagrar vi: din e-postadress (för inloggning; ditt lösenord är krypterat och vi ser det aldrig), ett valfritt visningsnamn och en bio, samt din integritetslåsinställning. För att driva gemenskapen («grupper») lagrar vi de meddelanden du publicerar och eventuella blockeringar eller anmälningar du gör. För att hålla dina framsteg trygga över enheter säkerhetskopierar vi endast siffror — din svit, avklarade utmaningar och ångestskattningar (förutsagt vs faktiskt) — plus egna steg du skapar. Anteckningstext inkluderas aldrig.",
   "ppAnalyticsHead": "Analys",
-  "ppAnalyticsBody": "Vi använder integritetsrespekterande produktanalys (PostHog) för att förstå vilka funktioner som hjälper, med anonyma användningshändelser som «öppnade en skärm» eller «slutförde ett steg». Vi skickar aldrig innehållet i dina anteckningar eller meddelanden till analysen.",
+  "ppAnalyticsBody": "Vi använder integritetsvänlig produktanalys (PostHog) för att förstå vilka funktioner som hjälper – anonyma användningshändelser som ”öppnade en skärm” eller ”slutförde ett steg”, aldrig innehållet i dina anteckningar eller meddelanden. Den är av som standard och körs bara om du aktiverar den i Inställningar; du kan stänga av den igen när som helst.",
   "ppUseHead": "Hur vi använder dina uppgifter",
   "ppUseBody": "Endast för att tillhandahålla appen: logga in dig, driva grupperna, återställa dina framsteg och förbättra Rung med aggregerade, anonyma trender. Vi säljer inte dina data och använder dem inte för annonsering.",
   "ppProcessHead": "Vem som behandlar dina data",

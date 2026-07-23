@@ -1782,7 +1782,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Wir nutzen datenschutzfreundliche Produktanalyse (PostHog), um zu verstehen, welche Funktionen helfen, anhand anonymer Nutzungsereignisse wie „Bildschirm geöffnet“ oder „Schritt abgeschlossen“. Wir senden niemals den Inhalt deiner Notizen oder Nachrichten an die Analyse.';
+      'Wir verwenden datenschutzfreundliche Produktanalyse (PostHog), um zu verstehen, welche Funktionen helfen – anonyme Nutzungsereignisse wie „Bildschirm geöffnet“ oder „Schritt abgeschlossen“, niemals den Inhalt deiner Notizen oder Nachrichten. Sie ist standardmäßig aus und läuft nur, wenn du sie in den Einstellungen aktivierst; du kannst sie jederzeit wieder ausschalten.';
 
   @override
   String get ppUseHead => 'Wie wir deine Daten nutzen';

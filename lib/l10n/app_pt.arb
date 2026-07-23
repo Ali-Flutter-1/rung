@@ -510,7 +510,7 @@
   "ppCloudHead": "O que guardamos na nuvem",
   "ppCloudBody": "Quando você cria uma conta, guardamos: seu endereço de e-mail (para login; sua senha é criptografada e nunca a vemos), um nome de exibição e uma bio opcionais, e sua configuração de bloqueio de privacidade. Para operar a comunidade («pods») guardamos as mensagens que você publica e quaisquer bloqueios ou denúncias que você faça. Para manter seu progresso seguro entre dispositivos, fazemos backup apenas de números — sua sequência, desafios concluídos e avaliações de ansiedade (prevista vs real) — além de quaisquer passos personalizados que você criar. O texto das notas nunca é incluído.",
   "ppAnalyticsHead": "Análise",
-  "ppAnalyticsBody": "Usamos análise de produto que respeita a privacidade (PostHog) para entender quais recursos ajudam, usando eventos de uso anônimos como «abriu uma tela» ou «concluiu um passo». Nunca enviamos o conteúdo das suas notas ou mensagens para a análise.",
+  "ppAnalyticsBody": "Usamos análises de produto que respeitam a privacidade (PostHog) para entender quais recursos ajudam — eventos de uso anônimos como “abriu uma tela” ou “concluiu uma etapa”, nunca o conteúdo das suas notas ou mensagens. Fica desativado por padrão e só funciona se você ativar nas Configurações; você pode desativá-lo novamente a qualquer momento.",
   "ppUseHead": "Como usamos suas informações",
   "ppUseBody": "Apenas para oferecer o app: fazer seu login, operar os pods, restaurar seu progresso e melhorar o Rung usando tendências agregadas e anônimas. Não vendemos seus dados nem os usamos para publicidade.",
   "ppProcessHead": "Quem processa seus dados",

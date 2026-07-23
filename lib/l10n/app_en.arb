@@ -850,7 +850,7 @@
   "ppCloudHead": "What we store in the cloud",
   "ppCloudBody": "When you create an account we store: your email address (for sign-in; your password is encrypted and we never see it), an optional display name and bio, and your privacy-lock setting. To run the community (“pods”) we store the messages you post and any blocks or reports you make. To keep your progress safe across devices we back up numbers only — your streak, challenges completed, and anxiety ratings (predicted vs actual) — plus any custom steps you create. Note text is never included.",
   "ppAnalyticsHead": "Analytics",
-  "ppAnalyticsBody": "We use privacy-respecting product analytics (PostHog) to understand which features help, using anonymous usage events such as “opened a screen” or “completed a step”. We never send the content of your notes or messages to analytics.",
+  "ppAnalyticsBody": "We use privacy-respecting product analytics (PostHog) to understand which features help — anonymous usage events like “opened a screen” or “completed a step”, never the content of your notes or messages. It is off by default and only runs if you turn it on in Settings; you can turn it off again at any time.",
   "ppUseHead": "How we use your information",
   "ppUseBody": "Only to provide the app: to sign you in, run the pods, restore your progress, and improve Rung using aggregate, anonymous trends. We do not sell your data or use it for advertising.",
   "ppProcessHead": "Who processes your data",

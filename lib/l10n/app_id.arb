@@ -510,7 +510,7 @@
   "ppCloudHead": "Yang kami simpan di cloud",
   "ppCloudBody": "Saat kamu membuat akun, kami menyimpan: alamat emailmu (untuk masuk; kata sandimu dienkripsi dan kami tidak pernah melihatnya), nama tampilan dan bio opsional, serta pengaturan kunci privasimu. Untuk menjalankan komunitas («pods») kami menyimpan pesan yang kamu kirim serta pemblokiran atau laporan yang kamu buat. Untuk menjaga kemajuanmu aman di berbagai perangkat, kami hanya mencadangkan angka — rangkaianmu, tantangan yang selesai, dan penilaian kecemasan (prediksi vs aktual) — ditambah langkah khusus yang kamu buat. Teks catatan tidak pernah disertakan.",
   "ppAnalyticsHead": "Analitik",
-  "ppAnalyticsBody": "Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami fitur mana yang membantu, dengan peristiwa penggunaan anonim seperti «membuka layar» atau «menyelesaikan langkah». Kami tidak pernah mengirim isi catatan atau pesanmu ke analitik.",
+  "ppAnalyticsBody": "Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami fitur mana yang membantu — peristiwa penggunaan anonim seperti “membuka layar” atau “menyelesaikan langkah”, tidak pernah isi catatan atau pesanmu. Fitur ini nonaktif secara bawaan dan hanya berjalan jika kamu mengaktifkannya di Pengaturan; kamu bisa menonaktifkannya lagi kapan saja.",
   "ppUseHead": "Bagaimana kami menggunakan informasimu",
   "ppUseBody": "Hanya untuk menyediakan aplikasi: membuatmu masuk, menjalankan pods, memulihkan kemajuanmu, dan meningkatkan Rung menggunakan tren agregat yang anonim. Kami tidak menjual datamu atau menggunakannya untuk iklan.",
   "ppProcessHead": "Siapa yang memproses datamu",

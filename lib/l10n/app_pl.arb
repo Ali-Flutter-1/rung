@@ -510,7 +510,7 @@
   "ppCloudHead": "Co przechowujemy w chmurze",
   "ppCloudBody": "Gdy tworzysz konto, przechowujemy: twój adres e-mail (do logowania; twoje hasło jest zaszyfrowane i nigdy go nie widzimy), opcjonalną nazwę wyświetlaną i biogram oraz twoje ustawienie blokady prywatności. Aby prowadzić społeczność («grupy»), przechowujemy wiadomości, które publikujesz, oraz wszelkie blokady lub zgłoszenia, których dokonujesz. Aby zachować twoje postępy na różnych urządzeniach, tworzymy kopię zapasową wyłącznie liczb — twojej serii, ukończonych wyzwań i ocen lęku (przewidywany vs rzeczywisty) — a także wszelkich własnych kroków, które utworzysz. Tekst notatek nigdy nie jest uwzględniany.",
   "ppAnalyticsHead": "Analityka",
-  "ppAnalyticsBody": "Używamy analityki produktowej szanującej prywatność (PostHog), aby zrozumieć, które funkcje pomagają, korzystając z anonimowych zdarzeń użycia, takich jak «otwarto ekran» czy «ukończono krok». Nigdy nie wysyłamy treści twoich notatek ani wiadomości do analityki.",
+  "ppAnalyticsBody": "Używamy analityki produktu szanującej prywatność (PostHog), aby zrozumieć, które funkcje pomagają — anonimowych zdarzeń użycia, takich jak „otwarcie ekranu” czy „ukończenie kroku”, nigdy treści Twoich notatek ani wiadomości. Jest domyślnie wyłączona i działa tylko, jeśli włączysz ją w Ustawieniach; możesz ją wyłączyć w dowolnej chwili.",
   "ppUseHead": "Jak wykorzystujemy twoje informacje",
   "ppUseBody": "Wyłącznie do udostępniania aplikacji: aby cię zalogować, prowadzić grupy, przywrócić twoje postępy i ulepszać Rung na podstawie zbiorczych, anonimowych trendów. Nie sprzedajemy twoich danych ani nie używamy ich do reklam.",
   "ppProcessHead": "Kto przetwarza twoje dane",

@@ -510,7 +510,7 @@
   "ppCloudHead": "O que guardamos na nuvem",
   "ppCloudBody": "Quando crias uma conta guardamos: o teu endereço de e-mail (para iniciares sessão; a tua palavra-passe é encriptada e nunca a vemos), um nome a apresentar e uma biografia opcionais, e a tua definição de bloqueio de privacidade. Para gerir a comunidade («grupos») guardamos as mensagens que publicas e quaisquer bloqueios ou denúncias que faças. Para manter o teu progresso seguro entre dispositivos, fazemos cópia apenas de números — a tua sequência, os desafios concluídos e as avaliações de ansiedade (prevista vs real) — além de quaisquer degraus personalizados que cries. O texto das notas nunca é incluído.",
   "ppAnalyticsHead": "Análise",
-  "ppAnalyticsBody": "Usamos análise de produto que respeita a privacidade (PostHog) para percebermos que funcionalidades ajudam, através de eventos de utilização anónimos como «abriu um ecrã» ou «concluiu um passo». Nunca enviamos o conteúdo das tuas notas ou mensagens para a análise.",
+  "ppAnalyticsBody": "Usamos análises de produto que respeitam a privacidade (PostHog) para perceber que funcionalidades ajudam — eventos de utilização anónimos como “abriu um ecrã” ou “concluiu um passo”, nunca o conteúdo das tuas notas ou mensagens. Está desativado por predefinição e só funciona se o ativares nas Definições; podes desativá-lo novamente a qualquer momento.",
   "ppUseHead": "Como usamos as tuas informações",
   "ppUseBody": "Apenas para disponibilizar a aplicação: iniciar a tua sessão, gerir os grupos, restaurar o teu progresso e melhorar o Rung com tendências agregadas e anónimas. Não vendemos os teus dados nem os usamos para publicidade.",
   "ppProcessHead": "Quem trata os teus dados",

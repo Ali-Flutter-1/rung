@@ -510,7 +510,7 @@
   "ppCloudHead": "Cosa memorizziamo nel cloud",
   "ppCloudBody": "Quando crei un account memorizziamo: il tuo indirizzo email (per l'accesso; la tua password è crittografata e non la vediamo mai), un nome visualizzato e una bio facoltativi, e la tua impostazione di blocco della privacy. Per gestire la comunità («pod») memorizziamo i messaggi che pubblichi e qualsiasi blocco o segnalazione che effettui. Per mantenere i tuoi progressi al sicuro tra i dispositivi eseguiamo il backup solo di numeri — la tua serie, le sfide completate e le valutazioni d'ansia (prevista vs reale) — oltre a eventuali passi personalizzati che crei. Il testo delle note non è mai incluso.",
   "ppAnalyticsHead": "Analisi",
-  "ppAnalyticsBody": "Usiamo analisi di prodotto rispettose della privacy (PostHog) per capire quali funzioni aiutano, tramite eventi d'uso anonimi come «ha aperto una schermata» o «ha completato un passo». Non inviamo mai il contenuto delle tue note o dei tuoi messaggi alle analisi.",
+  "ppAnalyticsBody": "Usiamo analisi di prodotto rispettose della privacy (PostHog) per capire quali funzioni aiutano: eventi d'uso anonimi come «schermata aperta» o «passo completato», mai il contenuto delle tue note o dei messaggi. È disattivata per impostazione predefinita e funziona solo se la attivi nelle Impostazioni; puoi disattivarla di nuovo in qualsiasi momento.",
   "ppUseHead": "Come usiamo le tue informazioni",
   "ppUseBody": "Solo per fornire l'app: farti accedere, gestire i pod, ripristinare i tuoi progressi e migliorare Rung usando tendenze aggregate e anonime. Non vendiamo i tuoi dati né li usiamo per la pubblicità.",
   "ppProcessHead": "Chi tratta i tuoi dati",

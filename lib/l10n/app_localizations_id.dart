@@ -1762,7 +1762,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami fitur mana yang membantu, dengan peristiwa penggunaan anonim seperti «membuka layar» atau «menyelesaikan langkah». Kami tidak pernah mengirim isi catatan atau pesanmu ke analitik.';
+      'Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami fitur mana yang membantu — peristiwa penggunaan anonim seperti “membuka layar” atau “menyelesaikan langkah”, tidak pernah isi catatan atau pesanmu. Fitur ini nonaktif secara bawaan dan hanya berjalan jika kamu mengaktifkannya di Pengaturan; kamu bisa menonaktifkannya lagi kapan saja.';
 
   @override
   String get ppUseHead => 'Bagaimana kami menggunakan informasimu';

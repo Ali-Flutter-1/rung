@@ -1770,7 +1770,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Usamos análise de produto que respeita a privacidade (PostHog) para entender quais recursos ajudam, usando eventos de uso anônimos como «abriu uma tela» ou «concluiu um passo». Nunca enviamos o conteúdo das suas notas ou mensagens para a análise.';
+      'Usamos análises de produto que respeitam a privacidade (PostHog) para entender quais recursos ajudam — eventos de uso anônimos como “abriu uma tela” ou “concluiu uma etapa”, nunca o conteúdo das suas notas ou mensagens. Fica desativado por padrão e só funciona se você ativar nas Configurações; você pode desativá-lo novamente a qualquer momento.';
 
   @override
   String get ppUseHead => 'Como usamos suas informações';
@@ -3793,7 +3793,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get ppAnalyticsBody =>
-      'Usamos análise de produto que respeita a privacidade (PostHog) para percebermos que funcionalidades ajudam, através de eventos de utilização anónimos como «abriu um ecrã» ou «concluiu um passo». Nunca enviamos o conteúdo das tuas notas ou mensagens para a análise.';
+      'Usamos análises de produto que respeitam a privacidade (PostHog) para perceber que funcionalidades ajudam — eventos de utilização anónimos como “abriu um ecrã” ou “concluiu um passo”, nunca o conteúdo das tuas notas ou mensagens. Está desativado por predefinição e só funciona se o ativares nas Definições; podes desativá-lo novamente a qualquer momento.';
 
   @override
   String get ppUseHead => 'Como usamos as tuas informações';

@@ -1687,7 +1687,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      '어떤 기능이 도움이 되는지 파악하기 위해 개인정보를 존중하는 제품 분석(PostHog)을 사용해요. 「화면을 열었다」나 「단계를 완료했다」 같은 익명 사용 이벤트만 기록해요. 메모나 메시지의 내용을 분석에 보내는 일은 결코 없어요.';
+      '개인정보를 존중하는 제품 분석(PostHog)을 사용해 어떤 기능이 도움이 되는지 파악합니다. ‘화면 열기’나 ‘단계 완료’ 같은 익명 사용 이벤트만 사용하며, 메모나 메시지 내용은 절대 전송하지 않습니다. 기본적으로 꺼져 있으며 설정에서 켠 경우에만 작동합니다. 언제든지 다시 끌 수 있습니다.';
 
   @override
   String get ppUseHead => '정보를 사용하는 방법';

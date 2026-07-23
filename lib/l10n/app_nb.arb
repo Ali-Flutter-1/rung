@@ -510,7 +510,7 @@
   "ppCloudHead": "Hva vi lagrer i skyen",
   "ppCloudBody": "Når du oppretter en konto lagrer vi: e-postadressen din (for innlogging; passordet ditt er kryptert og vi ser det aldri), et valgfritt visningsnavn og en bio, og personverninnstillingen din. For å drive fellesskapet («grupper») lagrer vi meldingene du publiserer og eventuelle blokkeringer eller rapporter du gjør. For å holde fremgangen din trygg på tvers av enheter sikkerhetskopierer vi bare tall — rekken din, fullførte utfordringer og angstvurderinger (forutsagt vs faktisk) — pluss egne trinn du oppretter. Notattekst er aldri inkludert.",
   "ppAnalyticsHead": "Analyse",
-  "ppAnalyticsBody": "Vi bruker personvernvennlig produktanalyse (PostHog) for å forstå hvilke funksjoner som hjelper, med anonyme bruksehendelser som «åpnet en skjerm» eller «fullførte et steg». Vi sender aldri innholdet i notatene eller meldingene dine til analysen.",
+  "ppAnalyticsBody": "Vi bruker personvernvennlig produktanalyse (PostHog) for å forstå hvilke funksjoner som hjelper – anonyme brukshendelser som «åpnet en skjerm» eller «fullførte et steg», aldri innholdet i notatene eller meldingene dine. Den er av som standard og kjører bare hvis du slår den på i Innstillinger; du kan slå den av igjen når som helst.",
   "ppUseHead": "Hvordan vi bruker opplysningene dine",
   "ppUseBody": "Bare for å levere appen: logge deg inn, drive gruppene, gjenopprette fremgangen din og forbedre Rung med aggregerte, anonyme trender. Vi selger ikke dataene dine og bruker dem ikke til annonsering.",
   "ppProcessHead": "Hvem som behandler dataene dine",

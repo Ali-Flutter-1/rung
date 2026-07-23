@@ -510,7 +510,7 @@
   "ppCloudHead": "Apa yang kami simpan dalam awan",
   "ppCloudBody": "Apabila anda membuat akaun, kami menyimpan: alamat e-mel anda (untuk log masuk; kata laluan anda disulitkan dan kami tidak pernah melihatnya), nama paparan dan bio pilihan, serta tetapan kunci privasi anda. Untuk mengendalikan komuniti («pods») kami menyimpan mesej yang anda siarkan serta sebarang sekatan atau laporan yang anda buat. Untuk memastikan kemajuan anda selamat merentas peranti, kami hanya menyandarkan nombor — rentetan anda, cabaran yang selesai, dan penilaian kebimbangan (ramalan vs sebenar) — serta langkah tersuai yang anda cipta. Teks nota tidak pernah disertakan.",
   "ppAnalyticsHead": "Analitik",
-  "ppAnalyticsBody": "Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami ciri mana yang membantu, menggunakan peristiwa penggunaan tanpa nama seperti «membuka skrin» atau «menyelesaikan langkah». Kami tidak pernah menghantar kandungan nota atau mesej anda ke analitik.",
+  "ppAnalyticsBody": "Kami menggunakan analitik produk yang menghormati privasi (PostHog) untuk memahami ciri yang membantu — peristiwa penggunaan tanpa nama seperti “membuka skrin” atau “menyelesaikan langkah”, tidak sekali-kali kandungan nota atau mesej anda. Ia dimatikan secara lalai dan hanya berjalan jika anda menghidupkannya dalam Tetapan; anda boleh mematikannya semula pada bila-bila masa.",
   "ppUseHead": "Bagaimana kami menggunakan maklumat anda",
   "ppUseBody": "Hanya untuk menyediakan apl: melog masuk anda, mengendalikan pods, memulihkan kemajuan anda, dan menambah baik Rung menggunakan trend agregat tanpa nama. Kami tidak menjual data anda atau menggunakannya untuk pengiklanan.",
   "ppProcessHead": "Siapa yang memproses data anda",

@@ -1781,7 +1781,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ppAnalyticsBody =>
-      'Nous utilisons une analytique produit respectueuse de la vie privée (PostHog) pour comprendre quelles fonctions aident, à l’aide d’événements d’usage anonymes comme « écran ouvert » ou « étape terminée ». Nous n’envoyons jamais le contenu de tes notes ou messages à l’analytique.';
+      'Nous utilisons des analyses produit respectueuses de la vie privée (PostHog) pour comprendre quelles fonctionnalités aident — des événements d\'usage anonymes comme « écran ouvert » ou « étape terminée », jamais le contenu de tes notes ou messages. C\'est désactivé par défaut et ne fonctionne que si tu l\'actives dans les Réglages ; tu peux le désactiver à tout moment.';
 
   @override
   String get ppUseHead => 'Comment nous utilisons tes informations';

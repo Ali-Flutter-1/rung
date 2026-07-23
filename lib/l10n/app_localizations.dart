@@ -3190,7 +3190,7 @@ abstract class AppLocalizations {
   /// No description provided for @ppAnalyticsBody.
   ///
   /// In en, this message translates to:
-  /// **'We use privacy-respecting product analytics (PostHog) to understand which features help, using anonymous usage events such as “opened a screen” or “completed a step”. We never send the content of your notes or messages to analytics.'**
+  /// **'We use privacy-respecting product analytics (PostHog) to understand which features help — anonymous usage events like “opened a screen” or “completed a step”, never the content of your notes or messages. It is off by default and only runs if you turn it on in Settings; you can turn it off again at any time.'**
   String get ppAnalyticsBody;
 
   /// No description provided for @ppUseHead.
