@@ -1,0 +1,17 @@
+# Copy to android/key.properties and fill in. This file (the .example) is safe
+# to commit; key.properties itself is git-ignored and must NEVER be committed.
+#
+# Generate the upload keystore once (keep upload-keystore.jks and these
+# passwords backed up somewhere safe — losing them means you can never update
+# the app on Play):
+#
+#   keytool -genkey -v -keystore ~/upload-keystore.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# storeFile is resolved relative to the android/ directory, so an absolute path
+# is simplest.
+
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=upload
+storeFile=/absolute/path/to/upload-keystore.jks

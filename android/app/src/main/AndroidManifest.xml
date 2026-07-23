@@ -1,7 +1,15 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Opt-in daily reminders (flutter_local_notifications). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- A Google Play Services dependency (via Firebase) injects the advertising
+         ID permission into the merged manifest. Rung uses no ads and no ad-id
+         tracking, so we strip it — this keeps the Play "Advertising ID" data-
+         safety answer truthfully "not used" and avoids the ad-id policy check.
+         If ads are ever added, remove this line and declare the ID in Play. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove"/>
     <application
         android:label="rung"
         android:name="${applicationName}"
