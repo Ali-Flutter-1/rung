@@ -2025,4 +2025,65 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'تعذّر الحفظ — قد تكون مساحة جهازك منخفضة. أفرِغ بعض المساحة وحاول مرة أخرى.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'المستوى $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'أكملت المستوى $level! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'المستوى التالي ←';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves حركة';
+  }
+
+  @override
+  String get gameTitleSlide => 'أحجية الانزلاق';
+
+  @override
+  String get gameSubSlide => 'منطق · رتّب القطع بالترتيب';
+
+  @override
+  String get slideRule1 => 'انقر على قطعة بجوار المكان الفارغ لتحريكها.';
+
+  @override
+  String get slideRule2 =>
+      'أعد ترتيب الأرقام لإكمال المستوى — كل مستوى بلوحة أكبر.';
+
+  @override
+  String get gameTitleLights => 'إطفاء الأضواء';
+
+  @override
+  String get gameSubLights => 'منطق · أطفئ كل الأضواء';
+
+  @override
+  String get lightsRule1 => 'انقر على مربع لتبديله مع جيرانه الأربعة.';
+
+  @override
+  String get lightsRule2 => 'أطفئ كل الأضواء لإكمال المستوى — كل مستوى أصعب.';
+
+  @override
+  String get gameTitleOrder => 'سباق الأرقام';
+
+  @override
+  String get gameSubOrder => 'تركيز · انقر على الأرقام بالترتيب';
+
+  @override
+  String get orderRule1 => 'انقر على الأرقام بالترتيب: 1، 2، 3 …';
+
+  @override
+  String get orderRule2 =>
+      'امسح الشبكة كاملة للتقدّم — كل مستوى يضيف أرقامًا أكثر.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'التالي: $next';
+  }
 }

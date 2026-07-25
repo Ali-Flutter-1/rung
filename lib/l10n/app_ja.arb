@@ -595,5 +595,22 @@
   "editBioHint": "あなたについて一行 — プロフィールをロックすると非公開のままです。",
   "errorOffline": "オフラインです。インターネットに接続して、もう一度お試しください。",
   "errorGeneric": "問題が発生しました。もう一度お試しください。",
-  "errorSaveFailed": "保存できませんでした — 端末の空き容量が不足している可能性があります。空き容量を増やして、もう一度お試しください。"
+  "errorSaveFailed": "保存できませんでした — 端末の空き容量が不足している可能性があります。空き容量を増やして、もう一度お試しください。",
+  "gameLevelLabel": "レベル {level}",
+  "gameLevelClear": "レベル {level} クリア！🎉",
+  "gameNextLevel": "次のレベル →",
+  "gameMovesLabel": "{moves} 手",
+  "gameTitleSlide": "スライドパズル",
+  "gameSubSlide": "論理 · タイルを順番に並べる",
+  "slideRule1": "空いているマスの隣のタイルをタップして動かします。",
+  "slideRule2": "数字を順番に並べてレベルをクリア。進むほど盤面が大きくなります。",
+  "gameTitleLights": "ライトアウト",
+  "gameSubLights": "論理 · すべての明かりを消す",
+  "lightsRule1": "マスをタップすると、そのマスと上下左右の4マスが切り替わります。",
+  "lightsRule2": "すべての明かりを消してレベルをクリア。進むほど難しくなります。",
+  "gameTitleOrder": "ナンバーラッシュ",
+  "gameSubOrder": "集中 · 数字を順番にタップ",
+  "orderRule1": "数字を順番にタップ：1、2、3 …",
+  "orderRule2": "盤面をすべて消して次へ。レベルごとに数字が増えます。",
+  "orderNextLabel": "次：{next}"
 }

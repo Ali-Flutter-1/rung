@@ -595,5 +595,22 @@
   "editBioHint": "Una línea sobre ti — se mantiene privada si bloqueas tu perfil.",
   "errorOffline": "Estás sin conexión. Conéctate a internet e inténtalo de nuevo.",
   "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
-  "errorSaveFailed": "No se pudo guardar — puede que tu dispositivo tenga poco espacio. Libera espacio e inténtalo de nuevo."
+  "errorSaveFailed": "No se pudo guardar — puede que tu dispositivo tenga poco espacio. Libera espacio e inténtalo de nuevo.",
+  "gameLevelLabel": "Nivel {level}",
+  "gameLevelClear": "¡Nivel {level} superado! 🎉",
+  "gameNextLevel": "Siguiente nivel →",
+  "gameMovesLabel": "{moves} movimientos",
+  "gameTitleSlide": "Puzle deslizante",
+  "gameSubSlide": "lógica · ordena las fichas",
+  "slideRule1": "Toca una ficha junto al hueco para deslizarla.",
+  "slideRule2": "Ordena los números para superar el nivel: cada uno tiene un tablero más grande.",
+  "gameTitleLights": "Apaga luces",
+  "gameSubLights": "lógica · apaga todas las luces",
+  "lightsRule1": "Toca una casilla para cambiar su luz y la de sus cuatro vecinas.",
+  "lightsRule2": "Apaga todas las luces para superar el nivel: cada uno es más difícil.",
+  "gameTitleOrder": "Números en orden",
+  "gameSubOrder": "concentración · toca los números en orden",
+  "orderRule1": "Toca los números en orden: 1, 2, 3…",
+  "orderRule2": "Completa toda la cuadrícula para avanzar: cada nivel añade más números.",
+  "orderNextLabel": "Siguiente: {next}"
 }

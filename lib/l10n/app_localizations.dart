@@ -3702,6 +3702,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t save — your device may be low on storage. Free up space and try again.'**
   String get errorSaveFailed;
+
+  /// No description provided for @gameLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String gameLevelLabel(int level);
+
+  /// No description provided for @gameLevelClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level} cleared! 🎉'**
+  String gameLevelClear(int level);
+
+  /// No description provided for @gameNextLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next level →'**
+  String get gameNextLevel;
+
+  /// No description provided for @gameMovesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{moves} moves'**
+  String gameMovesLabel(int moves);
+
+  /// No description provided for @gameTitleSlide.
+  ///
+  /// In en, this message translates to:
+  /// **'Sliding puzzle'**
+  String get gameTitleSlide;
+
+  /// No description provided for @gameSubSlide.
+  ///
+  /// In en, this message translates to:
+  /// **'logic · slide tiles into order'**
+  String get gameSubSlide;
+
+  /// No description provided for @slideRule1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a tile next to the empty space to slide it in.'**
+  String get slideRule1;
+
+  /// No description provided for @slideRule2.
+  ///
+  /// In en, this message translates to:
+  /// **'Get the numbers back in order to clear the level — each one is a bigger board.'**
+  String get slideRule2;
+
+  /// No description provided for @gameTitleLights.
+  ///
+  /// In en, this message translates to:
+  /// **'Lights Out'**
+  String get gameTitleLights;
+
+  /// No description provided for @gameSubLights.
+  ///
+  /// In en, this message translates to:
+  /// **'logic · turn every light off'**
+  String get gameSubLights;
+
+  /// No description provided for @lightsRule1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a tile to flip it and its four neighbours.'**
+  String get lightsRule1;
+
+  /// No description provided for @lightsRule2.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn every light off to clear the level — each one gets harder.'**
+  String get lightsRule2;
+
+  /// No description provided for @gameTitleOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Rush'**
+  String get gameTitleOrder;
+
+  /// No description provided for @gameSubOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'focus · tap the numbers in order'**
+  String get gameSubOrder;
+
+  /// No description provided for @orderRule1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the numbers in order: 1, 2, 3 and up.'**
+  String get orderRule1;
+
+  /// No description provided for @orderRule2.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the whole grid to advance — each level adds more numbers.'**
+  String get orderRule2;
+
+  /// No description provided for @orderNextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {next}'**
+  String orderNextLabel(int next);
 }
 
 class _AppLocalizationsDelegate

@@ -2067,4 +2067,68 @@ class AppLocalizationsMs extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Tidak dapat menyimpan — storan peranti anda mungkin rendah. Kosongkan ruang dan cuba lagi.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Tahap $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Tahap $level selesai! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Tahap seterusnya →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves gerakan';
+  }
+
+  @override
+  String get gameTitleSlide => 'Teka-teki gelongsor';
+
+  @override
+  String get gameSubSlide => 'logik · susun jubin mengikut urutan';
+
+  @override
+  String get slideRule1 =>
+      'Ketik jubin di sebelah ruang kosong untuk menggelongsorkannya.';
+
+  @override
+  String get slideRule2 =>
+      'Susun nombor mengikut urutan untuk selesaikan tahap — setiap tahap papannya lebih besar.';
+
+  @override
+  String get gameTitleLights => 'Padam Lampu';
+
+  @override
+  String get gameSubLights => 'logik · padamkan semua lampu';
+
+  @override
+  String get lightsRule1 =>
+      'Ketik petak untuk menukar petak itu dan empat jirannya.';
+
+  @override
+  String get lightsRule2 =>
+      'Padamkan semua lampu untuk selesaikan tahap — setiap tahap makin sukar.';
+
+  @override
+  String get gameTitleOrder => 'Kejar Nombor';
+
+  @override
+  String get gameSubOrder => 'fokus · ketik nombor mengikut urutan';
+
+  @override
+  String get orderRule1 => 'Ketik nombor mengikut urutan: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Bersihkan seluruh grid untuk teruskan — setiap tahap menambah nombor.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Seterusnya: $next';
+  }
 }

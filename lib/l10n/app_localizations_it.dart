@@ -2057,4 +2057,68 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Impossibile salvare — il dispositivo potrebbe avere poco spazio. Libera spazio e riprova.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Livello $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Livello $level completato! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Livello successivo →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves mosse';
+  }
+
+  @override
+  String get gameTitleSlide => 'Rompicapo scorrevole';
+
+  @override
+  String get gameSubSlide => 'logica · ordina le tessere';
+
+  @override
+  String get slideRule1 =>
+      'Tocca una tessera vicino allo spazio vuoto per farla scorrere.';
+
+  @override
+  String get slideRule2 =>
+      'Rimetti i numeri in ordine per superare il livello: ognuno ha una griglia più grande.';
+
+  @override
+  String get gameTitleLights => 'Spegni le luci';
+
+  @override
+  String get gameSubLights => 'logica · spegni tutte le luci';
+
+  @override
+  String get lightsRule1 =>
+      'Tocca una casella per invertire la sua luce e quelle delle quattro vicine.';
+
+  @override
+  String get lightsRule2 =>
+      'Spegni tutte le luci per superare il livello: ognuno è più difficile.';
+
+  @override
+  String get gameTitleOrder => 'Numeri in ordine';
+
+  @override
+  String get gameSubOrder => 'concentrazione · tocca i numeri in ordine';
+
+  @override
+  String get orderRule1 => 'Tocca i numeri in ordine: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Completa tutta la griglia per avanzare: ogni livello aggiunge numeri.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Successivo: $next';
+  }
 }

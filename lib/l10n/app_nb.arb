@@ -595,5 +595,22 @@
   "editBioHint": "En linje om deg — holdes privat hvis du låser profilen din.",
   "errorOffline": "Du er frakoblet. Koble til internett og prøv igjen.",
   "errorGeneric": "Noe gikk galt. Prøv igjen.",
-  "errorSaveFailed": "Kunne ikke lagre — enheten din har kanskje lite lagringsplass. Frigjør plass og prøv igjen."
+  "errorSaveFailed": "Kunne ikke lagre — enheten din har kanskje lite lagringsplass. Frigjør plass og prøv igjen.",
+  "gameLevelLabel": "Nivå {level}",
+  "gameLevelClear": "Nivå {level} fullført! 🎉",
+  "gameNextLevel": "Neste nivå →",
+  "gameMovesLabel": "{moves} trekk",
+  "gameTitleSlide": "Skyvepuslespill",
+  "gameSubSlide": "logikk · legg brikkene i rekkefølge",
+  "slideRule1": "Trykk på en brikke ved siden av det tomme feltet for å skyve den.",
+  "slideRule2": "Legg tallene i riktig rekkefølge for å klare nivået — hvert nivå er et større brett.",
+  "gameTitleLights": "Slukk lysene",
+  "gameSubLights": "logikk · slukk alle lysene",
+  "lightsRule1": "Trykk på en rute for å veksle den og de fire naboene.",
+  "lightsRule2": "Slukk alle lysene for å klare nivået — hvert nivå blir vanskeligere.",
+  "gameTitleOrder": "Talljakt",
+  "gameSubOrder": "fokus · trykk på tallene i rekkefølge",
+  "orderRule1": "Trykk på tallene i rekkefølge: 1, 2, 3 …",
+  "orderRule2": "Tøm hele rutenettet for å gå videre — hvert nivå gir flere tall.",
+  "orderNextLabel": "Neste: {next}"
 }

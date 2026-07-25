@@ -2066,4 +2066,67 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'No se pudo guardar — puede que tu dispositivo tenga poco espacio. Libera espacio e inténtalo de nuevo.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Nivel $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return '¡Nivel $level superado! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Siguiente nivel →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves movimientos';
+  }
+
+  @override
+  String get gameTitleSlide => 'Puzle deslizante';
+
+  @override
+  String get gameSubSlide => 'lógica · ordena las fichas';
+
+  @override
+  String get slideRule1 => 'Toca una ficha junto al hueco para deslizarla.';
+
+  @override
+  String get slideRule2 =>
+      'Ordena los números para superar el nivel: cada uno tiene un tablero más grande.';
+
+  @override
+  String get gameTitleLights => 'Apaga luces';
+
+  @override
+  String get gameSubLights => 'lógica · apaga todas las luces';
+
+  @override
+  String get lightsRule1 =>
+      'Toca una casilla para cambiar su luz y la de sus cuatro vecinas.';
+
+  @override
+  String get lightsRule2 =>
+      'Apaga todas las luces para superar el nivel: cada uno es más difícil.';
+
+  @override
+  String get gameTitleOrder => 'Números en orden';
+
+  @override
+  String get gameSubOrder => 'concentración · toca los números en orden';
+
+  @override
+  String get orderRule1 => 'Toca los números en orden: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Completa toda la cuadrícula para avanzar: cada nivel añade más números.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Siguiente: $next';
+  }
 }

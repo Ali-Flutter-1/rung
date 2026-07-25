@@ -595,5 +595,22 @@
   "editBioHint": "Uma linha sobre ti — fica privada se bloqueares o teu perfil.",
   "errorOffline": "Estás offline. Liga-te à internet e tenta novamente.",
   "errorGeneric": "Algo correu mal. Tenta novamente.",
-  "errorSaveFailed": "Não foi possível guardar — o teu dispositivo pode ter pouco espaço. Liberta espaço e tenta novamente."
+  "errorSaveFailed": "Não foi possível guardar — o teu dispositivo pode ter pouco espaço. Liberta espaço e tenta novamente.",
+  "gameLevelLabel": "Nível {level}",
+  "gameLevelClear": "Nível {level} concluído! 🎉",
+  "gameNextLevel": "Nível seguinte →",
+  "gameMovesLabel": "{moves} movimentos",
+  "gameTitleSlide": "Puzzle deslizante",
+  "gameSubSlide": "lógica · coloca as peças por ordem",
+  "slideRule1": "Toca numa peça ao lado do espaço vazio para a deslizares.",
+  "slideRule2": "Coloca os números por ordem para passar de nível — cada um tem um tabuleiro maior.",
+  "gameTitleLights": "Apaga as luzes",
+  "gameSubLights": "lógica · apaga todas as luzes",
+  "lightsRule1": "Toca num quadrado para inverter a luz dele e das quatro vizinhas.",
+  "lightsRule2": "Apaga todas as luzes para passar de nível — cada um é mais difícil.",
+  "gameTitleOrder": "Números por ordem",
+  "gameSubOrder": "foco · toca nos números por ordem",
+  "orderRule1": "Toca nos números por ordem: 1, 2, 3…",
+  "orderRule2": "Limpa toda a grelha para avançar — cada nível acrescenta mais números.",
+  "orderNextLabel": "Seguinte: {next}"
 }

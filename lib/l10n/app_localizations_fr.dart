@@ -2078,4 +2078,68 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Échec de l\'enregistrement — ton appareil manque peut-être d\'espace. Libère de l\'espace et réessaie.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Niveau $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Niveau $level réussi ! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Niveau suivant →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves coups';
+  }
+
+  @override
+  String get gameTitleSlide => 'Taquin';
+
+  @override
+  String get gameSubSlide => 'logique · remets les tuiles en ordre';
+
+  @override
+  String get slideRule1 =>
+      'Touche une tuile à côté de la case vide pour la faire glisser.';
+
+  @override
+  String get slideRule2 =>
+      'Remets les chiffres dans l’ordre pour réussir le niveau — chacun agrandit la grille.';
+
+  @override
+  String get gameTitleLights => 'Éteins les lumières';
+
+  @override
+  String get gameSubLights => 'logique · éteins toutes les lumières';
+
+  @override
+  String get lightsRule1 =>
+      'Touche une case pour inverser sa lumière et celle de ses quatre voisines.';
+
+  @override
+  String get lightsRule2 =>
+      'Éteins toutes les lumières pour réussir le niveau — chacun est plus difficile.';
+
+  @override
+  String get gameTitleOrder => 'Chiffres en ordre';
+
+  @override
+  String get gameSubOrder => 'concentration · touche les chiffres dans l’ordre';
+
+  @override
+  String get orderRule1 => 'Touche les chiffres dans l’ordre : 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Vide toute la grille pour avancer — chaque niveau ajoute des chiffres.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Suivant : $next';
+  }
 }

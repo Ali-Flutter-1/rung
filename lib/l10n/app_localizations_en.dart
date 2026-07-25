@@ -2040,4 +2040,66 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Couldn\'t save — your device may be low on storage. Free up space and try again.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Level $level cleared! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Next level →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves moves';
+  }
+
+  @override
+  String get gameTitleSlide => 'Sliding puzzle';
+
+  @override
+  String get gameSubSlide => 'logic · slide tiles into order';
+
+  @override
+  String get slideRule1 => 'Tap a tile next to the empty space to slide it in.';
+
+  @override
+  String get slideRule2 =>
+      'Get the numbers back in order to clear the level — each one is a bigger board.';
+
+  @override
+  String get gameTitleLights => 'Lights Out';
+
+  @override
+  String get gameSubLights => 'logic · turn every light off';
+
+  @override
+  String get lightsRule1 => 'Tap a tile to flip it and its four neighbours.';
+
+  @override
+  String get lightsRule2 =>
+      'Turn every light off to clear the level — each one gets harder.';
+
+  @override
+  String get gameTitleOrder => 'Number Rush';
+
+  @override
+  String get gameSubOrder => 'focus · tap the numbers in order';
+
+  @override
+  String get orderRule1 => 'Tap the numbers in order: 1, 2, 3 and up.';
+
+  @override
+  String get orderRule2 =>
+      'Clear the whole grid to advance — each level adds more numbers.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Next: $next';
+  }
 }

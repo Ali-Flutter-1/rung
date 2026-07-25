@@ -2061,4 +2061,68 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Kunne ikke gemme — din enhed har måske lidt lagerplads. Frigør plads, og prøv igen.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Niveau $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Niveau $level gennemført! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Næste niveau →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves træk';
+  }
+
+  @override
+  String get gameTitleSlide => 'Skydepuslespil';
+
+  @override
+  String get gameSubSlide => 'logik · læg brikkerne i rækkefølge';
+
+  @override
+  String get slideRule1 =>
+      'Tryk på en brik ved siden af det tomme felt for at skubbe den.';
+
+  @override
+  String get slideRule2 =>
+      'Læg tallene i rækkefølge for at klare niveauet — hvert niveau er et større bræt.';
+
+  @override
+  String get gameTitleLights => 'Sluk lysene';
+
+  @override
+  String get gameSubLights => 'logik · sluk alle lysene';
+
+  @override
+  String get lightsRule1 =>
+      'Tryk på et felt for at skifte det og dets fire naboer.';
+
+  @override
+  String get lightsRule2 =>
+      'Sluk alle lysene for at klare niveauet — hvert niveau bliver sværere.';
+
+  @override
+  String get gameTitleOrder => 'Taljagt';
+
+  @override
+  String get gameSubOrder => 'fokus · tryk på tallene i rækkefølge';
+
+  @override
+  String get orderRule1 => 'Tryk på tallene i rækkefølge: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Ryd hele gitteret for at komme videre — hvert niveau tilføjer flere tal.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Næste: $next';
+  }
 }

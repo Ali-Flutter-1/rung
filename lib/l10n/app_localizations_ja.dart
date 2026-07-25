@@ -1968,4 +1968,63 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       '保存できませんでした — 端末の空き容量が不足している可能性があります。空き容量を増やして、もう一度お試しください。';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'レベル $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'レベル $level クリア！🎉';
+  }
+
+  @override
+  String get gameNextLevel => '次のレベル →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves 手';
+  }
+
+  @override
+  String get gameTitleSlide => 'スライドパズル';
+
+  @override
+  String get gameSubSlide => '論理 · タイルを順番に並べる';
+
+  @override
+  String get slideRule1 => '空いているマスの隣のタイルをタップして動かします。';
+
+  @override
+  String get slideRule2 => '数字を順番に並べてレベルをクリア。進むほど盤面が大きくなります。';
+
+  @override
+  String get gameTitleLights => 'ライトアウト';
+
+  @override
+  String get gameSubLights => '論理 · すべての明かりを消す';
+
+  @override
+  String get lightsRule1 => 'マスをタップすると、そのマスと上下左右の4マスが切り替わります。';
+
+  @override
+  String get lightsRule2 => 'すべての明かりを消してレベルをクリア。進むほど難しくなります。';
+
+  @override
+  String get gameTitleOrder => 'ナンバーラッシュ';
+
+  @override
+  String get gameSubOrder => '集中 · 数字を順番にタップ';
+
+  @override
+  String get orderRule1 => '数字を順番にタップ：1、2、3 …';
+
+  @override
+  String get orderRule2 => '盤面をすべて消して次へ。レベルごとに数字が増えます。';
+
+  @override
+  String orderNextLabel(int next) {
+    return '次：$next';
+  }
 }

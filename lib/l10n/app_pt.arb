@@ -595,5 +595,22 @@
   "editBioHint": "Uma linha sobre você — fica privada se você bloquear seu perfil.",
   "errorOffline": "Você está offline. Conecte-se à internet e tente novamente.",
   "errorGeneric": "Algo deu errado. Tente novamente.",
-  "errorSaveFailed": "Não foi possível salvar — seu dispositivo pode estar com pouco espaço. Libere espaço e tente novamente."
+  "errorSaveFailed": "Não foi possível salvar — seu dispositivo pode estar com pouco espaço. Libere espaço e tente novamente.",
+  "gameLevelLabel": "Nível {level}",
+  "gameLevelClear": "Nível {level} concluído! 🎉",
+  "gameNextLevel": "Próximo nível →",
+  "gameMovesLabel": "{moves} movimentos",
+  "gameTitleSlide": "Quebra-cabeça deslizante",
+  "gameSubSlide": "lógica · coloque as peças em ordem",
+  "slideRule1": "Toque em uma peça ao lado do espaço vazio para deslizá-la.",
+  "slideRule2": "Coloque os números em ordem para passar de nível — cada um tem um tabuleiro maior.",
+  "gameTitleLights": "Apague as luzes",
+  "gameSubLights": "lógica · apague todas as luzes",
+  "lightsRule1": "Toque em um quadrado para inverter a luz dele e das quatro vizinhas.",
+  "lightsRule2": "Apague todas as luzes para passar de nível — cada um fica mais difícil.",
+  "gameTitleOrder": "Números em ordem",
+  "gameSubOrder": "foco · toque nos números em ordem",
+  "orderRule1": "Toque nos números em ordem: 1, 2, 3…",
+  "orderRule2": "Limpe toda a grade para avançar — cada nível adiciona mais números.",
+  "orderNextLabel": "Próximo: {next}"
 }

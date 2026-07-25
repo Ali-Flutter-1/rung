@@ -2054,4 +2054,68 @@ class AppLocalizationsNb extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Kunne ikke lagre — enheten din har kanskje lite lagringsplass. Frigjør plass og prøv igjen.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Nivå $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Nivå $level fullført! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Neste nivå →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves trekk';
+  }
+
+  @override
+  String get gameTitleSlide => 'Skyvepuslespill';
+
+  @override
+  String get gameSubSlide => 'logikk · legg brikkene i rekkefølge';
+
+  @override
+  String get slideRule1 =>
+      'Trykk på en brikke ved siden av det tomme feltet for å skyve den.';
+
+  @override
+  String get slideRule2 =>
+      'Legg tallene i riktig rekkefølge for å klare nivået — hvert nivå er et større brett.';
+
+  @override
+  String get gameTitleLights => 'Slukk lysene';
+
+  @override
+  String get gameSubLights => 'logikk · slukk alle lysene';
+
+  @override
+  String get lightsRule1 =>
+      'Trykk på en rute for å veksle den og de fire naboene.';
+
+  @override
+  String get lightsRule2 =>
+      'Slukk alle lysene for å klare nivået — hvert nivå blir vanskeligere.';
+
+  @override
+  String get gameTitleOrder => 'Talljakt';
+
+  @override
+  String get gameSubOrder => 'fokus · trykk på tallene i rekkefølge';
+
+  @override
+  String get orderRule1 => 'Trykk på tallene i rekkefølge: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Tøm hele rutenettet for å gå videre — hvert nivå gir flere tall.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Neste: $next';
+  }
 }

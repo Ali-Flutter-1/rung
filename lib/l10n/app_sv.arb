@@ -595,5 +595,22 @@
   "editBioHint": "En rad om dig — hålls privat om du låser din profil.",
   "errorOffline": "Du är offline. Anslut till internet och försök igen.",
   "errorGeneric": "Något gick fel. Försök igen.",
-  "errorSaveFailed": "Kunde inte spara — din enhet kan ha lite lagring. Frigör utrymme och försök igen."
+  "errorSaveFailed": "Kunde inte spara — din enhet kan ha lite lagring. Frigör utrymme och försök igen.",
+  "gameLevelLabel": "Nivå {level}",
+  "gameLevelClear": "Nivå {level} klarad! 🎉",
+  "gameNextLevel": "Nästa nivå →",
+  "gameMovesLabel": "{moves} drag",
+  "gameTitleSlide": "Skjutpussel",
+  "gameSubSlide": "logik · lägg brickorna i ordning",
+  "slideRule1": "Tryck på en bricka bredvid den tomma rutan för att skjuta in den.",
+  "slideRule2": "Lägg tillbaka siffrorna i ordning för att klara nivån — varje nivå är en större bräda.",
+  "gameTitleLights": "Släck lamporna",
+  "gameSubLights": "logik · släck alla lampor",
+  "lightsRule1": "Tryck på en ruta för att växla den och dess fyra grannar.",
+  "lightsRule2": "Släck alla lampor för att klara nivån — varje nivå blir svårare.",
+  "gameTitleOrder": "Sifferjakt",
+  "gameSubOrder": "fokus · tryck på siffrorna i ordning",
+  "orderRule1": "Tryck på siffrorna i ordning: 1, 2, 3 …",
+  "orderRule2": "Töm hela rutnätet för att gå vidare — varje nivå lägger till fler siffror.",
+  "orderNextLabel": "Nästa: {next}"
 }

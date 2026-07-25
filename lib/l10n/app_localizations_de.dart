@@ -2079,4 +2079,68 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Speichern fehlgeschlagen — dein Gerät hat vielleicht wenig Speicher. Schaffe Platz und versuche es erneut.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Level $level geschafft! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Nächstes Level →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves Züge';
+  }
+
+  @override
+  String get gameTitleSlide => 'Schiebepuzzle';
+
+  @override
+  String get gameSubSlide => 'Logik · Kacheln ordnen';
+
+  @override
+  String get slideRule1 =>
+      'Tippe auf eine Kachel neben dem freien Feld, um sie zu schieben.';
+
+  @override
+  String get slideRule2 =>
+      'Bring die Zahlen in die richtige Reihenfolge, um das Level zu schaffen — jedes ist ein größeres Feld.';
+
+  @override
+  String get gameTitleLights => 'Lichter aus';
+
+  @override
+  String get gameSubLights => 'Logik · alle Lichter ausschalten';
+
+  @override
+  String get lightsRule1 =>
+      'Tippe auf ein Feld, um es und seine vier Nachbarn umzuschalten.';
+
+  @override
+  String get lightsRule2 =>
+      'Schalte alle Lichter aus, um das Level zu schaffen — jedes wird schwerer.';
+
+  @override
+  String get gameTitleOrder => 'Zahlenjagd';
+
+  @override
+  String get gameSubOrder => 'Fokus · Zahlen der Reihe nach antippen';
+
+  @override
+  String get orderRule1 => 'Tippe die Zahlen der Reihe nach an: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Räume das ganze Feld, um weiterzukommen — jedes Level bringt mehr Zahlen.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Nächste: $next';
+  }
 }

@@ -595,5 +595,22 @@
   "editBioHint": "Satu baris tentangmu — tetap privat jika kamu mengunci profilmu.",
   "errorOffline": "Kamu sedang offline. Sambungkan ke internet dan coba lagi.",
   "errorGeneric": "Terjadi kesalahan. Coba lagi.",
-  "errorSaveFailed": "Tidak dapat menyimpan — penyimpanan perangkatmu mungkin hampir penuh. Kosongkan ruang dan coba lagi."
+  "errorSaveFailed": "Tidak dapat menyimpan — penyimpanan perangkatmu mungkin hampir penuh. Kosongkan ruang dan coba lagi.",
+  "gameLevelLabel": "Level {level}",
+  "gameLevelClear": "Level {level} selesai! 🎉",
+  "gameNextLevel": "Level berikutnya →",
+  "gameMovesLabel": "{moves} langkah",
+  "gameTitleSlide": "Puzzle geser",
+  "gameSubSlide": "logika · susun ubin secara berurutan",
+  "slideRule1": "Ketuk ubin di sebelah ruang kosong untuk menggesernya.",
+  "slideRule2": "Susun angka secara berurutan untuk menyelesaikan level — tiap level papannya lebih besar.",
+  "gameTitleLights": "Matikan Lampu",
+  "gameSubLights": "logika · matikan semua lampu",
+  "lightsRule1": "Ketuk kotak untuk membalik kotak itu dan empat tetangganya.",
+  "lightsRule2": "Matikan semua lampu untuk menyelesaikan level — tiap level makin sulit.",
+  "gameTitleOrder": "Kejar Angka",
+  "gameSubOrder": "fokus · ketuk angka secara berurutan",
+  "orderRule1": "Ketuk angka secara berurutan: 1, 2, 3 …",
+  "orderRule2": "Bersihkan seluruh kotak untuk lanjut — tiap level menambah angka.",
+  "orderNextLabel": "Berikutnya: {next}"
 }

@@ -970,5 +970,50 @@
   },
   "errorOffline": "You're offline. Connect to the internet and try again.",
   "errorGeneric": "Something went wrong. Please try again.",
-  "errorSaveFailed": "Couldn't save — your device may be low on storage. Free up space and try again."
+  "errorSaveFailed": "Couldn't save — your device may be low on storage. Free up space and try again.",
+  "gameLevelLabel": "Level {level}",
+  "@gameLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "gameLevelClear": "Level {level} cleared! 🎉",
+  "@gameLevelClear": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "gameNextLevel": "Next level →",
+  "gameMovesLabel": "{moves} moves",
+  "@gameMovesLabel": {
+    "placeholders": {
+      "moves": {
+        "type": "int"
+      }
+    }
+  },
+  "gameTitleSlide": "Sliding puzzle",
+  "gameSubSlide": "logic · slide tiles into order",
+  "slideRule1": "Tap a tile next to the empty space to slide it in.",
+  "slideRule2": "Get the numbers back in order to clear the level — each one is a bigger board.",
+  "gameTitleLights": "Lights Out",
+  "gameSubLights": "logic · turn every light off",
+  "lightsRule1": "Tap a tile to flip it and its four neighbours.",
+  "lightsRule2": "Turn every light off to clear the level — each one gets harder.",
+  "gameTitleOrder": "Number Rush",
+  "gameSubOrder": "focus · tap the numbers in order",
+  "orderRule1": "Tap the numbers in order: 1, 2, 3 and up.",
+  "orderRule2": "Clear the whole grid to advance — each level adds more numbers.",
+  "orderNextLabel": "Next: {next}",
+  "@orderNextLabel": {
+    "placeholders": {
+      "next": {
+        "type": "int"
+      }
+    }
+  }
 }

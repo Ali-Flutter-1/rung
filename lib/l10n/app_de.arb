@@ -595,5 +595,22 @@
   "editBioHint": "Eine Zeile über dich — bleibt privat, wenn du dein Profil sperrst.",
   "errorOffline": "Du bist offline. Stelle eine Internetverbindung her und versuche es erneut.",
   "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-  "errorSaveFailed": "Speichern fehlgeschlagen — dein Gerät hat vielleicht wenig Speicher. Schaffe Platz und versuche es erneut."
+  "errorSaveFailed": "Speichern fehlgeschlagen — dein Gerät hat vielleicht wenig Speicher. Schaffe Platz und versuche es erneut.",
+  "gameLevelLabel": "Level {level}",
+  "gameLevelClear": "Level {level} geschafft! 🎉",
+  "gameNextLevel": "Nächstes Level →",
+  "gameMovesLabel": "{moves} Züge",
+  "gameTitleSlide": "Schiebepuzzle",
+  "gameSubSlide": "Logik · Kacheln ordnen",
+  "slideRule1": "Tippe auf eine Kachel neben dem freien Feld, um sie zu schieben.",
+  "slideRule2": "Bring die Zahlen in die richtige Reihenfolge, um das Level zu schaffen — jedes ist ein größeres Feld.",
+  "gameTitleLights": "Lichter aus",
+  "gameSubLights": "Logik · alle Lichter ausschalten",
+  "lightsRule1": "Tippe auf ein Feld, um es und seine vier Nachbarn umzuschalten.",
+  "lightsRule2": "Schalte alle Lichter aus, um das Level zu schaffen — jedes wird schwerer.",
+  "gameTitleOrder": "Zahlenjagd",
+  "gameSubOrder": "Fokus · Zahlen der Reihe nach antippen",
+  "orderRule1": "Tippe die Zahlen der Reihe nach an: 1, 2, 3 …",
+  "orderRule2": "Räume das ganze Feld, um weiterzukommen — jedes Level bringt mehr Zahlen.",
+  "orderNextLabel": "Nächste: {next}"
 }

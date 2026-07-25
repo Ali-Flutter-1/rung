@@ -1974,4 +1974,63 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       '저장하지 못했어요 — 기기의 저장 공간이 부족할 수 있어요. 공간을 확보한 뒤 다시 시도해 주세요.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return '레벨 $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return '레벨 $level 완료! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => '다음 레벨 →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves 수';
+  }
+
+  @override
+  String get gameTitleSlide => '슬라이드 퍼즐';
+
+  @override
+  String get gameSubSlide => '논리 · 타일을 순서대로 맞추기';
+
+  @override
+  String get slideRule1 => '빈 칸 옆의 타일을 눌러 밀어 넣으세요.';
+
+  @override
+  String get slideRule2 => '숫자를 순서대로 맞춰 레벨을 클리어하세요. 갈수록 판이 커집니다.';
+
+  @override
+  String get gameTitleLights => '라이트 아웃';
+
+  @override
+  String get gameSubLights => '논리 · 모든 불 끄기';
+
+  @override
+  String get lightsRule1 => '칸을 누르면 그 칸과 상하좌우 네 칸이 켜지거나 꺼집니다.';
+
+  @override
+  String get lightsRule2 => '모든 불을 꺼서 레벨을 클리어하세요. 갈수록 어려워집니다.';
+
+  @override
+  String get gameTitleOrder => '넘버 러시';
+
+  @override
+  String get gameSubOrder => '집중 · 숫자를 순서대로 누르기';
+
+  @override
+  String get orderRule1 => '숫자를 순서대로 누르세요: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 => '판을 모두 지워 다음으로. 레벨마다 숫자가 늘어납니다.';
+
+  @override
+  String orderNextLabel(int next) {
+    return '다음: $next';
+  }
 }

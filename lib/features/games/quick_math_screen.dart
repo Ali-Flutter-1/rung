@@ -33,6 +33,9 @@ class _QuickMathState extends State<QuickMathScreen> {
   Timer? _timer;
   final _rand = Random();
 
+  /// Difficulty ramps every 5 correct answers within the 30-second sprint.
+  int get _level => 1 + _score ~/ 5;
+
   int _a = 0, _b = 0, _answer = 0;
   String _op = '+';
   List<int> _options = [];
@@ -88,26 +91,39 @@ class _QuickMathState extends State<QuickMathScreen> {
   }
 
   void _nextQuestion() {
-    final op = ['+', '-', '×'][_rand.nextInt(3)];
+    final lvl = _level;
+    // Harder as the score climbs: bigger numbers, and ÷ joins from level 3.
+    final ops = lvl >= 3 ? ['+', '-', '×', '÷'] : ['+', '-', '×'];
+    final op = ops[_rand.nextInt(ops.length)];
+    final range = 10 + lvl * 8; // additive range grows each level
     int a, b, ans;
     switch (op) {
       case '+':
-        a = _rand.nextInt(20) + 1;
-        b = _rand.nextInt(20) + 1;
+        a = _rand.nextInt(range) + 1;
+        b = _rand.nextInt(range) + 1;
         ans = a + b;
       case '-':
-        a = _rand.nextInt(20) + 10;
+        a = _rand.nextInt(range) + 10;
         b = _rand.nextInt(a);
         ans = a - b;
-      default:
-        a = _rand.nextInt(9) + 2;
-        b = _rand.nextInt(9) + 2;
+      case '÷':
+        // Build from the answer so the division is always exact.
+        final f = 3 + lvl;
+        b = _rand.nextInt(f) + 2;
+        ans = _rand.nextInt(f) + 2;
+        a = b * ans;
+      default: // ×
+        final f = 2 + lvl * 2;
+        a = _rand.nextInt(f) + 2;
+        b = _rand.nextInt(f) + 2;
         ans = a * b;
     }
+    // Distractors scale with the answer so the wrong options stay plausible.
+    final spread = max(4, ans ~/ 4);
     final opts = <int>{ans};
     while (opts.length < 4) {
-      final delta = _rand.nextInt(11) - 5;
-      final d = ans + (delta == 0 ? 3 : delta);
+      final delta = _rand.nextInt(spread * 2 + 1) - spread;
+      final d = ans + (delta == 0 ? spread : delta);
       if (d >= 0) opts.add(d);
     }
     setState(() {
@@ -208,6 +224,7 @@ class _QuickMathState extends State<QuickMathScreen> {
   }
 
   Widget _playing(TextTheme t) {
+    final l = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
@@ -220,7 +237,22 @@ class _QuickMathState extends State<QuickMathScreen> {
               ),
             ),
             const SizedBox(width: 6),
-            Text(AppLocalizations.of(context).qmCorrect, style: t.bodyMedium),
+            Text(l.qmCorrect, style: t.bodyMedium),
+            const SizedBox(width: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.12),
+                borderRadius: Radii.pill,
+              ),
+              child: Text(
+                l.gameLevelLabel(_level),
+                style: t.bodySmall?.copyWith(
+                  color: AppColors.primaryDeep,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
             const Spacer(),
             Icon(
               Icons.timer_outlined,

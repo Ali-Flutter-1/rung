@@ -2071,4 +2071,68 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Nie udało się zapisać — na urządzeniu może brakować miejsca. Zwolnij miejsce i spróbuj ponownie.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Poziom $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Poziom $level ukończony! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Następny poziom →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves ruchów';
+  }
+
+  @override
+  String get gameTitleSlide => 'Przesuwana układanka';
+
+  @override
+  String get gameSubSlide => 'logika · ułóż płytki po kolei';
+
+  @override
+  String get slideRule1 =>
+      'Dotknij płytki obok pustego pola, aby ją przesunąć.';
+
+  @override
+  String get slideRule2 =>
+      'Ułóż liczby po kolei, aby ukończyć poziom — każdy to większa plansza.';
+
+  @override
+  String get gameTitleLights => 'Zgaś światła';
+
+  @override
+  String get gameSubLights => 'logika · zgaś wszystkie światła';
+
+  @override
+  String get lightsRule1 =>
+      'Dotknij pola, aby przełączyć je i jego czterech sąsiadów.';
+
+  @override
+  String get lightsRule2 =>
+      'Zgaś wszystkie światła, aby ukończyć poziom — każdy jest trudniejszy.';
+
+  @override
+  String get gameTitleOrder => 'Liczby po kolei';
+
+  @override
+  String get gameSubOrder => 'skupienie · dotykaj liczb po kolei';
+
+  @override
+  String get orderRule1 => 'Dotykaj liczb po kolei: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Wyczyść całą planszę, aby przejść dalej — każdy poziom dodaje liczby.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Następna: $next';
+  }
 }

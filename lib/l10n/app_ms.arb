@@ -595,5 +595,22 @@
   "editBioHint": "Satu baris tentang anda — kekal peribadi jika anda mengunci profil anda.",
   "errorOffline": "Anda di luar talian. Sambung ke internet dan cuba lagi.",
   "errorGeneric": "Sesuatu tidak kena. Cuba lagi.",
-  "errorSaveFailed": "Tidak dapat menyimpan — storan peranti anda mungkin rendah. Kosongkan ruang dan cuba lagi."
+  "errorSaveFailed": "Tidak dapat menyimpan — storan peranti anda mungkin rendah. Kosongkan ruang dan cuba lagi.",
+  "gameLevelLabel": "Tahap {level}",
+  "gameLevelClear": "Tahap {level} selesai! 🎉",
+  "gameNextLevel": "Tahap seterusnya →",
+  "gameMovesLabel": "{moves} gerakan",
+  "gameTitleSlide": "Teka-teki gelongsor",
+  "gameSubSlide": "logik · susun jubin mengikut urutan",
+  "slideRule1": "Ketik jubin di sebelah ruang kosong untuk menggelongsorkannya.",
+  "slideRule2": "Susun nombor mengikut urutan untuk selesaikan tahap — setiap tahap papannya lebih besar.",
+  "gameTitleLights": "Padam Lampu",
+  "gameSubLights": "logik · padamkan semua lampu",
+  "lightsRule1": "Ketik petak untuk menukar petak itu dan empat jirannya.",
+  "lightsRule2": "Padamkan semua lampu untuk selesaikan tahap — setiap tahap makin sukar.",
+  "gameTitleOrder": "Kejar Nombor",
+  "gameSubOrder": "fokus · ketik nombor mengikut urutan",
+  "orderRule1": "Ketik nombor mengikut urutan: 1, 2, 3 …",
+  "orderRule2": "Bersihkan seluruh grid untuk teruskan — setiap tahap menambah nombor.",
+  "orderNextLabel": "Seterusnya: {next}"
 }

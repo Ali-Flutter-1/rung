@@ -2056,4 +2056,68 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Kunde inte spara — din enhet kan ha lite lagring. Frigör utrymme och försök igen.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Nivå $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Nivå $level klarad! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Nästa nivå →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves drag';
+  }
+
+  @override
+  String get gameTitleSlide => 'Skjutpussel';
+
+  @override
+  String get gameSubSlide => 'logik · lägg brickorna i ordning';
+
+  @override
+  String get slideRule1 =>
+      'Tryck på en bricka bredvid den tomma rutan för att skjuta in den.';
+
+  @override
+  String get slideRule2 =>
+      'Lägg tillbaka siffrorna i ordning för att klara nivån — varje nivå är en större bräda.';
+
+  @override
+  String get gameTitleLights => 'Släck lamporna';
+
+  @override
+  String get gameSubLights => 'logik · släck alla lampor';
+
+  @override
+  String get lightsRule1 =>
+      'Tryck på en ruta för att växla den och dess fyra grannar.';
+
+  @override
+  String get lightsRule2 =>
+      'Släck alla lampor för att klara nivån — varje nivå blir svårare.';
+
+  @override
+  String get gameTitleOrder => 'Sifferjakt';
+
+  @override
+  String get gameSubOrder => 'fokus · tryck på siffrorna i ordning';
+
+  @override
+  String get orderRule1 => 'Tryck på siffrorna i ordning: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Töm hela rutnätet för att gå vidare — varje nivå lägger till fler siffror.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Nästa: $next';
+  }
 }

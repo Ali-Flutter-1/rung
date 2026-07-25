@@ -2056,4 +2056,68 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Tidak dapat menyimpan — penyimpanan perangkatmu mungkin hampir penuh. Kosongkan ruang dan coba lagi.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Level $level selesai! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Level berikutnya →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves langkah';
+  }
+
+  @override
+  String get gameTitleSlide => 'Puzzle geser';
+
+  @override
+  String get gameSubSlide => 'logika · susun ubin secara berurutan';
+
+  @override
+  String get slideRule1 =>
+      'Ketuk ubin di sebelah ruang kosong untuk menggesernya.';
+
+  @override
+  String get slideRule2 =>
+      'Susun angka secara berurutan untuk menyelesaikan level — tiap level papannya lebih besar.';
+
+  @override
+  String get gameTitleLights => 'Matikan Lampu';
+
+  @override
+  String get gameSubLights => 'logika · matikan semua lampu';
+
+  @override
+  String get lightsRule1 =>
+      'Ketuk kotak untuk membalik kotak itu dan empat tetangganya.';
+
+  @override
+  String get lightsRule2 =>
+      'Matikan semua lampu untuk menyelesaikan level — tiap level makin sulit.';
+
+  @override
+  String get gameTitleOrder => 'Kejar Angka';
+
+  @override
+  String get gameSubOrder => 'fokus · ketuk angka secara berurutan';
+
+  @override
+  String get orderRule1 => 'Ketuk angka secara berurutan: 1, 2, 3 …';
+
+  @override
+  String get orderRule2 =>
+      'Bersihkan seluruh kotak untuk lanjut — tiap level menambah angka.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Berikutnya: $next';
+  }
 }

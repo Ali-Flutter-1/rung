@@ -595,5 +595,22 @@
   "editBioHint": "Une ligne sur toi — gardée privée si tu verrouilles ton profil.",
   "errorOffline": "Tu es hors ligne. Connecte-toi à Internet et réessaie.",
   "errorGeneric": "Une erreur s'est produite. Réessaie.",
-  "errorSaveFailed": "Échec de l'enregistrement — ton appareil manque peut-être d'espace. Libère de l'espace et réessaie."
+  "errorSaveFailed": "Échec de l'enregistrement — ton appareil manque peut-être d'espace. Libère de l'espace et réessaie.",
+  "gameLevelLabel": "Niveau {level}",
+  "gameLevelClear": "Niveau {level} réussi ! 🎉",
+  "gameNextLevel": "Niveau suivant →",
+  "gameMovesLabel": "{moves} coups",
+  "gameTitleSlide": "Taquin",
+  "gameSubSlide": "logique · remets les tuiles en ordre",
+  "slideRule1": "Touche une tuile à côté de la case vide pour la faire glisser.",
+  "slideRule2": "Remets les chiffres dans l’ordre pour réussir le niveau — chacun agrandit la grille.",
+  "gameTitleLights": "Éteins les lumières",
+  "gameSubLights": "logique · éteins toutes les lumières",
+  "lightsRule1": "Touche une case pour inverser sa lumière et celle de ses quatre voisines.",
+  "lightsRule2": "Éteins toutes les lumières pour réussir le niveau — chacun est plus difficile.",
+  "gameTitleOrder": "Chiffres en ordre",
+  "gameSubOrder": "concentration · touche les chiffres dans l’ordre",
+  "orderRule1": "Touche les chiffres dans l’ordre : 1, 2, 3…",
+  "orderRule2": "Vide toute la grille pour avancer — chaque niveau ajoute des chiffres.",
+  "orderNextLabel": "Suivant : {next}"
 }

@@ -595,5 +595,22 @@
   "editBioHint": "En linje om dig — holdes privat, hvis du låser din profil.",
   "errorOffline": "Du er offline. Opret forbindelse til internettet, og prøv igen.",
   "errorGeneric": "Noget gik galt. Prøv igen.",
-  "errorSaveFailed": "Kunne ikke gemme — din enhed har måske lidt lagerplads. Frigør plads, og prøv igen."
+  "errorSaveFailed": "Kunne ikke gemme — din enhed har måske lidt lagerplads. Frigør plads, og prøv igen.",
+  "gameLevelLabel": "Niveau {level}",
+  "gameLevelClear": "Niveau {level} gennemført! 🎉",
+  "gameNextLevel": "Næste niveau →",
+  "gameMovesLabel": "{moves} træk",
+  "gameTitleSlide": "Skydepuslespil",
+  "gameSubSlide": "logik · læg brikkerne i rækkefølge",
+  "slideRule1": "Tryk på en brik ved siden af det tomme felt for at skubbe den.",
+  "slideRule2": "Læg tallene i rækkefølge for at klare niveauet — hvert niveau er et større bræt.",
+  "gameTitleLights": "Sluk lysene",
+  "gameSubLights": "logik · sluk alle lysene",
+  "lightsRule1": "Tryk på et felt for at skifte det og dets fire naboer.",
+  "lightsRule2": "Sluk alle lysene for at klare niveauet — hvert niveau bliver sværere.",
+  "gameTitleOrder": "Taljagt",
+  "gameSubOrder": "fokus · tryk på tallene i rækkefølge",
+  "orderRule1": "Tryk på tallene i rækkefølge: 1, 2, 3 …",
+  "orderRule2": "Ryd hele gitteret for at komme videre — hvert niveau tilføjer flere tal.",
+  "orderNextLabel": "Næste: {next}"
 }

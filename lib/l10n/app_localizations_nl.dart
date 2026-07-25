@@ -2066,4 +2066,68 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Opslaan mislukt — je apparaat heeft mogelijk weinig opslag. Maak ruimte vrij en probeer opnieuw.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Niveau $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Niveau $level gehaald! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Volgend niveau →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves zetten';
+  }
+
+  @override
+  String get gameTitleSlide => 'Schuifpuzzel';
+
+  @override
+  String get gameSubSlide => 'logica · leg de tegels op volgorde';
+
+  @override
+  String get slideRule1 =>
+      'Tik op een tegel naast de lege plek om hem te schuiven.';
+
+  @override
+  String get slideRule2 =>
+      'Leg de cijfers weer op volgorde om het niveau te halen — elk niveau is een groter bord.';
+
+  @override
+  String get gameTitleLights => 'Lichten uit';
+
+  @override
+  String get gameSubLights => 'logica · doe alle lichten uit';
+
+  @override
+  String get lightsRule1 =>
+      'Tik op een vakje om dat vakje en zijn vier buren om te schakelen.';
+
+  @override
+  String get lightsRule2 =>
+      'Doe alle lichten uit om het niveau te halen — elk niveau wordt lastiger.';
+
+  @override
+  String get gameTitleOrder => 'Cijferjacht';
+
+  @override
+  String get gameSubOrder => 'focus · tik de cijfers op volgorde';
+
+  @override
+  String get orderRule1 => 'Tik de cijfers op volgorde aan: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Maak het hele rooster leeg om verder te gaan — elk niveau voegt cijfers toe.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Volgende: $next';
+  }
 }

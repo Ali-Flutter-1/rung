@@ -7,10 +7,13 @@ import '../../l10n/app_localizations.dart';
 import 'connect_four_screen.dart';
 import 'game_2048_screen.dart';
 import 'game_scores.dart';
+import 'lights_out_screen.dart';
 import 'memory_match_screen.dart';
+import 'number_rush_screen.dart';
 import 'quick_math_screen.dart';
 import 'reaction_screen.dart';
 import 'sequence_memory_screen.dart';
+import 'slide_puzzle_screen.dart';
 import 'tic_tac_toe_screen.dart';
 
 /// A small hub of calm, offline games — a stress break, not a headline. Shows
@@ -40,6 +43,9 @@ class _GamesScreenState extends State<GamesScreen> {
     final m = await GameScores.best('memory');
     final ttt = await GameScores.best('tictactoe');
     final c4 = await GameScores.best('connect4');
+    final sl = await GameScores.best('slide');
+    final lo = await GameScores.best('lights');
+    final or = await GameScores.best('order');
     if (!mounted) return;
     setState(() {
       _bestVals = {
@@ -50,6 +56,9 @@ class _GamesScreenState extends State<GamesScreen> {
         'memory': m,
         'tictactoe': ttt,
         'connect4': c4,
+        'slide': sl,
+        'lights': lo,
+        'order': or,
       };
     });
   }
@@ -71,6 +80,10 @@ class _GamesScreenState extends State<GamesScreen> {
         return l.gamesBest('$v');
       case 'memory':
         return l.gamesBestMoves(v);
+      case 'slide':
+      case 'lights':
+      case 'order':
+        return l.gamesBestLevel(v);
       case 'tictactoe':
       case 'connect4':
         return v == 0 ? null : l.gamesWinsVsPhone(v);
@@ -147,6 +160,18 @@ final _games = <_GameSpec>[
     Color(0xFFB187C9),
     Color(0xFF7C5296),
   ], (_) => const MemoryMatchScreen()),
+  _GameSpec('slide', '🧩', const [
+    Color(0xFF5B8DEF),
+    Color(0xFF3560B0),
+  ], (_) => const SlidePuzzleScreen()),
+  _GameSpec('lights', '💡', const [
+    Color(0xFFE8B84B),
+    Color(0xFFB98A24),
+  ], (_) => const LightsOutScreen()),
+  _GameSpec('order', '🎯', const [
+    Color(0xFFE06C9F),
+    Color(0xFFA84574),
+  ], (_) => const NumberRushScreen()),
 ];
 
 // 2048 / Tic-Tac-Toe / Connect 4 are universal game names — kept untranslated.
@@ -158,6 +183,9 @@ String _gameTitle(AppLocalizations l, String id) => switch (id) {
   'tictactoe' => 'Tic-Tac-Toe',
   'connect4' => 'Connect 4',
   'memory' => l.gameTitleMemory,
+  'slide' => l.gameTitleSlide,
+  'lights' => l.gameTitleLights,
+  'order' => l.gameTitleOrder,
   _ => id,
 };
 
@@ -169,6 +197,9 @@ String _gameSub(AppLocalizations l, String id) => switch (id) {
   'tictactoe' => l.gameSubTicTacToe,
   'connect4' => l.gameSubConnect4,
   'memory' => l.gameSubMemory,
+  'slide' => l.gameSubSlide,
+  'lights' => l.gameSubLights,
+  'order' => l.gameSubOrder,
   _ => '',
 };
 

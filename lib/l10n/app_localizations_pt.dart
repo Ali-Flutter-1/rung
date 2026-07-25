@@ -2067,6 +2067,70 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get errorSaveFailed =>
       'Não foi possível salvar — seu dispositivo pode estar com pouco espaço. Libere espaço e tente novamente.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Nível $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Nível $level concluído! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Próximo nível →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves movimentos';
+  }
+
+  @override
+  String get gameTitleSlide => 'Quebra-cabeça deslizante';
+
+  @override
+  String get gameSubSlide => 'lógica · coloque as peças em ordem';
+
+  @override
+  String get slideRule1 =>
+      'Toque em uma peça ao lado do espaço vazio para deslizá-la.';
+
+  @override
+  String get slideRule2 =>
+      'Coloque os números em ordem para passar de nível — cada um tem um tabuleiro maior.';
+
+  @override
+  String get gameTitleLights => 'Apague as luzes';
+
+  @override
+  String get gameSubLights => 'lógica · apague todas as luzes';
+
+  @override
+  String get lightsRule1 =>
+      'Toque em um quadrado para inverter a luz dele e das quatro vizinhas.';
+
+  @override
+  String get lightsRule2 =>
+      'Apague todas as luzes para passar de nível — cada um fica mais difícil.';
+
+  @override
+  String get gameTitleOrder => 'Números em ordem';
+
+  @override
+  String get gameSubOrder => 'foco · toque nos números em ordem';
+
+  @override
+  String get orderRule1 => 'Toque nos números em ordem: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Limpe toda a grade para avançar — cada nível adiciona mais números.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Próximo: $next';
+  }
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -4132,4 +4196,68 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get errorSaveFailed =>
       'Não foi possível guardar — o teu dispositivo pode ter pouco espaço. Liberta espaço e tenta novamente.';
+
+  @override
+  String gameLevelLabel(int level) {
+    return 'Nível $level';
+  }
+
+  @override
+  String gameLevelClear(int level) {
+    return 'Nível $level concluído! 🎉';
+  }
+
+  @override
+  String get gameNextLevel => 'Nível seguinte →';
+
+  @override
+  String gameMovesLabel(int moves) {
+    return '$moves movimentos';
+  }
+
+  @override
+  String get gameTitleSlide => 'Puzzle deslizante';
+
+  @override
+  String get gameSubSlide => 'lógica · coloca as peças por ordem';
+
+  @override
+  String get slideRule1 =>
+      'Toca numa peça ao lado do espaço vazio para a deslizares.';
+
+  @override
+  String get slideRule2 =>
+      'Coloca os números por ordem para passar de nível — cada um tem um tabuleiro maior.';
+
+  @override
+  String get gameTitleLights => 'Apaga as luzes';
+
+  @override
+  String get gameSubLights => 'lógica · apaga todas as luzes';
+
+  @override
+  String get lightsRule1 =>
+      'Toca num quadrado para inverter a luz dele e das quatro vizinhas.';
+
+  @override
+  String get lightsRule2 =>
+      'Apaga todas as luzes para passar de nível — cada um é mais difícil.';
+
+  @override
+  String get gameTitleOrder => 'Números por ordem';
+
+  @override
+  String get gameSubOrder => 'foco · toca nos números por ordem';
+
+  @override
+  String get orderRule1 => 'Toca nos números por ordem: 1, 2, 3…';
+
+  @override
+  String get orderRule2 =>
+      'Limpa toda a grelha para avançar — cada nível acrescenta mais números.';
+
+  @override
+  String orderNextLabel(int next) {
+    return 'Seguinte: $next';
+  }
 }
