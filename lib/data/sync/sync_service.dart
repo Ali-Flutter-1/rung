@@ -219,6 +219,7 @@ class SyncService {
     final customRungs = await _cloud.fetchCustomRungs(since);
     final attempts = await _cloud.fetchBackupAttempts(since);
     final progress = await _cloud.fetchBackupProgress(since);
+    final cloudFrozen = await _cloud.fetchStreakFreeze();
 
     _db.transaction(() {
       // Custom rungs FIRST — attempts reference rung ids via FK.
@@ -311,5 +312,28 @@ class SyncService {
         );
       }
     });
+
+    // Streak-freeze: union the "frozen days" set both ways. Only frozen_days is
+    // backed up — the weekly allowance (freeze_week / freezes_remaining) resets
+    // per tier each week, so it self-heals. Union (not last-write-wins) means a
+    // reinstall can never lose a day a freeze was holding the streak together
+    // with, and a stale push can't clobber another device's protected days.
+    // 'frozen_days' is the app_meta key set by LocalProgressRepository.
+    await _syncFrozenDays(cloudFrozen);
+  }
+
+  Future<void> _syncFrozenDays(String? cloudBlob) async {
+    Set<String> parse(String? raw) =>
+        (raw ?? '').split(',').where((s) => s.isNotEmpty).toSet();
+    final cloudDays = parse(cloudBlob);
+    final localDays = parse(_db.meta('frozen_days'));
+    final merged = {...localDays, ...cloudDays};
+    // Nothing to do when both sides already hold the same set.
+    if (merged.length == localDays.length && merged.length == cloudDays.length) {
+      return;
+    }
+    final joined = merged.join(',');
+    if (merged.length != localDays.length) _db.setMeta('frozen_days', joined);
+    if (merged.length != cloudDays.length) await _cloud.pushStreakFreeze(joined);
   }
 }

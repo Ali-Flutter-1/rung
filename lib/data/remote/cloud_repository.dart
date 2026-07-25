@@ -491,6 +491,31 @@ class CloudRepository {
     return rows.cast<Map<String, dynamic>>();
   }
 
+  // ── Streak-freeze (frozen days) ─────────────────────────────────────────
+  /// Upserts this user's frozen-days blob. Merged as a union client-side, so a
+  /// push never has to worry about clobbering another device's protected days.
+  Future<void> pushStreakFreeze(String frozenDays) async {
+    final uid = _uid;
+    if (uid == null) return;
+    await supabase.from('backup_streak_freeze').upsert({
+      'user_id': uid,
+      'frozen_days': frozenDays,
+    }, onConflict: 'user_id');
+  }
+
+  /// This user's stored frozen-days blob, or null if none has been backed up.
+  Future<String?> fetchStreakFreeze() async {
+    final uid = _uid;
+    if (uid == null) return null;
+    final rows = await supabase
+        .from('backup_streak_freeze')
+        .select('frozen_days')
+        .eq('user_id', uid)
+        .limit(1);
+    final list = rows.cast<Map<String, dynamic>>();
+    return list.isEmpty ? null : list.first['frozen_days'] as String?;
+  }
+
   // ── Global content (tracks + rungs) ─────────────────────────────────────
   /// Fetches the canonical tracks. Read-only; cached into local SQLite.
   Future<List<Map<String, dynamic>>> fetchContentTracks() async {
