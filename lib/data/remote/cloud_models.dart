@@ -19,22 +19,22 @@ class CloudPod {
 
   /// For the local "last seen pods" cache (instant Groups render on open).
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'capacity': capacity,
-        'is_system': isSystem,
-        'member_count': memberCount,
-        'unread_count': unreadCount,
-      };
+    'id': id,
+    'name': name,
+    'capacity': capacity,
+    'is_system': isSystem,
+    'member_count': memberCount,
+    'unread_count': unreadCount,
+  };
 
   factory CloudPod.fromRow(Map<String, dynamic> r) => CloudPod(
-        id: r['id'] as String,
-        name: (r['name'] ?? 'Pod') as String,
-        capacity: ((r['capacity'] ?? 25) as num).toInt(),
-        isSystem: (r['is_system'] ?? false) as bool,
-        memberCount: ((r['member_count'] ?? 0) as num).toInt(),
-        unreadCount: ((r['unread_count'] ?? 0) as num).toInt(),
-      );
+    id: r['id'] as String,
+    name: (r['name'] ?? 'Pod') as String,
+    capacity: ((r['capacity'] ?? 25) as num).toInt(),
+    isSystem: (r['is_system'] ?? false) as bool,
+    memberCount: ((r['member_count'] ?? 0) as num).toInt(),
+    unreadCount: ((r['unread_count'] ?? 0) as num).toInt(),
+  );
 }
 
 class CloudPodPrompt {
@@ -51,11 +51,11 @@ class CloudPodPrompt {
   final String prompt;
 
   factory CloudPodPrompt.fromRow(Map<String, dynamic> r) => CloudPodPrompt(
-        id: r['id'] as String,
-        groupId: r['group_id'] as String,
-        dayKey: (r['day_key'] ?? '') as String,
-        prompt: (r['prompt'] ?? '') as String,
-      );
+    id: r['id'] as String,
+    groupId: r['group_id'] as String,
+    dayKey: (r['day_key'] ?? '') as String,
+    prompt: (r['prompt'] ?? '') as String,
+  );
 }
 
 class CloudProfile {
@@ -84,16 +84,18 @@ class CloudProfile {
   final int totalChallenges;
 
   factory CloudProfile.fromRow(Map<String, dynamic> r) => CloudProfile(
-        id: r['id'] as String,
-        displayName: r['display_name'] as String?,
-        bio: r['bio'] as String?,
-        isLocked: (r['is_locked'] ?? false) as bool,
-        avatarId: r['avatar'] as String?,
-        isPremium: ((r['subscription_tier'] ?? 'free') as String) != 'free',
-        currentStreak: (r['current_streak'] ?? 0) as int,
-        bestStreak: (r['best_streak'] ?? 0) as int,
-        totalChallenges: (r['total_challenges'] ?? 0) as int,
-      );
+    id: r['id'] as String,
+    displayName: r['display_name'] as String?,
+    bio: r['bio'] as String?,
+    isLocked: (r['is_locked'] ?? false) as bool,
+    avatarId: r['avatar'] as String?,
+    isPremium: ((r['subscription_tier'] ?? 'free') as String) != 'free',
+    // (x as num).toInt() — Postgres numerics can arrive as JSON floats;
+    // a bare `as int` would throw on 3.0.
+    currentStreak: ((r['current_streak'] ?? 0) as num).toInt(),
+    bestStreak: ((r['best_streak'] ?? 0) as num).toInt(),
+    totalChallenges: ((r['total_challenges'] ?? 0) as num).toInt(),
+  );
 }
 
 class CloudMessage {
@@ -121,20 +123,20 @@ class CloudMessage {
   bool get isEdited => editedAt != null;
 
   factory CloudMessage.fromRow(Map<String, dynamic> r) => CloudMessage(
-        id: r['id'] as String,
-        groupId: r['group_id'] as String,
-        userId: r['user_id'] as String,
-        body: (r['body'] ?? '') as String,
-        createdAt:
-            DateTime.tryParse('${r['created_at']}')?.toLocal() ?? DateTime(2000),
-        replyTo: r['reply_to'] as String?,
-        editedAt: r['edited_at'] == null
-            ? null
-            : DateTime.tryParse('${r['edited_at']}')?.toLocal(),
-        deletedAt: r['deleted_at'] == null
-            ? null
-            : DateTime.tryParse('${r['deleted_at']}')?.toLocal(),
-      );
+    id: r['id'] as String,
+    groupId: r['group_id'] as String,
+    userId: r['user_id'] as String,
+    body: (r['body'] ?? '') as String,
+    createdAt:
+        DateTime.tryParse('${r['created_at']}')?.toLocal() ?? DateTime(2000),
+    replyTo: r['reply_to'] as String?,
+    editedAt: r['edited_at'] == null
+        ? null
+        : DateTime.tryParse('${r['edited_at']}')?.toLocal(),
+    deletedAt: r['deleted_at'] == null
+        ? null
+        : DateTime.tryParse('${r['deleted_at']}')?.toLocal(),
+  );
 }
 
 /// A single reaction row (one message + one user + one emoji).
@@ -150,8 +152,8 @@ class CloudReaction {
   final String emoji;
 
   factory CloudReaction.fromRow(Map<String, dynamic> r) => CloudReaction(
-        messageId: r['message_id'] as String,
-        userId: r['user_id'] as String,
-        emoji: (r['emoji'] ?? '') as String,
-      );
+    messageId: r['message_id'] as String,
+    userId: r['user_id'] as String,
+    emoji: (r['emoji'] ?? '') as String,
+  );
 }

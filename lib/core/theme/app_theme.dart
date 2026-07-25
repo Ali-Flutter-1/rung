@@ -59,8 +59,13 @@ class AppTheme {
       onError: Colors.white,
       surface: surface,
       onSurface: ink,
-      surfaceContainerHighest:
-          isDark ? AppColors.surfaceAltDark : AppColors.surfaceAlt,
+      // Brightness-aware muted tone for secondary text/icons. Exposing it here
+      // lets widgets use `colorScheme.onSurfaceVariant` instead of the fixed
+      // light `AppColors.inkMuted`, which was unreadably dim in dark mode.
+      onSurfaceVariant: muted,
+      surfaceContainerHighest: isDark
+          ? AppColors.surfaceAltDark
+          : AppColors.surfaceAlt,
       outline: border,
     );
 

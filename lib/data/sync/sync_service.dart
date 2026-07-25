@@ -76,9 +76,13 @@ class SyncService {
 
   /// Whether the local store has any real attempt history (vs a fresh install).
   bool get localHasHistory {
-    final n = _db
-        .select('SELECT COUNT(*) AS n FROM attempts WHERE deleted_at IS NULL;')
-        .first['n'] as int;
+    final n =
+        _db
+                .select(
+                  'SELECT COUNT(*) AS n FROM attempts WHERE deleted_at IS NULL;',
+                )
+                .first['n']
+            as int;
     return n > 0;
   }
 
@@ -86,6 +90,14 @@ class SyncService {
   Future<bool> restoreFromCloud() async {
     await _settings.setBackupEnabled(true);
     await _settings.setLastBackupAt(0); // pull the full history
+    // Pull global content (including premium-unlocked rungs) FIRST, so restored
+    // attempts that reference those rungs resolve their rung_id foreign key
+    // instead of failing the insert. The per-row skip in _pull is the backstop.
+    try {
+      await syncContent(force: true);
+    } catch (_) {
+      /* best-effort; _pull tolerates any still-missing rung */
+    }
     return backupNow();
   }
 
@@ -139,18 +151,20 @@ class SyncService {
           'WHERE is_custom = 1 AND updated_at > ?;',
           [since],
         )
-        .map((r) => {
-              'id': r['id'],
-              'track_id': r['track_id'],
-              'title': r['title'],
-              'what_to_do': r['what_to_do'],
-              'why_it_helps': r['why_it_helps'],
-              'difficulty': r['difficulty'],
-              'sort_order': r['sort_order'],
-              'est_minutes': r['est_minutes'],
-              'updated_at': r['updated_at'],
-              'deleted_at': r['deleted_at'],
-            })
+        .map(
+          (r) => {
+            'id': r['id'],
+            'track_id': r['track_id'],
+            'title': r['title'],
+            'what_to_do': r['what_to_do'],
+            'why_it_helps': r['why_it_helps'],
+            'difficulty': r['difficulty'],
+            'sort_order': r['sort_order'],
+            'est_minutes': r['est_minutes'],
+            'updated_at': r['updated_at'],
+            'deleted_at': r['deleted_at'],
+          },
+        )
         .toList();
     await _cloud.pushCustomRungs(customRungs);
 
@@ -161,18 +175,20 @@ class SyncService {
           'FROM attempts WHERE updated_at > ?;',
           [since],
         )
-        .map((r) => {
-              'id': r['id'],
-              'rung_id': r['rung_id'],
-              'predicted_suds': r['predicted_suds'],
-              'actual_suds': r['actual_suds'],
-              'outcome': r['outcome'],
-              'started_at': r['started_at'],
-              'completed_at': r['completed_at'],
-              'created_at': r['created_at'],
-              'updated_at': r['updated_at'],
-              'deleted_at': r['deleted_at'],
-            })
+        .map(
+          (r) => {
+            'id': r['id'],
+            'rung_id': r['rung_id'],
+            'predicted_suds': r['predicted_suds'],
+            'actual_suds': r['actual_suds'],
+            'outcome': r['outcome'],
+            'started_at': r['started_at'],
+            'completed_at': r['completed_at'],
+            'created_at': r['created_at'],
+            'updated_at': r['updated_at'],
+            'deleted_at': r['deleted_at'],
+          },
+        )
         .toList();
     await _cloud.pushBackupAttempts(attempts);
 
@@ -183,15 +199,17 @@ class SyncService {
           'FROM user_track_progress WHERE updated_at > ?;',
           [since],
         )
-        .map((r) => {
-              'track_id': r['track_id'],
-              'current_rung_id': r['current_rung_id'],
-              'rungs_cleared': r['rungs_cleared'],
-              'streak': r['streak'],
-              'streak_freezes_remaining': r['streak_freezes_remaining'],
-              'last_activity_day': r['last_activity_day'],
-              'updated_at': r['updated_at'],
-            })
+        .map(
+          (r) => {
+            'track_id': r['track_id'],
+            'current_rung_id': r['current_rung_id'],
+            'rungs_cleared': r['rungs_cleared'],
+            'streak': r['streak'],
+            'streak_freezes_remaining': r['streak_freezes_remaining'],
+            'last_activity_day': r['last_activity_day'],
+            'updated_at': r['updated_at'],
+          },
+        )
         .toList();
     await _cloud.pushBackupProgress(progress);
   }
@@ -218,33 +236,55 @@ class SyncService {
           '  deleted_at = excluded.deleted_at '
           'WHERE excluded.updated_at > rungs.updated_at;',
           [
-            r['id'], r['track_id'], r['title'], r['what_to_do'],
-            r['why_it_helps'], r['difficulty'], r['sort_order'], 'cloud',
-            r['est_minutes'] ?? 2, r['updated_at'], r['deleted_at'],
+            r['id'],
+            r['track_id'],
+            r['title'],
+            r['what_to_do'],
+            r['why_it_helps'],
+            r['difficulty'],
+            r['sort_order'],
+            'cloud',
+            r['est_minutes'] ?? 2,
+            r['updated_at'],
+            r['deleted_at'],
           ],
         );
       }
       for (final r in attempts) {
         // INSERT new rows; only overwrite an existing row if the cloud copy is
         // newer. Note columns are left untouched (never synced).
-        _db.run(
-          'INSERT INTO attempts (id, rung_id, predicted_suds, actual_suds, '
-          'outcome, started_at, completed_at, created_at, updated_at, deleted_at) '
-          'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) '
-          'ON CONFLICT(id) DO UPDATE SET '
-          '  predicted_suds = excluded.predicted_suds, '
-          '  actual_suds = excluded.actual_suds, '
-          '  outcome = excluded.outcome, '
-          '  completed_at = excluded.completed_at, '
-          '  updated_at = excluded.updated_at, '
-          '  deleted_at = excluded.deleted_at '
-          'WHERE excluded.updated_at > attempts.updated_at;',
-          [
-            r['id'], r['rung_id'], r['predicted_suds'], r['actual_suds'],
-            r['outcome'], r['started_at'], r['completed_at'], r['created_at'],
-            r['updated_at'], r['deleted_at'],
-          ],
-        );
+        try {
+          _db.run(
+            'INSERT INTO attempts (id, rung_id, predicted_suds, actual_suds, '
+            'outcome, started_at, completed_at, created_at, updated_at, deleted_at) '
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) '
+            'ON CONFLICT(id) DO UPDATE SET '
+            '  predicted_suds = excluded.predicted_suds, '
+            '  actual_suds = excluded.actual_suds, '
+            '  outcome = excluded.outcome, '
+            '  completed_at = excluded.completed_at, '
+            '  updated_at = excluded.updated_at, '
+            '  deleted_at = excluded.deleted_at '
+            'WHERE excluded.updated_at > attempts.updated_at;',
+            [
+              r['id'],
+              r['rung_id'],
+              r['predicted_suds'],
+              r['actual_suds'],
+              r['outcome'],
+              r['started_at'],
+              r['completed_at'],
+              r['created_at'],
+              r['updated_at'],
+              r['deleted_at'],
+            ],
+          );
+        } catch (_) {
+          // Skip an attempt whose rung_id isn't cached locally yet (e.g. a
+          // premium content rung that hasn't synced). Dropping the one row keeps
+          // the rest of the restore — without this, a single foreign-key failure
+          // rolls back the whole transaction and wipes ALL restored history.
+        }
       }
       for (final r in progress) {
         _db.run(
@@ -260,8 +300,12 @@ class SyncService {
           '  updated_at = excluded.updated_at '
           'WHERE excluded.updated_at > user_track_progress.updated_at;',
           [
-            r['track_id'], r['current_rung_id'], r['rungs_cleared'],
-            r['streak'], r['streak_freezes_remaining'], r['last_activity_day'],
+            r['track_id'],
+            r['current_rung_id'],
+            r['rungs_cleared'],
+            r['streak'],
+            r['streak_freezes_remaining'],
+            r['last_activity_day'],
             r['updated_at'],
           ],
         );

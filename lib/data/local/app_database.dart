@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -30,10 +31,28 @@ class AppDatabase {
   static const _legacyDefaultWhatToDo = 'A challenge you set for yourself.';
 
   static Future<AppDatabase> open({String? path}) async {
-    final dbPath = path ??
-        '${(await getApplicationDocumentsDirectory()).path}/rung.db';
-    final db = sqlite3.open(dbPath);
-    final instance = AppDatabase._(db);
+    final dbPath =
+        path ?? '${(await getApplicationDocumentsDirectory()).path}/rung.db';
+    try {
+      return _openAt(dbPath);
+    } catch (_) {
+      // A corrupt/unreadable file or a failed migration would otherwise throw
+      // out of main() before runApp — a permanent crash loop with a blank
+      // launch, since it recurs every start. Rebuild from scratch instead: the
+      // local DB is best-effort runtime state (signed-in users restore their
+      // real history from the cloud), so a fresh DB beats a dead app. One clean
+      // retry; if THAT fails (e.g. genuinely out of disk), let it surface.
+      try {
+        File(dbPath).deleteSync();
+      } catch (_) {
+        /* nothing to delete / can't — the reopen will report */
+      }
+      return _openAt(dbPath);
+    }
+  }
+
+  static AppDatabase _openAt(String dbPath) {
+    final instance = AppDatabase._(sqlite3.open(dbPath));
     instance._configure();
     instance._migrate();
     instance._seed();
@@ -56,7 +75,8 @@ class AppDatabase {
   }
 
   void _migrate() {
-    final version = _db.select('PRAGMA user_version;').first.values.first as int;
+    final version =
+        _db.select('PRAGMA user_version;').first.values.first as int;
     var v = version;
     // Forward-only, additive migrations (§11.4).
     if (v < 1) {
@@ -111,6 +131,7 @@ class AppDatabase {
       ['', now, _legacyDefaultWhatToDo],
     );
   }
+
   void _createV1() {
     _db.execute('''
       CREATE TABLE tracks (
@@ -139,9 +160,7 @@ class AppDatabase {
         deleted_at   INTEGER
       );
     ''');
-    _db.execute(
-      'CREATE INDEX idx_rungs_track ON rungs(track_id, sort_order);',
-    );
+    _db.execute('CREATE INDEX idx_rungs_track ON rungs(track_id, sort_order);');
     _db.execute('''
       CREATE TABLE attempts (
         id              TEXT PRIMARY KEY,
@@ -173,9 +192,7 @@ class AppDatabase {
       );
     ''');
     // Global key/value scratch for app-wide counters (e.g. streak freezes).
-    _db.execute(
-      'CREATE TABLE app_meta (key TEXT PRIMARY KEY, value TEXT);',
-    );
+    _db.execute('CREATE TABLE app_meta (key TEXT PRIMARY KEY, value TEXT);');
   }
 
   /// Upserts seed content so app updates can add/adjust global tracks & rungs
@@ -201,13 +218,25 @@ class AppDatabase {
     try {
       for (final t in SeedData.tracks) {
         trackStmt.execute([
-          t.id, t.slug, t.title, t.description, t.icon, t.sortOrder, t.colorSeed,
+          t.id,
+          t.slug,
+          t.title,
+          t.description,
+          t.icon,
+          t.sortOrder,
+          t.colorSeed,
         ]);
       }
       for (final r in SeedData.rungs) {
         rungStmt.execute([
-          r.id, r.trackId, r.title, r.whatToDo, r.whyItHelps,
-          r.difficulty, r.sortOrder, r.estMinutes,
+          r.id,
+          r.trackId,
+          r.title,
+          r.whatToDo,
+          r.whyItHelps,
+          r.difficulty,
+          r.sortOrder,
+          r.estMinutes,
         ]);
       }
       // Ensure a progress row exists per track.
@@ -246,8 +275,13 @@ class AppDatabase {
           'icon=excluded.icon, sort_order=excluded.sort_order, '
           'color_seed=excluded.color_seed;',
           [
-            t['id'], t['slug'], t['title'], t['description'], t['icon'],
-            t['sort_order'], t['color_seed'],
+            t['id'],
+            t['slug'],
+            t['title'],
+            t['description'],
+            t['icon'],
+            t['sort_order'],
+            t['color_seed'],
           ],
         );
         _db.execute(
@@ -266,9 +300,16 @@ class AppDatabase {
           'est_minutes=excluded.est_minutes, updated_at=excluded.updated_at, '
           'deleted_at=excluded.deleted_at;',
           [
-            r['id'], r['track_id'], r['title'], r['what_to_do'],
-            r['why_it_helps'], r['difficulty'], r['sort_order'],
-            r['est_minutes'] ?? 2, r['updated_at'] ?? 0, r['deleted_at'],
+            r['id'],
+            r['track_id'],
+            r['title'],
+            r['what_to_do'],
+            r['why_it_helps'],
+            r['difficulty'],
+            r['sort_order'],
+            r['est_minutes'] ?? 2,
+            r['updated_at'] ?? 0,
+            r['deleted_at'],
           ],
         );
       }
@@ -288,10 +329,10 @@ class AppDatabase {
   }
 
   void setMeta(String key, String value) => _db.execute(
-        'INSERT INTO app_meta (key, value) VALUES (?, ?) '
-        'ON CONFLICT(key) DO UPDATE SET value = excluded.value;',
-        [key, value],
-      );
+    'INSERT INTO app_meta (key, value) VALUES (?, ?) '
+    'ON CONFLICT(key) DO UPDATE SET value = excluded.value;',
+    [key, value],
+  );
 
   /// Runs [body] in a transaction and notifies watchers once on success.
   T transaction<T>(T Function() body) {

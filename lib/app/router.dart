@@ -48,14 +48,17 @@ CustomTransitionPage<void> _fade(Widget child) {
     transitionDuration: const Duration(milliseconds: 280),
     reverseTransitionDuration: const Duration(milliseconds: 220),
     transitionsBuilder: (context, animation, _, child) {
-      final curved =
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+      );
       return FadeTransition(
         opacity: curved,
         child: SlideTransition(
           position: Tween<Offset>(
-                  begin: const Offset(0, 0.02), end: Offset.zero)
-              .animate(curved),
+            begin: const Offset(0, 0.02),
+            end: Offset.zero,
+          ).animate(curved),
           child: child,
         ),
       );
@@ -104,10 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.onboarding,
         builder: (_, _) => const OnboardingScreen(),
       ),
-      GoRoute(
-        path: Routes.auth,
-        builder: (_, _) => const SignInScreen(),
-      ),
+      GoRoute(path: Routes.auth, builder: (_, _) => const SignInScreen()),
       StatefulShellRoute(
         builder: (_, _, shell) => AppShell(shell: shell),
         // Keep all 5 tabs alive (IndexedStack) BUT freeze the tickers on the
@@ -125,43 +125,53 @@ final routerProvider = Provider<GoRouter>((ref) {
           ],
         ),
         branches: [
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: Routes.dashboard,
-              builder: (_, _) => const DashboardScreen(),
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: Routes.tracks,
-              builder: (_, _) => const TracksScreen(),
-              routes: [
-                GoRoute(
-                  path: ':trackId',
-                  builder: (_, s) =>
-                      LadderScreen(trackId: s.pathParameters['trackId']!),
-                ),
-              ],
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: Routes.groups,
-              builder: (_, _) => const GroupsScreen(),
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: Routes.subscription,
-              builder: (_, _) => const SubscriptionScreen(),
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: Routes.profile,
-              builder: (_, _) => const ProfileScreen(),
-            ),
-          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.dashboard,
+                builder: (_, _) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.tracks,
+                builder: (_, _) => const TracksScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':trackId',
+                    builder: (_, s) =>
+                        LadderScreen(trackId: s.pathParameters['trackId']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.groups,
+                builder: (_, _) => const GroupsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.subscription,
+                builder: (_, _) => const SubscriptionScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.profile,
+                builder: (_, _) => const ProfileScreen(),
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(
@@ -203,7 +213,15 @@ class _GateRefresh extends ChangeNotifier {
     notifyListeners();
     _subs.add(settings.asBroadcastStream().listen((_) => notifyListeners()));
     if (auth != null) {
-      _subs.add(auth.asBroadcastStream().listen((_) => notifyListeners()));
+      // Supabase pushes an error onto the auth stream on an offline token
+      // refresh; swallow it (like authUserProvider does) so it doesn't escape
+      // uncaught. A refresh failure doesn't change the gate.
+      _subs.add(
+        auth.asBroadcastStream().listen(
+          (_) => notifyListeners(),
+          onError: (Object _) {},
+        ),
+      );
     }
   }
   final _subs = <StreamSubscription<dynamic>>[];
