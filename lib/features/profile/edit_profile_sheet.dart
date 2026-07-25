@@ -14,8 +14,9 @@ Future<void> showEditProfileSheet(BuildContext context, WidgetRef ref) {
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: const _EditProfileForm(),
     ),
   );
@@ -30,6 +31,7 @@ class _EditProfileForm extends ConsumerStatefulWidget {
 class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   late final TextEditingController _name;
   late final TextEditingController _bio;
+  bool _busy = false;
 
   @override
   void initState() {
@@ -47,10 +49,17 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   }
 
   Future<void> _save() async {
+    if (_busy) return; // a double-tap must not save twice and pop twice
+    setState(() => _busy = true);
     final settings = ref.read(settingsRepositoryProvider);
-    await settings.setDisplayName(_name.text);
-    await settings.setBio(_bio.text);
-    await pushIdentityToCloud(ref); // publish new name/bio to pod members
+    try {
+      await settings.setDisplayName(_name.text);
+      await settings.setBio(_bio.text);
+      await pushIdentityToCloud(ref); // publish new name/bio to pod members
+    } catch (_) {
+      // A local prefs-write failure must never throw out of the button's async
+      // callback (that would reach the global handler). Best-effort; close.
+    }
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -60,36 +69,46 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l.editProfileTitle, style: t.titleLarge),
-          const SizedBox(height: Insets.lg),
-          TextField(
-            controller: _name,
-            textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(
-              labelText: l.editDisplayName,
-              hintText: l.editDisplayNameHint,
-              border: const OutlineInputBorder(),
+      // Scroll when the keyboard + fields exceed a short screen (avoids overflow).
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.editProfileTitle, style: t.titleLarge),
+            const SizedBox(height: Insets.lg),
+            TextField(
+              controller: _name,
+              onTapOutside: (_) {},
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                labelText: l.editDisplayName,
+                hintText: l.editDisplayNameHint,
+                border: const OutlineInputBorder(),
+              ),
             ),
-          ),
-          const SizedBox(height: Insets.md),
-          TextField(
-            controller: _bio,
-            textCapitalization: TextCapitalization.sentences,
-            maxLines: 3,
-            maxLength: 140,
-            decoration: InputDecoration(
-              labelText: l.editBio,
-              hintText: l.editBioHint,
-              border: const OutlineInputBorder(),
+            const SizedBox(height: Insets.md),
+            TextField(
+              controller: _bio,
+              onTapOutside: (_) {},
+              textCapitalization: TextCapitalization.sentences,
+              maxLines: 3,
+              maxLength: 140,
+              decoration: InputDecoration(
+                labelText: l.editBio,
+                hintText: l.editBioHint,
+                border: const OutlineInputBorder(),
+              ),
             ),
-          ),
-          const SizedBox(height: Insets.sm),
-          FilledButton(onPressed: _save, child: Text(l.commonSave)),
-        ],
+            const SizedBox(height: Insets.sm),
+            TextFieldTapRegion(
+              child: FilledButton(
+                onPressed: _busy ? null : _save,
+                child: Text(l.commonSave),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

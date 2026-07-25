@@ -69,8 +69,8 @@ class PrefsSettingsRepository implements SettingsRepository {
   @override
   ToneMode get toneMode =>
       (_prefs.getString(_kTone) == ToneMode.situational.name)
-          ? ToneMode.situational
-          : ToneMode.introvert;
+      ? ToneMode.situational
+      : ToneMode.introvert;
 
   @override
   Future<void> setToneMode(ToneMode mode) async {
@@ -80,10 +80,10 @@ class PrefsSettingsRepository implements SettingsRepository {
 
   @override
   ThemeMode get themeMode => switch (_prefs.getString(_kTheme)) {
-        'light' => ThemeMode.light,
-        'dark' => ThemeMode.dark,
-        _ => ThemeMode.system,
-      };
+    'light' => ThemeMode.light,
+    'dark' => ThemeMode.dark,
+    _ => ThemeMode.system,
+  };
 
   @override
   Future<void> setThemeMode(ThemeMode mode) async {

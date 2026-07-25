@@ -6,7 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-
 import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
@@ -26,7 +25,8 @@ import 'pod_models.dart';
 import 'pod_rules_sheet.dart';
 
 /// Localized subscription-tier name (Free / Premium · Monthly / Premium · Yearly).
-String tierLabelL10n(AppLocalizations l, SubscriptionTier tier) => switch (tier) {
+String tierLabelL10n(AppLocalizations l, SubscriptionTier tier) =>
+    switch (tier) {
       SubscriptionTier.free => l.tierFree,
       SubscriptionTier.monthly => l.tierMonthly,
       SubscriptionTier.yearly => l.tierYearly,
@@ -84,11 +84,17 @@ class _SignedOut extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.groups_2_outlined,
-                size: 56, color: AppColors.primary),
+            const Icon(
+              Icons.groups_2_outlined,
+              size: 56,
+              color: AppColors.primary,
+            ),
             const SizedBox(height: Insets.lg),
-            Text(l.groupsSignedOutTitle, style: t.headlineSmall,
-                textAlign: TextAlign.center),
+            Text(
+              l.groupsSignedOutTitle,
+              style: t.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: Insets.sm),
             Text(
               l.groupsSignedOutBody,
@@ -97,8 +103,9 @@ class _SignedOut extends StatelessWidget {
             ),
             const SizedBox(height: Insets.xl),
             FilledButton(
-              onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SignInScreen())),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const SignInScreen())),
               child: Text(l.groupsSignInCta),
             ),
           ],
@@ -147,14 +154,18 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
 
   void _saveCache() {
     try {
-      ref.read(databaseProvider).setMeta(
+      ref
+          .read(databaseProvider)
+          .setMeta(
             _cacheKey,
             jsonEncode({
               'mine': _mine.map((p) => p.toJson()).toList(),
               'discover': _discover.map((p) => p.toJson()).toList(),
             }),
           );
-    } catch (_) {/* cache is best-effort */}
+    } catch (_) {
+      /* cache is best-effort */
+    }
   }
 
   @override
@@ -182,9 +193,11 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     } catch (e) {
       // Only surface the error when there's nothing cached on screen.
       if (mounted && _mine.isEmpty && _discover.isEmpty) {
-        setState(() => _error = isOfflineError(e)
-            ? AppLocalizations.of(context).errorOffline
-            : AppLocalizations.of(context).groupsLoadError);
+        setState(
+          () => _error = isOfflineError(e)
+              ? AppLocalizations.of(context).errorOffline
+              : AppLocalizations.of(context).groupsLoadError,
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -257,11 +270,13 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
         content: Text(l.groupsLeaveBody),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: Text(l.commonCancel)),
+            onPressed: () => Navigator.of(dialogCtx).pop(false),
+            child: Text(l.commonCancel),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: Text(l.groupsLeave)),
+            onPressed: () => Navigator.of(dialogCtx).pop(true),
+            child: Text(l.groupsLeave),
+          ),
         ],
       ),
     );
@@ -278,17 +293,16 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
   Future<void> _open(CloudPod pod) async {
     if (!await _ensureRules()) return;
     if (!mounted) return;
-    ref.read(analyticsProvider)
-        .capture(Ev.podOpened, {'system': pod.isSystem});
-    final left = await Navigator.of(context).push<bool>(MaterialPageRoute(
-      builder: (_) => CloudChatScreen(pod: pod),
-    ));
+    ref.read(analyticsProvider).capture(Ev.podOpened, {'system': pod.isSystem});
+    final left = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => CloudChatScreen(pod: pod)));
     if (left == true && mounted) await _reload(); // they left from the chat
   }
 
   void _snack(String msg) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
-      );
+    SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +314,11 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     if (_loading) {
       return ListView(
         padding: const EdgeInsets.fromLTRB(
-            Insets.lg, Insets.lg, Insets.lg, Insets.xl),
+          Insets.lg,
+          Insets.lg,
+          Insets.lg,
+          Insets.xl,
+        ),
         children: [
           const Skeleton(width: 220, height: 24),
           const SizedBox(height: Insets.sm),
@@ -316,10 +334,12 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     if (_error != null) {
       return RefreshIndicator(
         onRefresh: _bootstrap,
-        child: ListView(children: [
-          const SizedBox(height: 120),
-          Center(child: Text(_error!, textAlign: TextAlign.center)),
-        ]),
+        child: ListView(
+          children: [
+            const SizedBox(height: 120),
+            Center(child: Text(_error!, textAlign: TextAlign.center)),
+          ],
+        ),
       );
     }
 
@@ -328,14 +348,20 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
     return RefreshIndicator(
       onRefresh: _reload,
       child: ListView(
-        padding:
-            const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, Insets.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Insets.lg,
+          Insets.sm,
+          Insets.lg,
+          Insets.xl,
+        ),
         children: [
           Text(l.groupsHeader, style: t.headlineSmall),
           const SizedBox(height: Insets.xs),
           Text(
             l.groupsTierPods(
-                tierLabelL10n(l, tier).toLowerCase(), podsLabelL10n(l, tier)),
+              tierLabelL10n(l, tier).toLowerCase(),
+              podsLabelL10n(l, tier),
+            ),
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.lg),
@@ -343,16 +369,16 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
           const SizedBox(height: Insets.sm),
           for (final (i, pod) in _mine.indexed) ...[
             _PodTile(
-              name: pod.name,
-              subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
-              unreadCount: pod.unreadCount,
-              system: pod.isSystem,
-              joined: true,
-              memberCount: pod.memberCount,
-              capacity: pod.capacity,
-              onOpen: () => _open(pod),
-              onLeave: () => _leave(pod),
-            )
+                  name: pod.name,
+                  subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
+                  unreadCount: pod.unreadCount,
+                  system: pod.isSystem,
+                  joined: true,
+                  memberCount: pod.memberCount,
+                  capacity: pod.capacity,
+                  onOpen: () => _open(pod),
+                  onLeave: () => _leave(pod),
+                )
                 .animate()
                 .fadeIn(duration: 260.ms, delay: (40 * i).ms)
                 .slideY(begin: 0.06, end: 0, curve: Curves.easeOut),
@@ -364,12 +390,16 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
               onPressed: _joinAnother,
               icon: const Icon(Icons.add_rounded, size: 18),
               label: Text(l.groupsJoinAnother),
-              style:
-                  OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(46)),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(46),
+              ),
             ),
           ],
           const SizedBox(height: Insets.md),
-          Text(l.groupsDiscoverPods, style: _section(t, AppColors.inkMuted)),
+          Text(
+            l.groupsDiscoverPods,
+            style: _section(t, Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
           const SizedBox(height: Insets.sm),
           if (!canJoinMore)
             _UpgradeBanner(tier: tier)
@@ -378,13 +408,13 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
           else
             for (final (i, pod) in _discover.indexed) ...[
               _PodTile(
-                name: pod.name,
-                subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
-                joined: false,
-                memberCount: pod.memberCount,
-                capacity: pod.capacity,
-                onJoin: () => _join(pod),
-              )
+                    name: pod.name,
+                    subtitle: l.groupsMembers(pod.memberCount, pod.capacity),
+                    joined: false,
+                    memberCount: pod.memberCount,
+                    capacity: pod.capacity,
+                    onJoin: () => _join(pod),
+                  )
                   .animate()
                   .fadeIn(duration: 260.ms, delay: (40 * i).ms)
                   .slideY(begin: 0.06, end: 0, curve: Curves.easeOut),
@@ -399,7 +429,11 @@ class _CloudGroupsState extends ConsumerState<_CloudGroups> {
 }
 
 TextStyle? _section(TextTheme t, Color c) => t.bodyMedium?.copyWith(
-    color: c, fontWeight: FontWeight.w700, letterSpacing: 0.5, fontSize: 11);
+  color: c,
+  fontWeight: FontWeight.w700,
+  letterSpacing: 0.5,
+  fontSize: 11,
+);
 
 // ── Local sample shell (when cloud is off) ──────────────────────────────────
 class _LocalGroupsShell extends ConsumerStatefulWidget {
@@ -421,49 +455,67 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
     final system = systemPod(capacity);
     final joinedCount = 1 + _joinedExtra.length;
     final canJoinMore = GroupRules.canJoinAnother(tier, joinedCount);
-    final discover = discoverablePods(capacity)
-        .where((p) => !_joinedExtra.contains(p.name))
-        .toList();
+    final discover = discoverablePods(
+      capacity,
+    ).where((p) => !_joinedExtra.contains(p.name)).toList();
 
-    void open(Pod pod) => Navigator.of(context).push(MaterialPageRoute(
+    void open(Pod pod) => Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (_) => GroupChatScreen(
-            podName: pod.name,
-            memberCount: pod.memberCount,
-            capacity: pod.capacity)));
+          podName: pod.name,
+          memberCount: pod.memberCount,
+          capacity: pod.capacity,
+        ),
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context).navGroups)),
       body: ListView(
-        padding:
-            const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, Insets.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Insets.lg,
+          Insets.sm,
+          Insets.lg,
+          Insets.xl,
+        ),
         children: [
           Text(l.groupsHeader, style: t.headlineSmall),
           const SizedBox(height: Insets.xs),
           Text(
-            l.groupsCapacityTierPods(capacity,
-                tierLabelL10n(l, tier).toLowerCase(), podsLabelL10n(l, tier)),
+            l.groupsCapacityTierPods(
+              capacity,
+              tierLabelL10n(l, tier).toLowerCase(),
+              podsLabelL10n(l, tier),
+            ),
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.lg),
           Text(l.groupsYourPods, style: _section(t, AppColors.primary)),
           const SizedBox(height: Insets.sm),
           _PodTile(
-              name: system.name,
-              subtitle: '${system.memberCount}/${system.capacity} · ${system.blurb}',
-              system: true,
-              joined: true,
-              onOpen: () => open(system)),
-          for (final pod in discoverablePods(capacity)
-              .where((p) => _joinedExtra.contains(p.name))) ...[
+            name: system.name,
+            subtitle:
+                '${system.memberCount}/${system.capacity} · ${system.blurb}',
+            system: true,
+            joined: true,
+            onOpen: () => open(system),
+          ),
+          for (final pod in discoverablePods(
+            capacity,
+          ).where((p) => _joinedExtra.contains(p.name))) ...[
             const SizedBox(height: Insets.sm),
             _PodTile(
-                name: pod.name,
-                subtitle: '${pod.memberCount}/${pod.capacity} · ${pod.blurb}',
-                joined: true,
-                onOpen: () => open(pod)),
+              name: pod.name,
+              subtitle: '${pod.memberCount}/${pod.capacity} · ${pod.blurb}',
+              joined: true,
+              onOpen: () => open(pod),
+            ),
           ],
           const SizedBox(height: Insets.md),
-          Text(l.groupsDiscoverPods, style: _section(t, AppColors.inkMuted)),
+          Text(
+            l.groupsDiscoverPods,
+            style: _section(t, Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
           const SizedBox(height: Insets.sm),
           if (!canJoinMore)
             _UpgradeBanner(tier: tier)
@@ -475,9 +527,12 @@ class _LocalGroupsShellState extends ConsumerState<_LocalGroupsShell> {
                 joined: false,
                 onJoin: () {
                   setState(() => _joinedExtra.add(pod.name));
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
                       behavior: SnackBarBehavior.floating,
-                      content: Text(l.groupsJoinedShort(pod.name))));
+                      content: Text(l.groupsJoinedShort(pod.name)),
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: Insets.sm),
@@ -500,7 +555,7 @@ class _PodSkeleton extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: const Row(
         children: [
@@ -576,9 +631,10 @@ class _PodTile extends StatelessWidget {
               : Theme.of(context).colorScheme.surface,
           borderRadius: Radii.lgAll,
           border: Border.all(
-              color: joined
-                  ? AppColors.primary.withValues(alpha: 0.4)
-                  : AppColors.border),
+            color: joined
+                ? AppColors.primary.withValues(alpha: 0.4)
+                : Theme.of(context).colorScheme.outline,
+          ),
         ),
         child: Row(
           children: [
@@ -601,11 +657,10 @@ class _PodTile extends StatelessWidget {
                 ],
               ),
               child: Icon(
-                  system
-                      ? Icons.auto_awesome_outlined
-                      : Icons.groups_2_outlined,
-                  color: Colors.white,
-                  size: 24),
+                system ? Icons.auto_awesome_outlined : Icons.groups_2_outlined,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
             const SizedBox(width: Insets.md),
             Expanded(
@@ -617,33 +672,44 @@ class _PodTile extends StatelessWidget {
                       Flexible(child: Text(name, style: t.titleMedium)),
                       if (system) ...[
                         const SizedBox(width: 6),
-                        const Icon(Icons.verified_rounded,
-                            size: 15, color: AppColors.primary),
+                        const Icon(
+                          Icons.verified_rounded,
+                          size: 15,
+                          color: AppColors.primary,
+                        ),
                       ],
                       if (joined && unreadCount > 0) ...[
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 7, vertical: 1.5),
+                            horizontal: 7,
+                            vertical: 1.5,
+                          ),
                           decoration: const BoxDecoration(
                             color: AppColors.primary,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(999)),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(999),
+                            ),
                           ),
-                          child: Text('$unreadCount',
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800)),
+                          child: Text(
+                            '$unreadCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                         ),
                       ],
                     ],
                   ),
                   const SizedBox(height: 2),
-                  Text(subtitle,
-                      style: t.bodyMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
+                  Text(
+                    subtitle,
+                    style: t.bodyMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   if (fill != null) ...[
                     const SizedBox(height: 7),
                     // How alive the pod is, at a glance.
@@ -653,8 +719,9 @@ class _PodTile extends StatelessWidget {
                         height: 4,
                         child: LinearProgressIndicator(
                           value: fill,
-                          backgroundColor:
-                              gradient.first.withValues(alpha: 0.15),
+                          backgroundColor: gradient.first.withValues(
+                            alpha: 0.15,
+                          ),
                           valueColor: AlwaysStoppedAnimation(gradient.first),
                         ),
                       ),
@@ -675,8 +742,10 @@ class _PodTile extends StatelessWidget {
               )
             else if (!system && onLeave != null)
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert_rounded,
-                    color: AppColors.inkFaint),
+                icon: const Icon(
+                  Icons.more_vert_rounded,
+                  color: AppColors.inkFaint,
+                ),
                 tooltip: AppLocalizations.of(context).groupsPodOptions,
                 onSelected: (v) {
                   if (v == 'leave') onLeave!();
@@ -693,8 +762,10 @@ class _PodTile extends StatelessWidget {
                 ],
               )
             else
-              const Icon(Icons.chevron_right_rounded,
-                  color: AppColors.inkFaint),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.inkFaint,
+              ),
           ],
         ),
       ),
@@ -721,13 +792,16 @@ class _UpgradeBanner extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.workspace_premium_outlined,
-                  color: AppColors.accentDeep),
+              const Icon(
+                Icons.workspace_premium_outlined,
+                color: AppColors.accentDeep,
+              ),
               const SizedBox(width: Insets.sm),
               Expanded(
-                child: Text(l.groupsInYourPods(podsLabelL10n(l, tier)),
-                    style:
-                        t.titleMedium?.copyWith(color: AppColors.accentDeep)),
+                child: Text(
+                  l.groupsInYourPods(podsLabelL10n(l, tier)),
+                  style: t.titleMedium?.copyWith(color: AppColors.accentDeep),
+                ),
               ),
             ],
           ),
@@ -738,8 +812,9 @@ class _UpgradeBanner extends StatelessWidget {
           ),
           const SizedBox(height: Insets.md),
           FilledButton(
-            style:
-                FilledButton.styleFrom(backgroundColor: AppColors.accentDeep),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.accentDeep,
+            ),
             onPressed: () => context.go(Routes.subscription),
             child: Text(l.shareSeePremium),
           ),
@@ -765,7 +840,10 @@ class _SafetyNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.shield_outlined, color: AppColors.inkMuted),
+          Icon(
+            Icons.shield_outlined,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: Insets.md),
           Expanded(
             child: Text(

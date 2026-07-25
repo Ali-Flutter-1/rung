@@ -100,11 +100,11 @@ class _Game2048State extends State<Game2048Screen> {
     var gained = 0;
 
     List<int> lineOf(int i) => switch (dir) {
-          0 => _grid[i],
-          1 => _grid[i].reversed.toList(),
-          2 => [for (var r = 0; r < 4; r++) _grid[r][i]],
-          _ => [for (var r = 3; r >= 0; r--) _grid[r][i]],
-        };
+      0 => _grid[i],
+      1 => _grid[i].reversed.toList(),
+      2 => [for (var r = 0; r < 4; r++) _grid[r][i]],
+      _ => [for (var r = 3; r >= 0; r--) _grid[r][i]],
+    };
     void writeLine(int i, List<int> line) {
       switch (dir) {
         case 0:
@@ -181,89 +181,94 @@ class _Game2048State extends State<Game2048Screen> {
           ]),
         ],
       ),
-      body: _wrapConfetti(SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.lg),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  _Stat(label: l.g2048Score, value: _score),
-                  const SizedBox(width: Insets.md),
-                  _Stat(label: l.g2048Best, value: _best),
-                  const Spacer(),
-                  Text(
-                    _over
-                        ? l.g2048GameOver
-                        : _won
-                            ? l.g2048Won
-                            : l.g2048SwipeToMerge,
-                    style: t.bodyMedium,
-                  ),
-                ],
-              ),
-              const SizedBox(height: Insets.lg),
-              Expanded(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: GestureDetector(
-                      onHorizontalDragEnd: (d) =>
-                          _move((d.primaryVelocity ?? 0) < 0 ? 0 : 1),
-                      onVerticalDragEnd: (d) =>
-                          _move((d.primaryVelocity ?? 0) < 0 ? 2 : 3),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.12),
-                          borderRadius: Radii.lgAll,
-                        ),
-                        child: Column(
-                          children: [
-                            for (var r = 0; r < 4; r++)
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    for (var c = 0; c < 4; c++)
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4),
-                                          child: _Tile(value: _grid[r][c]),
+      body: _wrapConfetti(
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Insets.lg),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    _Stat(label: l.g2048Score, value: _score),
+                    const SizedBox(width: Insets.md),
+                    _Stat(label: l.g2048Best, value: _best),
+                    const Spacer(),
+                    Text(
+                      _over
+                          ? l.g2048GameOver
+                          : _won
+                          ? l.g2048Won
+                          : l.g2048SwipeToMerge,
+                      style: t.bodyMedium,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Insets.lg),
+                Expanded(
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: GestureDetector(
+                        onHorizontalDragEnd: (d) =>
+                            _move((d.primaryVelocity ?? 0) < 0 ? 0 : 1),
+                        onVerticalDragEnd: (d) =>
+                            _move((d.primaryVelocity ?? 0) < 0 ? 2 : 3),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.12),
+                            borderRadius: Radii.lgAll,
+                          ),
+                          child: Column(
+                            children: [
+                              for (var r = 0; r < 4; r++)
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      for (var c = 0; c < 4; c++)
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4),
+                                            child: _Tile(value: _grid[r][c]),
+                                          ),
                                         ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: Insets.lg),
-              GestureDetector(
-                onTap: _newGame,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: Radii.pill,
-                  ),
-                  child: Text(l.gameNewGame,
+                const SizedBox(height: Insets.lg),
+                GestureDetector(
+                  onTap: _newGame,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: Radii.pill,
+                    ),
+                    child: Text(
+                      l.gameNewGame,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15)),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -300,27 +305,32 @@ class _Tile extends StatelessWidget {
     final bg = _palette[value] ?? const Color(0xFFCB3F4A);
     final dark = value >= 32 && value != 64 && value != 128;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 120),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: bg, borderRadius: Radii.card),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Padding(
-          padding: const EdgeInsets.all(6),
-          child: Text(
-            '$value',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 26,
-              color: dark ? Colors.white : AppColors.primaryDeep,
+          duration: const Duration(milliseconds: 120),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: bg, borderRadius: Radii.card),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Text(
+                '$value',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 26,
+                  color: dark ? Colors.white : AppColors.primaryDeep,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    )
+        )
         // Pop whenever this tile's value changes (spawn or merge).
         .animate(key: ValueKey(value))
-        .scaleXY(begin: 0.7, end: 1, duration: 160.ms, curve: Curves.easeOutBack);
+        .scaleXY(
+          begin: 0.7,
+          end: 1,
+          duration: 160.ms,
+          curve: Curves.easeOutBack,
+        );
   }
 }
 
@@ -336,20 +346,26 @@ class _Stat extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         children: [
-          Text(label.toUpperCase(),
-              style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.inkMuted)),
-          Text('$value',
-              style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primaryDeep)),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            '$value',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primaryDeep,
+            ),
+          ),
         ],
       ),
     );

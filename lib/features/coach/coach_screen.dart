@@ -10,6 +10,7 @@ import '../../core/safety/content_guard.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/subscription.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/support_sheet.dart';
 
 enum CoachMode { rehearse, debrief }
@@ -17,20 +18,26 @@ enum CoachMode { rehearse, debrief }
 /// Opens the AI coach if the user is Premium; otherwise routes to the paywall.
 /// The coach is the headline Premium feature — valuable on day one, no
 /// community required.
-void openCoach(BuildContext context, WidgetRef ref,
-    {CoachMode mode = CoachMode.rehearse}) {
+void openCoach(
+  BuildContext context,
+  WidgetRef ref, {
+  CoachMode mode = CoachMode.rehearse,
+}) {
   final tier = ref.read(settingsRepositoryProvider).subscriptionTier;
   if (!tier.isPremium) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text('Your coach is part of Premium.'),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(AppLocalizations.of(context).coachPremiumOnly),
+      ),
+    );
     context.go(Routes.subscription);
     return;
   }
-  Navigator.of(context, rootNavigator: true).push(
-    MaterialPageRoute(builder: (_) => CoachScreen(initialMode: mode)),
-  );
+  Navigator.of(
+    context,
+    rootNavigator: true,
+  ).push(MaterialPageRoute(builder: (_) => CoachScreen(initialMode: mode)));
 }
 
 class CoachScreen extends ConsumerStatefulWidget {
@@ -54,10 +61,16 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
   final _scroll = ScrollController();
   bool _sending = false;
 
+  bool _seeded = false;
+
   @override
-  void initState() {
-    super.initState();
-    _seedIntro();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Seed the intro here (not initState) so AppLocalizations is available.
+    if (!_seeded) {
+      _seeded = true;
+      _seedIntro(AppLocalizations.of(context));
+    }
   }
 
   @override
@@ -67,24 +80,23 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
     super.dispose();
   }
 
-  void _seedIntro() {
+  void _seedIntro(AppLocalizations l) {
     _messages.clear();
-    _messages.add(_Msg(
-      false,
-      _mode == CoachMode.rehearse
-          ? "Hi — I'm here with you. Is there something coming up that's on "
-              "your mind? Tell me about it and we'll get you ready, one small "
-              "step at a time."
-          : "Hey — you did something today, and that matters. Want to tell me "
-              "how it went? No judgement here.",
-    ));
+    _messages.add(
+      _Msg(
+        false,
+        _mode == CoachMode.rehearse
+            ? l.coachIntroRehearse
+            : l.coachIntroDebrief,
+      ),
+    );
   }
 
-  void _switchMode(CoachMode m) {
+  void _switchMode(CoachMode m, AppLocalizations l) {
     if (m == _mode) return;
     setState(() {
       _mode = m;
-      _seedIntro();
+      _seedIntro(l);
     });
   }
 
@@ -108,9 +120,13 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
     _scrollToEnd();
 
     final history = _messages
-        .map((m) => {'role': m.fromUser ? 'user' : 'assistant', 'content': m.text})
+        .map(
+          (m) => {'role': m.fromUser ? 'user' : 'assistant', 'content': m.text},
+        )
         .toList();
-    final result = await ref.read(cloudRepositoryProvider).coachReply(
+    final result = await ref
+        .read(cloudRepositoryProvider)
+        .coachReply(
           mode: _mode == CoachMode.rehearse ? 'rehearse' : 'debrief',
           history: history,
         );
@@ -136,65 +152,64 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
 
   void _handleError(String? code) {
     final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
+    void snack(String text) => messenger.showSnackBar(
+      SnackBar(behavior: SnackBarBehavior.floating, content: Text(text)),
+    );
     switch (code) {
       case 'premium_required':
-        messenger.showSnackBar(const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Your coach is part of Premium.'),
-        ));
+        snack(l.coachPremiumOnly);
         context.go(Routes.subscription);
       case 'daily_limit':
-        messenger.showSnackBar(const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text("That's a lot of good work today — let's pick this up "
-              'again tomorrow.'),
-        ));
+        snack(l.coachDailyLimit);
       case 'coach_unconfigured':
-        messenger.showSnackBar(const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('The coach isn’t switched on yet. Try again soon.'),
-        ));
+        snack(l.coachUnconfigured);
       default:
-        messenger.showSnackBar(const SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text("I couldn't reach the coach just now. Try again."),
-        ));
+        snack(l.coachError);
     }
   }
 
   void _scrollToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scroll.hasClients) {
-        _scroll.animateTo(_scroll.position.maxScrollExtent,
-            duration: Motion.base, curve: Curves.easeOut);
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: Motion.base,
+          curve: Curves.easeOut,
+        );
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your coach'),
+        title: Text(l.coachTitle),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
-                Insets.lg, 0, Insets.lg, Insets.sm),
+              Insets.lg,
+              0,
+              Insets.lg,
+              Insets.sm,
+            ),
             child: Row(
               children: [
                 _ModePill(
-                  label: 'Rehearse',
+                  label: l.coachRehearse,
                   icon: Icons.self_improvement_rounded,
                   selected: _mode == CoachMode.rehearse,
-                  onTap: () => _switchMode(CoachMode.rehearse),
+                  onTap: () => _switchMode(CoachMode.rehearse, l),
                 ),
                 const SizedBox(width: Insets.sm),
                 _ModePill(
-                  label: 'Debrief',
+                  label: l.coachDebrief,
                   icon: Icons.favorite_outline_rounded,
                   selected: _mode == CoachMode.debrief,
-                  onTap: () => _switchMode(CoachMode.debrief),
+                  onTap: () => _switchMode(CoachMode.debrief, l),
                 ),
               ],
             ),
@@ -215,11 +230,7 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
                 },
               ),
             ),
-            _Composer(
-              controller: _input,
-              sending: _sending,
-              onSend: _send,
-            ),
+            _Composer(controller: _input, sending: _sending, onSend: _send),
           ],
         ),
       ),
@@ -235,41 +246,51 @@ class _Bubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final user = msg.fromUser;
-    final bg = user ? AppColors.primary : Theme.of(context).colorScheme.surface;
-    final fg = user ? Colors.white : AppColors.ink;
+    final cs = Theme.of(context).colorScheme;
+    // Theme-aware, not fixed AppColors.ink — the bot bubble sits on `surface`,
+    // which is near-black in dark mode, so a fixed near-black ink was invisible.
+    final bg = user ? AppColors.primary : cs.surface;
+    final fg = user ? Colors.white : cs.onSurface;
     return Padding(
-      padding: const EdgeInsets.only(bottom: Insets.md),
-      child: Row(
-        mainAxisAlignment:
-            user ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!user) ...[
-            const _CoachAvatar(),
-            const SizedBox(width: Insets.sm),
-          ],
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: Insets.md, vertical: 10),
-              decoration: BoxDecoration(
-                color: bg,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radii.md,
-                  topRight: Radii.md,
-                  bottomLeft: Radius.circular(user ? 16 : 4),
-                  bottomRight: Radius.circular(user ? 4 : 16),
+          padding: const EdgeInsets.only(bottom: Insets.md),
+          child: Row(
+            mainAxisAlignment: user
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (!user) ...[
+                const _CoachAvatar(),
+                const SizedBox(width: Insets.sm),
+              ],
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Insets.md,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: bg,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radii.md,
+                      topRight: Radii.md,
+                      bottomLeft: Radius.circular(user ? 16 : 4),
+                      bottomRight: Radius.circular(user ? 4 : 16),
+                    ),
+                    border: user ? null : Border.all(color: cs.outline),
+                  ),
+                  child: Text(
+                    msg.text,
+                    style: t.bodyLarge?.copyWith(color: fg, height: 1.4),
+                  ),
                 ),
-                border: user ? null : Border.all(color: AppColors.border),
               ),
-              child: Text(msg.text,
-                  style: t.bodyLarge?.copyWith(color: fg, height: 1.4)),
-            ),
+            ],
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 220.ms).slideY(
-        begin: 0.1, end: 0, duration: 220.ms, curve: Curves.easeOut);
+        )
+        .animate()
+        .fadeIn(duration: 220.ms)
+        .slideY(begin: 0.1, end: 0, duration: 220.ms, curve: Curves.easeOut);
   }
 }
 
@@ -304,8 +325,10 @@ class _TypingBubble extends StatelessWidget {
           const _CoachAvatar(),
           const SizedBox(width: Insets.sm),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: Insets.md, vertical: 14),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Insets.md,
+              vertical: 14,
+            ),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.only(
@@ -314,7 +337,7 @@ class _TypingBubble extends StatelessWidget {
                 bottomLeft: Radius.circular(4),
                 bottomRight: Radii.md,
               ),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -322,18 +345,19 @@ class _TypingBubble extends StatelessWidget {
                 for (var i = 0; i < 3; i++)
                   Padding(
                     padding: EdgeInsets.only(right: i < 2 ? 4 : 0),
-                    child: Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.inkFaint,
-                      ),
-                    )
-                        .animate(onPlay: (c) => c.repeat())
-                        .fadeIn(duration: 400.ms, delay: (i * 160).ms)
-                        .then()
-                        .fadeOut(duration: 400.ms),
+                    child:
+                        Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.inkFaint,
+                              ),
+                            )
+                            .animate(onPlay: (c) => c.repeat())
+                            .fadeIn(duration: 400.ms, delay: (i * 160).ms)
+                            .then()
+                            .fadeOut(duration: 400.ms),
                   ),
               ],
             ),
@@ -356,11 +380,19 @@ class _Composer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(Insets.md, Insets.sm, Insets.md, Insets.sm),
+      padding: const EdgeInsets.fromLTRB(
+        Insets.md,
+        Insets.sm,
+        Insets.md,
+        Insets.sm,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline)),
+        border: Border(
+          top: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -372,13 +404,17 @@ class _Composer extends StatelessWidget {
               maxLines: 5,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: 'Say what’s on your mind…',
+                hintText: l.coachComposerHint,
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: Insets.md, vertical: 12),
+                  horizontal: Insets.md,
+                  vertical: 12,
+                ),
                 border: OutlineInputBorder(
-                    borderRadius: Radii.lgAll, borderSide: BorderSide.none),
+                  borderRadius: Radii.lgAll,
+                  borderSide: BorderSide.none,
+                ),
               ),
               onSubmitted: (_) => onSend(),
             ),
@@ -398,7 +434,9 @@ class _Composer extends StatelessWidget {
                   ? const Padding(
                       padding: EdgeInsets.all(14),
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.arrow_upward_rounded, color: Colors.white),
             ),
@@ -434,23 +472,33 @@ class _ModePill extends StatelessWidget {
               : Colors.transparent,
           borderRadius: Radii.pill,
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
+            color: selected
+                ? AppColors.primary
+                : Theme.of(context).colorScheme.outline,
             width: selected ? 1.5 : 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-                size: 16,
-                color: selected ? AppColors.primaryDeep : AppColors.inkMuted),
+            Icon(
+              icon,
+              size: 16,
+              color: selected
+                  ? AppColors.primaryDeep
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 6),
-            Text(label,
-                style: TextStyle(
-                  color: selected ? AppColors.primaryDeep : AppColors.inkMuted,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                )),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected
+                    ? AppColors.primaryDeep
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
           ],
         ),
       ),

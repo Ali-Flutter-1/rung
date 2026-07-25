@@ -19,7 +19,9 @@ Future<void> _ensureSetup() async {
       ..host = AppConfig.posthogHost;
     await Posthog().setup(config);
     _setupDone = true;
-  } catch (_) {/* analytics must never break boot */}
+  } catch (_) {
+    /* analytics must never break boot */
+  }
 }
 
 /// Boot-time: honour the stored opt-in. With consent off (the default) the SDK

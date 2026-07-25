@@ -61,7 +61,9 @@ class _HelpNowSheet extends StatelessWidget {
             TabBar(
               labelColor: AppColors.primaryDeep,
               indicatorColor: AppColors.primary,
-              unselectedLabelColor: AppColors.inkMuted,
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant,
               tabs: [
                 Tab(text: l.helpTabBreathe),
                 Tab(text: l.helpTabGround),
@@ -70,11 +72,7 @@ class _HelpNowSheet extends StatelessWidget {
             ),
             const Expanded(
               child: TabBarView(
-                children: [
-                  _BreathePane(),
-                  _GroundPane(),
-                  _LinesPane(),
-                ],
+                children: [_BreathePane(), _GroundPane(), _LinesPane()],
               ),
             ),
           ],
@@ -135,13 +133,16 @@ class _BreathePaneState extends State<_BreathePane>
               ),
               const SizedBox(height: Insets.xl),
               Text(
-                  breathingIn
-                      ? AppLocalizations.of(context).helpBreatheIn
-                      : AppLocalizations.of(context).helpBreatheOut,
-                  style: t.titleLarge),
+                breathingIn
+                    ? AppLocalizations.of(context).helpBreatheIn
+                    : AppLocalizations.of(context).helpBreatheOut,
+                style: t.titleLarge,
+              ),
               const SizedBox(height: Insets.sm),
-              Text(AppLocalizations.of(context).helpBreatheHint,
-                  style: t.bodyMedium),
+              Text(
+                AppLocalizations.of(context).helpBreatheHint,
+                style: t.bodyMedium,
+              ),
             ],
           );
         },
@@ -177,10 +178,13 @@ class _GroundPane extends StatelessWidget {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: AppColors.primarySoft,
-                  child: Text(n,
-                      style: const TextStyle(
-                          color: AppColors.primaryDeep,
-                          fontWeight: FontWeight.w800)),
+                  child: Text(
+                    n,
+                    style: const TextStyle(
+                      color: AppColors.primaryDeep,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: Insets.md),
                 Text(label, style: t.bodyLarge),
@@ -201,7 +205,12 @@ class _LinesPane extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
-    final openers = [l.helpOpener1, l.helpOpener2, l.helpOpener3, l.helpOpener4];
+    final openers = [
+      l.helpOpener1,
+      l.helpOpener2,
+      l.helpOpener3,
+      l.helpOpener4,
+    ];
     final exits = [l.helpExit1, l.helpExit2, l.helpExit3];
     return ListView(
       padding: const EdgeInsets.all(Insets.lg),
@@ -230,15 +239,19 @@ class _LineChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Row(
         children: [
-          const Icon(Icons.chat_bubble_outline_rounded,
-              size: 18, color: AppColors.primary),
+          const Icon(
+            Icons.chat_bubble_outline_rounded,
+            size: 18,
+            color: AppColors.primary,
+          ),
           const SizedBox(width: Insets.md),
           Expanded(
-              child: Text(line, style: Theme.of(context).textTheme.bodyLarge)),
+            child: Text(line, style: Theme.of(context).textTheme.bodyLarge),
+          ),
         ],
       ),
     );

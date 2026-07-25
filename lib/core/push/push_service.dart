@@ -25,7 +25,10 @@ class PushService {
     await _fm.requestPermission(alert: true, badge: true, sound: true);
     // Show notifications while the app is foregrounded (iOS).
     await _fm.setForegroundNotificationPresentationOptions(
-        alert: true, badge: true, sound: true);
+      alert: true,
+      badge: true,
+      sound: true,
+    );
     _fm.onTokenRefresh.listen(_save);
   }
 
@@ -46,8 +49,9 @@ class PushService {
     // re-trigger registration without an actual token change.
     if (_token == token) return;
     _token = token;
-    final platform =
-        defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
+    final platform = defaultTargetPlatform == TargetPlatform.iOS
+        ? 'ios'
+        : 'android';
     // Handy for testing: copy this from the console to send a Firebase test push.
     if (kDebugMode) debugPrint('[push] FCM token ($platform): $token');
     try {

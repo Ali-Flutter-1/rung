@@ -112,7 +112,8 @@ class CloudRepository {
       }
       if (msg.contains('pod limit reached')) {
         throw const CloudJoinException(
-            'You\'ve hit your pod limit — upgrade to join more.');
+          'You\'ve hit your pod limit — upgrade to join more.',
+        );
       }
       throw const CloudJoinException('Could not join that pod. Try again.');
     }
@@ -147,11 +148,10 @@ class CloudRepository {
     String? context,
   }) async {
     try {
-      final res = await supabase.functions.invoke('coach', body: {
-        'mode': mode,
-        'context': context,
-        'messages': history,
-      });
+      final res = await supabase.functions.invoke(
+        'coach',
+        body: {'mode': mode, 'context': context, 'messages': history},
+      );
       final data = res.data;
       if (data is Map) {
         if (data['crisis'] == true) return const CoachResult.crisis();
@@ -210,21 +210,31 @@ class CloudRepository {
   Future<void> setPodAlerts(bool enabled) async {
     final uid = _uid;
     if (uid == null) return;
-    await supabase.from('profiles').update({'pod_alerts': enabled}).eq('id', uid);
+    await supabase
+        .from('profiles')
+        .update({'pod_alerts': enabled})
+        .eq('id', uid);
   }
 
   /// User ids in a pod. (Locked members still appear here; their profile is
   /// just hidden by RLS when fetched.)
   Future<List<String>> podMemberIds(String groupId) async {
-    final rows =
-        await supabase.from('group_members').select('user_id').eq('group_id', groupId);
+    final rows = await supabase
+        .from('group_members')
+        .select('user_id')
+        .eq('group_id', groupId);
     return rows.map((r) => r['user_id'] as String).toList();
   }
 
   /// Visible profiles for a pod (locked members are omitted by RLS).
-  Future<Map<String, CloudProfile>> visibleProfiles(List<String> userIds) async {
+  Future<Map<String, CloudProfile>> visibleProfiles(
+    List<String> userIds,
+  ) async {
     if (userIds.isEmpty) return {};
-    final rows = await supabase.from('profiles').select().inFilter('id', userIds);
+    final rows = await supabase
+        .from('profiles')
+        .select()
+        .inFilter('id', userIds);
     final map = <String, CloudProfile>{};
     for (final r in rows) {
       final p = CloudProfile.fromRow(r);
@@ -252,7 +262,11 @@ class CloudRepository {
         .handleError((Object _) {});
   }
 
-  Future<void> sendMessage(String groupId, String body, {String? replyTo}) async {
+  Future<void> sendMessage(
+    String groupId,
+    String body, {
+    String? replyTo,
+  }) async {
     final uid = _uid;
     if (uid == null) return;
     try {
@@ -266,12 +280,14 @@ class CloudRepository {
       final msg = e.toString();
       if (msg.contains('rate_limited')) {
         throw const CloudActionException(
-            'Take a breath — that\'s a lot of messages very fast.');
+          'Take a breath — that\'s a lot of messages very fast.',
+        );
       }
       // RLS: not a member of this pod (e.g. membership lapsed / not joined).
       if (msg.contains('row-level security') || msg.contains('42501')) {
         throw const CloudActionException(
-            "You're not in this pod — reopen Groups to rejoin.");
+          "You're not in this pod — reopen Groups to rejoin.",
+        );
       }
       throw const CloudActionException('Could not send. Try again.');
     }
@@ -280,10 +296,13 @@ class CloudRepository {
   /// Edits the body of the user's own message (RLS enforces ownership).
   Future<void> editMessage(String messageId, String newBody) async {
     try {
-      await supabase.from('messages').update({
-        'body': newBody,
-        'edited_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', messageId);
+      await supabase
+          .from('messages')
+          .update({
+            'body': newBody,
+            'edited_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', messageId);
     } catch (_) {
       throw const CloudActionException('Could not edit. Try again.');
     }
@@ -292,9 +311,10 @@ class CloudRepository {
   /// Soft-deletes the user's own message (row kept so replies still resolve).
   Future<void> deleteMessage(String messageId) async {
     try {
-      await supabase.from('messages').update({
-        'deleted_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', messageId);
+      await supabase
+          .from('messages')
+          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+          .eq('id', messageId);
     } catch (_) {
       throw const CloudActionException('Could not delete. Try again.');
     }
@@ -314,7 +334,11 @@ class CloudRepository {
   }
 
   /// Adds the current user's reaction (idempotent — the PK dedupes).
-  Future<void> addReaction(String messageId, String groupId, String emoji) async {
+  Future<void> addReaction(
+    String messageId,
+    String groupId,
+    String emoji,
+  ) async {
     final uid = _uid;
     if (uid == null) return;
     try {
@@ -324,7 +348,9 @@ class CloudRepository {
         'emoji': emoji,
         'group_id': groupId,
       });
-    } catch (_) {/* already reacted / offline — harmless */}
+    } catch (_) {
+      /* already reacted / offline — harmless */
+    }
   }
 
   /// Removes the current user's reaction of [emoji] from a message.
@@ -338,7 +364,9 @@ class CloudRepository {
           .eq('message_id', messageId)
           .eq('user_id', uid)
           .eq('emoji', emoji);
-    } catch (_) {/* offline — harmless */}
+    } catch (_) {
+      /* offline — harmless */
+    }
   }
 
   // ── Moderation (Phase 2 safety) ─────────────────────────────────────────
@@ -352,8 +380,10 @@ class CloudRepository {
   Future<List<String>> blockedUserIds() async {
     final uid = _uid;
     if (uid == null) return [];
-    final rows =
-        await supabase.from('blocks').select('blocked_id').eq('blocker_id', uid);
+    final rows = await supabase
+        .from('blocks')
+        .select('blocked_id')
+        .eq('blocker_id', uid);
     return rows.map((r) => r['blocked_id'] as String).toList();
   }
 
@@ -361,8 +391,10 @@ class CloudRepository {
       supabase.rpc('report_message', params: {'mid': messageId, 'why': reason});
 
   Future<void> reportUser(String userId, String groupId, String reason) =>
-      supabase.rpc('report_user',
-          params: {'target': userId, 'gid': groupId, 'why': reason});
+      supabase.rpc(
+        'report_user',
+        params: {'target': userId, 'gid': groupId, 'why': reason},
+      );
 
   // ── Pod engagement (daily prompts + check-ins) ──────────────────────────
   /// RPCs declared `returns table` come back as a LIST of row maps (even for a
@@ -390,7 +422,10 @@ class CloudRepository {
   /// Marks "I did my step" for today (idempotent). Returns today's check-in
   /// count for this pod and whether this user is now checked in.
   Future<({int count, bool checkedIn})> checkInToday(String groupId) async {
-    final row = await supabase.rpc('pod_check_in_today', params: {'gid': groupId});
+    final row = await supabase.rpc(
+      'pod_check_in_today',
+      params: {'gid': groupId},
+    );
     final m = _singleRow(row);
     return (
       count: ((m['today_count'] ?? 0) as num).toInt(),
@@ -399,8 +434,13 @@ class CloudRepository {
   }
 
   /// Current check-in state for today in a pod.
-  Future<({int count, bool checkedIn})> todaysCheckInState(String groupId) async {
-    final row = await supabase.rpc('pod_check_in_state', params: {'gid': groupId});
+  Future<({int count, bool checkedIn})> todaysCheckInState(
+    String groupId,
+  ) async {
+    final row = await supabase.rpc(
+      'pod_check_in_state',
+      params: {'gid': groupId},
+    );
     final m = _singleRow(row);
     return (
       count: ((m['today_count'] ?? 0) as num).toInt(),
@@ -475,13 +515,12 @@ class CloudRepository {
       for (final r in rows) {...r, 'user_id': uid},
     ];
     try {
-      await supabase
-          .from('custom_rungs')
-          .upsert(withUser, onConflict: 'id');
+      await supabase.from('custom_rungs').upsert(withUser, onConflict: 'id');
     } catch (e) {
       if (e.toString().contains('custom_rung_limit')) {
         throw const CloudActionException(
-            'Free plan keeps 5 custom rungs — upgrade for unlimited.');
+          'Free plan keeps 5 custom rungs — upgrade for unlimited.',
+        );
       }
       rethrow;
     }

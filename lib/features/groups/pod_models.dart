@@ -29,7 +29,8 @@ class Member {
   final int streak;
   final int challenges;
 
-  String get initial => name.isEmpty ? '?' : name.characters.first.toUpperCase();
+  String get initial =>
+      name.isEmpty ? '?' : name.characters.first.toUpperCase();
 }
 
 /// A pod (group). `capacity` is set by the owning user's tier (25 free / 50
@@ -56,35 +57,54 @@ class Pod {
 
 /// Sample roster used across the Groups shell.
 const sampleMembers = <Member>[
-  Member(name: 'Mara', bio: 'Coffee-shop conversations are my Everest.', climbing: 'Approaching people'),
-  Member(name: 'Sam', bio: 'Here for the prediction-gap dopamine.', climbing: 'Speaking up'),
+  Member(
+    name: 'Mara',
+    bio: 'Coffee-shop conversations are my Everest.',
+    climbing: 'Approaching people',
+  ),
+  Member(
+    name: 'Sam',
+    bio: 'Here for the prediction-gap dopamine.',
+    climbing: 'Speaking up',
+  ),
   Member(name: 'Quiet one', locked: true), // keeps their profile private
-  Member(name: 'Priya', bio: 'Learning to take up space in meetings.', climbing: 'Under pressure'),
-  Member(name: 'Leo', bio: 'Phone calls? In this economy?', climbing: 'Speaking up'),
+  Member(
+    name: 'Priya',
+    bio: 'Learning to take up space in meetings.',
+    climbing: 'Under pressure',
+  ),
+  Member(
+    name: 'Leo',
+    bio: 'Phone calls? In this economy?',
+    climbing: 'Speaking up',
+  ),
 ];
 
 Pod systemPod(int capacity) => Pod(
-      name: 'Quiet Risers',
-      blurb: 'Your starter pod — assigned, gentle, no pressure',
-      members: sampleMembers,
-      capacity: capacity,
-      system: true,
-    );
+  name: 'Quiet Risers',
+  blurb: 'Your starter pod — assigned, gentle, no pressure',
+  members: sampleMembers,
+  capacity: capacity,
+  system: true,
+);
 
 List<Pod> discoverablePods(int capacity) => [
-      Pod(
-          name: 'Evening Owls',
-          blurb: 'After-work practice & wins',
-          members: sampleMembers.take(4).toList(),
-          capacity: capacity),
-      Pod(
-          name: 'First Rungs',
-          blurb: 'Brand-new climbers, extra gentle',
-          members: sampleMembers.take(3).toList(),
-          capacity: capacity),
-      Pod(
-          name: 'Phone-Call Club',
-          blurb: 'We dread the same things',
-          members: sampleMembers.take(5).toList(),
-          capacity: capacity),
-    ];
+  Pod(
+    name: 'Evening Owls',
+    blurb: 'After-work practice & wins',
+    members: sampleMembers.take(4).toList(),
+    capacity: capacity,
+  ),
+  Pod(
+    name: 'First Rungs',
+    blurb: 'Brand-new climbers, extra gentle',
+    members: sampleMembers.take(3).toList(),
+    capacity: capacity,
+  ),
+  Pod(
+    name: 'Phone-Call Club',
+    blurb: 'We dread the same things',
+    members: sampleMembers.take(5).toList(),
+    capacity: capacity,
+  ),
+];

@@ -17,24 +17,26 @@ class GapInsightCard extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final avgPred =
         exposures.map((e) => e.predictedSuds).reduce((a, b) => a + b) /
-            exposures.length;
-    final avgAct = exposures.map((e) => e.actualSuds!).reduce((a, b) => a + b) /
+        exposures.length;
+    final avgAct =
+        exposures.map((e) => e.actualSuds!).reduce((a, b) => a + b) /
         exposures.length;
     final gap = avgPred - avgAct;
-    final overestimateRate = exposures
+    final overestimateRate =
+        exposures
             .where((e) => e.predictedSuds > (e.actualSuds ?? e.predictedSuds))
             .length /
         exposures.length;
 
     final takeaway = gap > 0.5
         ? 'On average your fear runs ${gap.toStringAsFixed(1)} points hotter than '
-            'reality. ${(overestimateRate * 100).round()}% of the time, it was '
-            'easier than you predicted.'
+              'reality. ${(overestimateRate * 100).round()}% of the time, it was '
+              'easier than you predicted.'
         : gap < -0.5
-            ? "Lately things have felt about as hard as you expected — and "
-                "you're still showing up. Keep going."
-            : "Your predictions are landing close to reality. That calibration "
-                "is real progress.";
+        ? "Lately things have felt about as hard as you expected — and "
+              "you're still showing up. Keep going."
+        : "Your predictions are landing close to reality. That calibration "
+              "is real progress.";
 
     return Container(
       padding: const EdgeInsets.all(Insets.lg),
@@ -50,7 +52,11 @@ class GapInsightCard extends StatelessWidget {
           const SizedBox(height: Insets.sm),
           Text(takeaway, style: t.bodyLarge),
           const SizedBox(height: Insets.lg),
-          _AvgBar(label: 'Predicted', value: avgPred, color: AppColors.inkMuted),
+          _AvgBar(
+            label: 'Predicted',
+            value: avgPred,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(height: Insets.sm),
           _AvgBar(label: 'Actual', value: avgAct, color: AppColors.primary),
           const SizedBox(height: Insets.lg),
@@ -75,23 +81,28 @@ class _Legend extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 12,
-            height: 4,
-            decoration: BoxDecoration(
-                color: color, borderRadius: BorderRadius.circular(2)),
-          ),
-          const SizedBox(width: 6),
-          Text(label, style: Theme.of(context).textTheme.bodyMedium),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 12,
+        height: 4,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+      const SizedBox(width: 6),
+      Text(label, style: Theme.of(context).textTheme.bodyMedium),
+    ],
+  );
 }
 
 class _AvgBar extends StatelessWidget {
-  const _AvgBar(
-      {required this.label, required this.value, required this.color});
+  const _AvgBar({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
   final String label;
   final double value;
   final Color color;
@@ -116,9 +127,11 @@ class _AvgBar extends StatelessWidget {
         const SizedBox(width: Insets.sm),
         SizedBox(
           width: 32,
-          child: Text(value.toStringAsFixed(1),
-              textAlign: TextAlign.end,
-              style: t.titleMedium?.copyWith(color: color)),
+          child: Text(
+            value.toStringAsFixed(1),
+            textAlign: TextAlign.end,
+            style: t.titleMedium?.copyWith(color: color),
+          ),
         ),
       ],
     );
@@ -144,45 +157,46 @@ class _GapChart extends StatelessWidget {
     }
 
     final t = Theme.of(context).textTheme;
-    LineChartBarData bar(List<FlSpot> spots, Color color, {bool dashed = false}) =>
-        LineChartBarData(
-          spots: spots,
-          isCurved: true,
-          curveSmoothness: 0.3,
-          preventCurveOverShooting: true,
-          color: color,
-          barWidth: dashed ? 2 : 3.5,
-          dashArray: dashed ? [5, 4] : null,
-          // Dots only on the "reality" line — white core with a coloured ring.
-          dotData: FlDotData(
-            show: !dashed,
-            getDotPainter: (s, _, _, _) => FlDotCirclePainter(
-                radius: 3.5,
-                color: Colors.white,
-                strokeWidth: 2,
-                strokeColor: color),
-          ),
-          belowBarData: BarAreaData(
-            show: !dashed,
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                color.withValues(alpha: 0.28),
-                color.withValues(alpha: 0.0),
-              ],
-            ),
-          ),
-        );
+    LineChartBarData bar(
+      List<FlSpot> spots,
+      Color color, {
+      bool dashed = false,
+    }) => LineChartBarData(
+      spots: spots,
+      isCurved: true,
+      curveSmoothness: 0.3,
+      preventCurveOverShooting: true,
+      color: color,
+      barWidth: dashed ? 2 : 3.5,
+      dashArray: dashed ? [5, 4] : null,
+      // Dots only on the "reality" line — white core with a coloured ring.
+      dotData: FlDotData(
+        show: !dashed,
+        getDotPainter: (s, _, _, _) => FlDotCirclePainter(
+          radius: 3.5,
+          color: Colors.white,
+          strokeWidth: 2,
+          strokeColor: color,
+        ),
+      ),
+      belowBarData: BarAreaData(
+        show: !dashed,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [color.withValues(alpha: 0.28), color.withValues(alpha: 0.0)],
+        ),
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            _legend(AppColors.inkFaint, 'Fear', t),
+            _legend(context, AppColors.inkFaint, 'Fear', t),
             const SizedBox(width: Insets.md),
-            _legend(AppColors.primary, 'Reality', t),
+            _legend(context, AppColors.primary, 'Reality', t),
           ],
         ),
         const SizedBox(height: Insets.md),
@@ -199,25 +213,33 @@ class _GapChart extends StatelessWidget {
                 drawVerticalLine: false,
                 horizontalInterval: 5,
                 getDrawingHorizontalLine: (_) => FlLine(
-                    color: AppColors.border.withValues(alpha: 0.6),
-                    strokeWidth: 1,
-                    dashArray: [4, 4]),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.6),
+                  strokeWidth: 1,
+                  dashArray: [4, 4],
+                ),
               ),
               borderData: FlBorderData(show: false),
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 bottomTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                  sideTitles: SideTitles(showTitles: false),
+                ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
                     interval: 5,
                     reservedSize: 22,
-                    getTitlesWidget: (v, _) => Text('${v.toInt()}',
-                        style: t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
+                    getTitlesWidget: (v, _) => Text(
+                      '${v.toInt()}',
+                      style: t.bodySmall?.copyWith(color: t.bodyMedium?.color),
+                    ),
                   ),
                 ),
               ),
@@ -233,7 +255,7 @@ class _GapChart extends StatelessWidget {
     );
   }
 
-  Widget _legend(Color color, String label, TextTheme t) {
+  Widget _legend(BuildContext context, Color color, String label, TextTheme t) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -241,12 +263,18 @@ class _GapChart extends StatelessWidget {
           width: 16,
           height: 4,
           decoration: BoxDecoration(
-              color: color, borderRadius: BorderRadius.circular(2)),
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
         ),
         const SizedBox(width: 6),
-        Text(label,
-            style: t.bodySmall
-                ?.copyWith(color: AppColors.inkMuted, fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: t.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -273,7 +301,7 @@ class StatTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,14 +334,14 @@ class AttemptHistoryTile extends StatelessWidget {
             inProgress
                 ? Icons.timelapse_rounded
                 : skipped
-                    ? Icons.nightlight_outlined
-                    : Icons.check_circle_outline,
+                ? Icons.nightlight_outlined
+                : Icons.check_circle_outline,
             size: 18,
             color: inProgress
                 ? AppColors.primary
                 : skipped
-                    ? AppColors.inkFaint
-                    : AppColors.primary,
+                ? AppColors.inkFaint
+                : AppColors.primary,
           ),
           const SizedBox(width: Insets.sm),
           Expanded(
@@ -321,8 +349,8 @@ class AttemptHistoryTile extends StatelessWidget {
               inProgress
                   ? 'In progress — predicted ${attempt.predictedSuds}'
                   : skipped
-                      ? 'Not today'
-                      : 'Predicted ${attempt.predictedSuds} · actual ${attempt.actualSuds}',
+                  ? 'Not today'
+                  : 'Predicted ${attempt.predictedSuds} · actual ${attempt.actualSuds}',
               style: t.bodyLarge,
             ),
           ),
@@ -333,11 +361,14 @@ class AttemptHistoryTile extends StatelessWidget {
                 color: AppColors.primarySoft,
                 borderRadius: Radii.pill,
               ),
-              child: Text('−$gap',
-                  style: const TextStyle(
-                      color: AppColors.primaryDeep,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12)),
+              child: Text(
+                '−$gap',
+                style: const TextStyle(
+                  color: AppColors.primaryDeep,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
             ),
         ],
       ),
@@ -351,29 +382,43 @@ class GapEmpty extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.all(Insets.lg),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: Radii.lgAll,
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.insights_rounded, color: AppColors.primary, size: 32)
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scaleXY(
-                  begin: 1, end: 1.12, duration: 1600.ms, curve: Curves.easeInOut),
-          const SizedBox(height: Insets.md),
-          Text('Your evidence is coming',
-              style: t.titleMedium, textAlign: TextAlign.center),
-          const SizedBox(height: Insets.sm),
-          Text(
-            'Log a couple of attempts and this is where you\'ll see, in your own '
-            'numbers, how your fear compares to reality.',
-            textAlign: TextAlign.center,
-            style: t.bodyMedium,
+          padding: const EdgeInsets.all(Insets.lg),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            borderRadius: Radii.lgAll,
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, curve: Curves.easeOut);
+          child: Column(
+            children: [
+              const Icon(
+                    Icons.insights_rounded,
+                    color: AppColors.primary,
+                    size: 32,
+                  )
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .scaleXY(
+                    begin: 1,
+                    end: 1.12,
+                    duration: 1600.ms,
+                    curve: Curves.easeInOut,
+                  ),
+              const SizedBox(height: Insets.md),
+              Text(
+                'Your evidence is coming',
+                style: t.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: Insets.sm),
+              Text(
+                'Log a couple of attempts and this is where you\'ll see, in your own '
+                'numbers, how your fear compares to reality.',
+                textAlign: TextAlign.center,
+                style: t.bodyMedium,
+              ),
+            ],
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 400.ms)
+        .slideY(begin: 0.05, end: 0, curve: Curves.easeOut);
   }
 }

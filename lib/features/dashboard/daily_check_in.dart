@@ -14,13 +14,13 @@ import '../../shared/help_now.dart';
 /// Localized display label for a mood (the English [label] is kept as the stable
 /// analytics value).
 String _moodLabel(AppLocalizations l, String label) => switch (label) {
-      'Calm' => l.checkInMoodCalm,
-      'Okay' => l.checkInMoodOkay,
-      'Anxious' => l.checkInMoodAnxious,
-      'Low' => l.checkInMoodLow,
-      'Tense' => l.checkInMoodTense,
-      _ => label,
-    };
+  'Calm' => l.checkInMoodCalm,
+  'Okay' => l.checkInMoodOkay,
+  'Anxious' => l.checkInMoodAnxious,
+  'Low' => l.checkInMoodLow,
+  'Tense' => l.checkInMoodTense,
+  _ => label,
+};
 
 /// A once-a-day arrival prompt on Home — "how are you arriving today?" plus one
 /// gentle next step. Builds the daily habit without pressure; disappears for the
@@ -62,9 +62,9 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
     Haptics.selection();
     final settings = ref.read(settingsRepositoryProvider);
     await settings.setLastCheckInDate(_todayYmd);
-    ref
-        .read(analyticsProvider)
-        .capture(Ev.checkInCompleted, {'mood': mood.label});
+    ref.read(analyticsProvider).capture(Ev.checkInCompleted, {
+      'mood': mood.label,
+    });
     if (mounted) setState(() => _picked = mood);
   }
 
@@ -92,7 +92,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
             AppColors.accent.withValues(alpha: 0.10),
           ],
         ),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: _picked == null ? _prompt(t) : _acknowledgement(t, _picked!),
     );
@@ -105,8 +105,11 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
       children: [
         Row(
           children: [
-            const Icon(Icons.wb_twilight_rounded,
-                size: 20, color: AppColors.primaryDeep),
+            const Icon(
+              Icons.wb_twilight_rounded,
+              size: 20,
+              color: AppColors.primaryDeep,
+            ),
             const SizedBox(width: Insets.sm),
             Text(l.checkInTitle, style: t.titleMedium),
           ],
@@ -116,8 +119,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
           spacing: Insets.sm,
           runSpacing: Insets.sm,
           children: [
-            for (final m in _moods)
-              _MoodChip(mood: m, onTap: () => _pick(m)),
+            for (final m in _moods) _MoodChip(mood: m, onTap: () => _pick(m)),
           ],
         ),
       ],
@@ -136,9 +138,11 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
             Text(mood.emoji, style: const TextStyle(fontSize: 22)),
             const SizedBox(width: Insets.sm),
             Expanded(
-                child: Text(
-                    l.checkInAckTitle(_moodLabel(l, mood.label).toLowerCase()),
-                    style: t.titleMedium)),
+              child: Text(
+                l.checkInAckTitle(_moodLabel(l, mood.label).toLowerCase()),
+                style: t.titleMedium,
+              ),
+            ),
             IconButton(
               tooltip: l.checkInDismiss,
               visualDensity: VisualDensity.compact,
@@ -160,8 +164,10 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
                 context.go(Routes.tracks);
               }
             },
-            icon: Icon(gentle ? Icons.spa_outlined : Icons.stairs_rounded,
-                size: 18),
+            icon: Icon(
+              gentle ? Icons.spa_outlined : Icons.stairs_rounded,
+              size: 18,
+            ),
             label: Text(gentle ? l.checkInCalmCta : l.checkInStepCta),
           ),
         ),
@@ -182,20 +188,24 @@ class _MoodChip extends StatelessWidget {
       onTap: onTap,
       borderRadius: Radii.pill,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: Insets.md, vertical: Insets.sm),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.md,
+          vertical: Insets.sm,
+        ),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: Radii.pill,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(mood.emoji, style: const TextStyle(fontSize: 16)),
             const SizedBox(width: 6),
-            Text(_moodLabel(AppLocalizations.of(context), mood.label),
-                style: t.labelLarge?.copyWith(color: AppColors.primaryDeep)),
+            Text(
+              _moodLabel(AppLocalizations.of(context), mood.label),
+              style: t.labelLarge?.copyWith(color: AppColors.primaryDeep),
+            ),
           ],
         ),
       ),

@@ -21,23 +21,11 @@ class SafetyScreen extends StatelessWidget {
           children: [
             Text(l.safetyPracticeTitle, style: t.headlineSmall),
             const SizedBox(height: Insets.md),
-            Text(
-              l.safetyIntro,
-              style: t.bodyLarge,
-            ),
+            Text(l.safetyIntro, style: t.bodyLarge),
             const SizedBox(height: Insets.lg),
-            _Point(
-              icon: Icons.self_improvement_rounded,
-              text: l.safetyPoint1,
-            ),
-            _Point(
-              icon: Icons.favorite_outline_rounded,
-              text: l.safetyPoint2,
-            ),
-            _Point(
-              icon: Icons.lock_outline_rounded,
-              text: l.safetyPoint3,
-            ),
+            _Point(icon: Icons.self_improvement_rounded, text: l.safetyPoint1),
+            _Point(icon: Icons.favorite_outline_rounded, text: l.safetyPoint2),
+            _Point(icon: Icons.lock_outline_rounded, text: l.safetyPoint3),
             const SizedBox(height: Insets.lg),
             Container(
               padding: const EdgeInsets.all(Insets.md),

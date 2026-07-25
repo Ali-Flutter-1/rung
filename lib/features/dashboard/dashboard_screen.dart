@@ -33,11 +33,13 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final today = ref.watch(todaysRungProvider);
-    final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
+    final attempts =
+        ref.watch(recentAttemptsProvider).asData?.value ?? const [];
     final t = Theme.of(context).textTheme;
     final settings = ref.watch(settingsRepositoryProvider);
     final weeklyGoal = settings.weeklyGoalSteps;
-    final weeklyDone = ref.watch(weeklyCompletedCountProvider).asData?.value ?? 0;
+    final weeklyDone =
+        ref.watch(weeklyCompletedCountProvider).asData?.value ?? 0;
     final weeklyRatio = weeklyGoal == 0
         ? 0.0
         : (weeklyDone / weeklyGoal).clamp(0.0, 1.0).toDouble();
@@ -65,14 +67,22 @@ class DashboardScreen extends ConsumerWidget {
       floatingActionButton: const HelpNowButton(),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.lg, Insets.lg, 96),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            Insets.lg,
+            Insets.lg,
+            96,
+          ),
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(_greeting(l),
-                      style: t.headlineMedium, overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    _greeting(l),
+                    style: t.headlineMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (streak > 0) StreakPill(days: streak),
                 IconButton(
@@ -101,7 +111,9 @@ class DashboardScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: Radii.card,
-                border: Border.all(color: AppColors.border),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,11 +128,15 @@ class DashboardScreen extends ConsumerWidget {
                         itemBuilder: (_) => [
                           for (final n in const [2, 3, 5, 7])
                             PopupMenuItem(
-                                value: n, child: Text(l.dashStepsPerWeek(n))),
+                              value: n,
+                              child: Text(l.dashStepsPerWeek(n)),
+                            ),
                         ],
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: Insets.sm, vertical: 6),
+                            horizontal: Insets.sm,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primarySoft,
                             borderRadius: Radii.pill,
@@ -128,8 +144,9 @@ class DashboardScreen extends ConsumerWidget {
                           child: Text(
                             l.dashGoalPerWeek(weeklyGoal),
                             style: t.bodyMedium?.copyWith(
-                                color: AppColors.primaryDeep,
-                                fontWeight: FontWeight.w700),
+                              color: AppColors.primaryDeep,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
@@ -146,7 +163,9 @@ class DashboardScreen extends ConsumerWidget {
                     child: LinearProgressIndicator(
                       minHeight: 10,
                       value: weeklyRatio,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                      backgroundColor: AppColors.primary.withValues(
+                        alpha: 0.15,
+                      ),
                     ),
                   ),
                 ],
@@ -164,7 +183,8 @@ class DashboardScreen extends ConsumerWidget {
                   ),
             const SizedBox(height: Insets.md),
             WeekStrip(
-              activeDays: ref.watch(activeDaysProvider).asData?.value ?? const {},
+              activeDays:
+                  ref.watch(activeDaysProvider).asData?.value ?? const {},
             ),
             const SizedBox(height: Insets.md),
             if (exposures.length < 2)
@@ -189,7 +209,11 @@ class _CoachCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
-    final premium = ref.watch(settingsRepositoryProvider).subscriptionTier.isPremium;
+    final l = AppLocalizations.of(context);
+    final premium = ref
+        .watch(settingsRepositoryProvider)
+        .subscriptionTier
+        .isPremium;
     return GestureDetector(
       onTap: () => openCoach(context, ref),
       behavior: HitTestBehavior.opaque,
@@ -213,7 +237,11 @@ class _CoachCard extends ConsumerWidget {
                 shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.18),
               ),
-              child: const Icon(Icons.spa_rounded, color: Colors.white, size: 22),
+              child: const Icon(
+                Icons.spa_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
             ),
             const SizedBox(width: Insets.md),
             Expanded(
@@ -222,39 +250,49 @@ class _CoachCard extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      Text('Talk to your coach',
-                          style: t.titleMedium?.copyWith(color: Colors.white)),
+                      Text(
+                        l.dashCoachTitle,
+                        style: t.titleMedium?.copyWith(color: Colors.white),
+                      ),
                       if (!premium) ...[
                         const SizedBox(width: Insets.sm),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.accent,
                             borderRadius: Radii.pill,
                           ),
-                          child: const Text('Premium',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700)),
+                          child: Text(
+                            l.profilePremium,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                       ],
                     ],
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Rehearse something coming up, or talk through how it went.',
-                    style: t.bodyMedium
-                        ?.copyWith(color: Colors.white.withValues(alpha: 0.85)),
+                    l.dashCoachSub,
+                    style: t.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded,
-                color: Colors.white.withValues(alpha: 0.8)),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
           ],
         ),
       ),
@@ -271,9 +309,10 @@ class _TakeABreakCard extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
     return GestureDetector(
-      onTap: () => Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute(builder: (_) => const GamesScreen()),
-      ),
+      onTap: () => Navigator.of(
+        context,
+        rootNavigator: true,
+      ).push(MaterialPageRoute(builder: (_) => const GamesScreen())),
       behavior: HitTestBehavior.opaque,
       child: Container(
         padding: const EdgeInsets.all(Insets.lg),
@@ -287,7 +326,7 @@ class _TakeABreakCard extends StatelessWidget {
               AppColors.primary.withValues(alpha: 0.10),
             ],
           ),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           children: [
@@ -308,10 +347,12 @@ class _TakeABreakCard extends StatelessWidget {
                 children: [
                   Text(l.dashTakeABreak, style: t.titleMedium),
                   const SizedBox(height: 2),
-                  Text(l.dashTakeABreakSub,
-                      style: t.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
+                  Text(
+                    l.dashTakeABreakSub,
+                    style: t.bodyMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),

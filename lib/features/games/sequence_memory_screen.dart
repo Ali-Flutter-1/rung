@@ -107,13 +107,12 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
   }
 
   String _statusText(AppLocalizations l) => switch (_phase) {
-        _Phase.idle => l.smWatchRepeat,
-        _Phase.showing => l.smWatch,
-        _Phase.input => l.smYourTurn(_userIdx + 1, _seq.length),
-        _Phase.over => _best != null
-            ? l.smReachedBest(_reached, _best!)
-            : l.smReached(_reached),
-      };
+    _Phase.idle => l.smWatchRepeat,
+    _Phase.showing => l.smWatch,
+    _Phase.input => l.smYourTurn(_userIdx + 1, _seq.length),
+    _Phase.over =>
+      _best != null ? l.smReachedBest(_reached, _best!) : l.smReached(_reached),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -137,11 +136,16 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
           child: Column(
             children: [
               const SizedBox(height: Insets.sm),
-              Text(l.smRound(_seq.isEmpty ? 0 : _seq.length),
-                  style: t.bodyMedium),
+              Text(
+                l.smRound(_seq.isEmpty ? 0 : _seq.length),
+                style: t.bodyMedium,
+              ),
               const SizedBox(height: 4),
-              Text(_statusText(l),
-                  style: t.titleLarge, textAlign: TextAlign.center),
+              Text(
+                _statusText(l),
+                style: t.titleLarge,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: Insets.lg),
               Expanded(
                 child: Center(
@@ -165,7 +169,8 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
                                 duration: const Duration(milliseconds: 120),
                                 decoration: BoxDecoration(
                                   color: _tileColors[i].withValues(
-                                      alpha: _lit == i ? 1 : 0.30),
+                                    alpha: _lit == i ? 1 : 0.30,
+                                  ),
                                   borderRadius: Radii.lgAll,
                                   border: Border.all(
                                     color: _lit == i
@@ -176,8 +181,9 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
                                   boxShadow: _lit == i
                                       ? [
                                           BoxShadow(
-                                            color: _tileColors[i]
-                                                .withValues(alpha: 0.55),
+                                            color: _tileColors[i].withValues(
+                                              alpha: 0.55,
+                                            ),
                                             blurRadius: 18,
                                             spreadRadius: 1,
                                           ),
@@ -205,11 +211,14 @@ class _SequenceMemoryState extends State<SequenceMemoryScreen> {
                       color: AppColors.primary,
                       borderRadius: Radii.pill,
                     ),
-                    child: Text(_phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15)),
+                    child: Text(
+                      _phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                 )
               else

@@ -106,64 +106,71 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
           ]),
         ],
       ),
-      body: _wrapConfetti(SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.lg),
-          child: Column(
-            children: [
-              Text(
-                _won ? l.mmAllMatched(_moves) : l.mmFindPairs(_moves),
-                style: t.titleMedium,
-              ),
-              if (_best != null)
-                Text(l.mmBest(_best!),
-                    style: t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
-              const SizedBox(height: Insets.lg),
-              Expanded(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: GridView.count(
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        for (var i = 0; i < _cards.length; i++)
-                          _Card(
-                            face: _cards[i],
-                            up: _flipped.contains(i) || _matched.contains(i),
-                            matched: _matched.contains(i),
-                            onTap: () => _tap(i),
-                          ),
-                      ],
+      body: _wrapConfetti(
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Insets.lg),
+            child: Column(
+              children: [
+                Text(
+                  _won ? l.mmAllMatched(_moves) : l.mmFindPairs(_moves),
+                  style: t.titleMedium,
+                ),
+                if (_best != null)
+                  Text(
+                    l.mmBest(_best!),
+                    style: t.bodySmall?.copyWith(color: t.bodyMedium?.color),
+                  ),
+                const SizedBox(height: Insets.lg),
+                Expanded(
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: GridView.count(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          for (var i = 0; i < _cards.length; i++)
+                            _Card(
+                              face: _cards[i],
+                              up: _flipped.contains(i) || _matched.contains(i),
+                              matched: _matched.contains(i),
+                              onTap: () => _tap(i),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: Insets.lg),
-              GestureDetector(
-                onTap: _deal,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: Radii.pill,
-                  ),
-                  child: Text(_won ? l.gamePlayAgain : l.mmShuffle,
+                const SizedBox(height: Insets.lg),
+                GestureDetector(
+                  onTap: _deal,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: Radii.pill,
+                    ),
+                    child: Text(
+                      _won ? l.gamePlayAgain : l.mmShuffle,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15)),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -185,29 +192,35 @@ class _Card extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: Motion.fast,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: up
-              ? (matched
-                  ? AppColors.primary.withValues(alpha: 0.16)
-                  : Theme.of(context).colorScheme.surface)
-              : AppColors.primary,
-          borderRadius: Radii.card,
-          border: Border.all(
-            color: matched ? AppColors.primary : AppColors.border,
-            width: matched ? 2 : 1,
-          ),
-        ),
-        child: up
-            ? Text(face, style: const TextStyle(fontSize: 30))
-            : const Icon(Icons.psychology_alt_rounded,
-                color: Colors.white, size: 22),
-      )
-          // Flip when the face changes; a soft pop when it's matched.
-          .animate(key: ValueKey('$up-$matched'))
-          .flipH(duration: 260.ms, curve: Curves.easeOut),
+      child:
+          AnimatedContainer(
+                duration: Motion.fast,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: up
+                      ? (matched
+                            ? AppColors.primary.withValues(alpha: 0.16)
+                            : Theme.of(context).colorScheme.surface)
+                      : AppColors.primary,
+                  borderRadius: Radii.card,
+                  border: Border.all(
+                    color: matched
+                        ? AppColors.primary
+                        : Theme.of(context).colorScheme.outline,
+                    width: matched ? 2 : 1,
+                  ),
+                ),
+                child: up
+                    ? Text(face, style: const TextStyle(fontSize: 30))
+                    : const Icon(
+                        Icons.psychology_alt_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+              )
+              // Flip when the face changes; a soft pop when it's matched.
+              .animate(key: ValueKey('$up-$matched'))
+              .flipH(duration: 260.ms, curve: Curves.easeOut),
     );
   }
 }

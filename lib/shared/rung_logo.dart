@@ -42,9 +42,9 @@ class RungWordmark extends StatelessWidget {
         Text(
           'Rung',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.primaryDeep,
-                fontWeight: FontWeight.w800,
-              ),
+            color: AppColors.primaryDeep,
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ],
     );

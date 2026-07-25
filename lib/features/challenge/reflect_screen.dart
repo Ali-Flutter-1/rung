@@ -37,7 +37,9 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
   }
 
   Future<void> _load() async {
-    final a = await ref.read(attemptRepositoryProvider).getAttempt(widget.attemptId);
+    final a = await ref
+        .read(attemptRepositoryProvider)
+        .getAttempt(widget.attemptId);
     if (mounted) setState(() => _attempt = a);
   }
 
@@ -52,26 +54,34 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
     final l = AppLocalizations.of(context);
     setState(() => _saving = true);
     try {
-      await ref.read(attemptRepositoryProvider).completeChallenge(
+      await ref
+          .read(attemptRepositoryProvider)
+          .completeChallenge(
             attemptId: widget.attemptId,
             actualSuds: _outcome == Outcome.skipped ? _suds : _suds,
             outcome: _outcome!,
-            reflectionNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
+            reflectionNote: _note.text.trim().isEmpty
+                ? null
+                : _note.text.trim(),
           );
     } catch (_) {
       // Local write failed (device storage full, etc). Keep the user on the
       // reflection with their input intact, rather than losing a cleared rung.
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.errorSaveFailed),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.errorSaveFailed),
+        ),
+      );
       return;
     }
     final analytics = ref.read(analyticsProvider);
-    analytics.capture(Ev.reflectCompleted,
-        {'actual': _suds, 'outcome': _outcome!.name});
+    analytics.capture(Ev.reflectCompleted, {
+      'actual': _suds,
+      'outcome': _outcome!.name,
+    });
     if (_outcome!.counts) {
       analytics.capture(Ev.rungCleared, {'actual': _suds});
       Haptics.medium(); // celebrate clearing a rung
@@ -91,9 +101,12 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
     final rung = attempt == null
         ? null
         : ref.watch(rungByIdProvider(attempt.rungId)).asData?.value;
-    final track =
-        rung == null ? null : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
-    final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final track = rung == null
+        ? null
+        : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
+    final accent = track == null
+        ? AppColors.primary
+        : TrackVisuals.color(track);
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
 
@@ -110,8 +123,11 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                       children: [
                         Text(rung.title, style: t.headlineSmall),
                         const SizedBox(height: Insets.xl),
-                        Text(l.reflectDidYouDoIt,
-                            textAlign: TextAlign.center, style: t.titleMedium),
+                        Text(
+                          l.reflectDidYouDoIt,
+                          textAlign: TextAlign.center,
+                          style: t.titleMedium,
+                        ),
                         const SizedBox(height: Insets.md),
                         _OutcomeButtons(
                           selected: _outcome,
@@ -135,6 +151,7 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                         const SizedBox(height: Insets.xl),
                         TextField(
                           controller: _note,
+                          onTapOutside: (_) {},
                           textCapitalization: TextCapitalization.sentences,
                           maxLines: 2,
                           decoration: InputDecoration(
@@ -149,14 +166,18 @@ class _ReflectScreenState extends ConsumerState<ReflectScreen> {
                     padding: const EdgeInsets.all(Insets.lg),
                     child: FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: accent),
-                      onPressed:
-                          _saving || _outcome == null ? null : () => _save(accent),
+                      onPressed: _saving || _outcome == null
+                          ? null
+                          : () => _save(accent),
                       child: _saving
                           ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white))
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : Text(l.commonSave),
                     ),
                   ),
@@ -182,14 +203,26 @@ class _OutcomeButtons extends StatelessWidget {
     final l = AppLocalizations.of(context);
     return Row(
       children: [
-        _btn(context, Outcome.done, l.reflectOutcomeDone,
-            Icons.check_circle_outline),
+        _btn(
+          context,
+          Outcome.done,
+          l.reflectOutcomeDone,
+          Icons.check_circle_outline,
+        ),
         const SizedBox(width: Insets.sm),
-        _btn(context, Outcome.partial, l.reflectOutcomePartial,
-            Icons.adjust_rounded),
+        _btn(
+          context,
+          Outcome.partial,
+          l.reflectOutcomePartial,
+          Icons.adjust_rounded,
+        ),
         const SizedBox(width: Insets.sm),
-        _btn(context, Outcome.skipped, l.reflectOutcomeNotToday,
-            Icons.nightlight_outlined),
+        _btn(
+          context,
+          Outcome.skipped,
+          l.reflectOutcomeNotToday,
+          Icons.nightlight_outlined,
+        ),
       ],
     );
   }
@@ -206,18 +239,29 @@ class _OutcomeButtons extends StatelessWidget {
             color: isSel ? accent.withValues(alpha: 0.10) : null,
             borderRadius: Radii.card,
             border: Border.all(
-                color: isSel ? accent : AppColors.border,
-                width: isSel ? 2 : 1),
+              color: isSel ? accent : Theme.of(context).colorScheme.outline,
+              width: isSel ? 2 : 1,
+            ),
           ),
           child: Column(
             children: [
-              Icon(icon, color: isSel ? accent : AppColors.inkMuted),
+              Icon(
+                icon,
+                color: isSel
+                    ? accent
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(height: 6),
-              Text(label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: isSel ? accent : AppColors.inkMuted)),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: isSel
+                      ? accent
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),

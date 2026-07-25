@@ -151,12 +151,14 @@ class _QuickMathState extends State<QuickMathScreen> {
           ]),
         ],
       ),
-      body: _wrapConfetti(SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.lg),
-          child: _phase == _Phase.playing ? _playing(t) : _startOver(t),
+      body: _wrapConfetti(
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Insets.lg),
+            child: _phase == _Phase.playing ? _playing(t) : _startOver(t),
+          ),
         ),
-      )),
+      ),
     );
   }
 
@@ -185,15 +187,19 @@ class _QuickMathState extends State<QuickMathScreen> {
             onTap: _start,
             behavior: HitTestBehavior.opaque,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 40, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
               decoration: BoxDecoration(
-                  color: AppColors.primary, borderRadius: Radii.pill),
-              child: Text(_phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16)),
+                color: AppColors.primary,
+                borderRadius: Radii.pill,
+              ),
+              child: Text(
+                _phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ],
@@ -206,23 +212,33 @@ class _QuickMathState extends State<QuickMathScreen> {
       children: [
         Row(
           children: [
-            Text('$_score',
-                style: t.headlineSmall
-                    ?.copyWith(color: AppColors.primaryDeep, fontWeight: FontWeight.w800)),
+            Text(
+              '$_score',
+              style: t.headlineSmall?.copyWith(
+                color: AppColors.primaryDeep,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(width: 6),
-            Text(AppLocalizations.of(context).qmCorrect,
-                style: t.bodyMedium),
+            Text(AppLocalizations.of(context).qmCorrect, style: t.bodyMedium),
             const Spacer(),
-            Icon(Icons.timer_outlined,
-                size: 18,
-                color: _timeLeft <= 5 ? AppColors.intensityHigh : AppColors.inkMuted),
+            Icon(
+              Icons.timer_outlined,
+              size: 18,
+              color: _timeLeft <= 5
+                  ? AppColors.intensityHigh
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 4),
-            Text('$_timeLeft s',
-                style: t.titleMedium?.copyWith(
-                    color: _timeLeft <= 5
-                        ? AppColors.intensityHigh
-                        : AppColors.primaryDeep,
-                    fontWeight: FontWeight.w800)),
+            Text(
+              '$_timeLeft s',
+              style: t.titleMedium?.copyWith(
+                color: _timeLeft <= 5
+                    ? AppColors.intensityHigh
+                    : AppColors.primaryDeep,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: Insets.sm),
@@ -235,9 +251,10 @@ class _QuickMathState extends State<QuickMathScreen> {
           ),
         ),
         const Spacer(),
-        Text('$_a  $_op  $_b',
-                style:
-                    const TextStyle(fontSize: 46, fontWeight: FontWeight.w800))
+        Text(
+              '$_a  $_op  $_b',
+              style: const TextStyle(fontSize: 46, fontWeight: FontWeight.w800),
+            )
             .animate(key: ValueKey('q$_a$_op$_b'))
             .scale(
               begin: const Offset(0.85, 0.85),
@@ -247,41 +264,43 @@ class _QuickMathState extends State<QuickMathScreen> {
             ),
         const Spacer(),
         GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 2.2,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            for (final o in _options)
-              GestureDetector(
-                onTap: () => _answerTap(o),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _wrongTapped == o
-                        ? AppColors.intensityHigh.withValues(alpha: 0.15)
-                        : Theme.of(context).colorScheme.surface,
-                    borderRadius: Radii.card,
-                    border: Border.all(
-                      color: _wrongTapped == o
-                          ? AppColors.intensityHigh
-                          : AppColors.border,
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 2.2,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                for (final o in _options)
+                  GestureDetector(
+                    onTap: () => _answerTap(o),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _wrongTapped == o
+                            ? AppColors.intensityHigh.withValues(alpha: 0.15)
+                            : Theme.of(context).colorScheme.surface,
+                        borderRadius: Radii.card,
+                        border: Border.all(
+                          color: _wrongTapped == o
+                              ? AppColors.intensityHigh
+                              : Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      child: Text(
+                        '$o',
+                        style: t.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text('$o',
-                      style: t.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w800)),
-                ),
-              ),
-          ],
-        ).animate(key: ValueKey('o$_a$_op$_b')).fadeIn(duration: 220.ms).slideY(
-              begin: 0.15,
-              end: 0,
-              curve: Curves.easeOut,
-            ),
+              ],
+            )
+            .animate(key: ValueKey('o$_a$_op$_b'))
+            .fadeIn(duration: 220.ms)
+            .slideY(begin: 0.15, end: 0, curve: Curves.easeOut),
         const SizedBox(height: Insets.md),
       ],
     );

@@ -10,10 +10,10 @@ extension SubscriptionTierX on SubscriptionTier {
   bool get isPremium => this != SubscriptionTier.free;
 
   String get label => switch (this) {
-        SubscriptionTier.free => 'Free',
-        SubscriptionTier.monthly => 'Premium · Monthly',
-        SubscriptionTier.yearly => 'Premium · Yearly',
-      };
+    SubscriptionTier.free => 'Free',
+    SubscriptionTier.monthly => 'Premium · Monthly',
+    SubscriptionTier.yearly => 'Premium · Yearly',
+  };
 }
 
 /// Content access keyed off the user's subscription tier.
@@ -30,18 +30,18 @@ class ContentRules {
 
   /// Visible seeded rungs per track for this tier.
   static int maxRungsPerTrack(SubscriptionTier tier) => switch (tier) {
-        SubscriptionTier.free => 10,
-        SubscriptionTier.monthly => 30,
-        SubscriptionTier.yearly => 40,
-      };
+    SubscriptionTier.free => 10,
+    SubscriptionTier.monthly => 30,
+    SubscriptionTier.yearly => 40,
+  };
 
   /// Custom rungs a user may create. For free this is an all-time total; for
   /// paid tiers it's an allowance PER CALENDAR MONTH (yearly = 40/mo ≈ 480/yr).
   static int maxCustomRungs(SubscriptionTier tier) => switch (tier) {
-        SubscriptionTier.free => 5,
-        SubscriptionTier.monthly => 30,
-        SubscriptionTier.yearly => 40,
-      };
+    SubscriptionTier.free => 5,
+    SubscriptionTier.monthly => 30,
+    SubscriptionTier.yearly => 40,
+  };
 
   /// Whether the custom-rung cap is counted per calendar month (paid) instead
   /// of as an all-time total (free).
@@ -65,15 +65,14 @@ class GroupRules {
 
   /// Max pods a user may belong to. `null` = unlimited (yearly).
   static int? maxGroups(SubscriptionTier tier) => switch (tier) {
-        SubscriptionTier.free => 1,
-        SubscriptionTier.monthly => 3,
-        SubscriptionTier.yearly => null, // unlimited
-      };
+    SubscriptionTier.free => 1,
+    SubscriptionTier.monthly => 3,
+    SubscriptionTier.yearly => null, // unlimited
+  };
 
   /// Pod member capacity available to a user of this tier.
   /// Free users sit in smaller pods (≤25); subscribers get larger pods (≤50).
-  static int podCapacity(SubscriptionTier tier) =>
-      tier.isPremium ? 50 : 25;
+  static int podCapacity(SubscriptionTier tier) => tier.isPremium ? 50 : 25;
 
   /// Whether the user can join one more pod given how many they're in now.
   static bool canJoinAnother(SubscriptionTier tier, int currentCount) {

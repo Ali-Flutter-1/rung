@@ -15,7 +15,10 @@ Widget gameHelpAction(BuildContext context, String game, List<String> rules) {
 }
 
 Future<void> showGameRules(
-    BuildContext context, String game, List<String> rules) {
+  BuildContext context,
+  String game,
+  List<String> rules,
+) {
   return showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
@@ -26,16 +29,22 @@ Future<void> showGameRules(
       final l = AppLocalizations.of(sheetCtx);
       return SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            0,
+            Insets.lg,
+            Insets.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.videogame_asset_rounded,
-                      color: AppColors.primary),
+                  const Icon(
+                    Icons.videogame_asset_rounded,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(width: Insets.sm),
                   Expanded(
                     child: Text(l.gameHelpTitle(game), style: t.titleLarge),
@@ -46,7 +55,8 @@ Future<void> showGameRules(
               for (var i = 0; i < rules.length; i++)
                 Padding(
                   padding: EdgeInsets.only(
-                      bottom: i == rules.length - 1 ? 0 : Insets.md),
+                    bottom: i == rules.length - 1 ? 0 : Insets.md,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -58,11 +68,14 @@ Future<void> showGameRules(
                           shape: BoxShape.circle,
                           color: AppColors.primary.withValues(alpha: 0.14),
                         ),
-                        child: Text('${i + 1}',
-                            style: const TextStyle(
-                                color: AppColors.primaryDeep,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12)),
+                        child: Text(
+                          '${i + 1}',
+                          style: const TextStyle(
+                            color: AppColors.primaryDeep,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                       const SizedBox(width: Insets.md),
                       Expanded(child: Text(rules[i], style: t.bodyLarge)),
@@ -81,11 +94,14 @@ Future<void> showGameRules(
                     color: AppColors.primary,
                     borderRadius: Radii.pill,
                   ),
-                  child: Text(l.gameGotIt,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15)),
+                  child: Text(
+                    l.gameGotIt,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               ),
             ],

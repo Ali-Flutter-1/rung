@@ -193,101 +193,121 @@ class _TicTacToeState extends State<TicTacToeScreen> {
           ]),
         ],
       ),
-      body: _wrapConfetti(SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.lg),
-          child: Column(
-            children: [
-              // Mode toggle.
-              Row(
-                children: [
-                  _ModeChip(
-                    label: l.gamePlayPhone,
-                    icon: Icons.smartphone_rounded,
-                    selected: _mode == _Mode.ai,
-                    onTap: () => _setMode(_Mode.ai),
-                  ),
-                  const SizedBox(width: Insets.sm),
-                  _ModeChip(
-                    label: l.game2Players,
-                    icon: Icons.people_alt_rounded,
-                    selected: _mode == _Mode.pass,
-                    onTap: () => _setMode(_Mode.pass),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Insets.lg),
-              Text(_statusText(l), style: t.titleLarge)
-                  .animate(key: ValueKey(_statusText(l)))
-                  .fadeIn(duration: 250.ms)
-                  .slideY(begin: 0.2, end: 0, curve: Curves.easeOut),
-              const SizedBox(height: Insets.lg),
-              // Board.
-              AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.06),
-                    borderRadius: Radii.lgAll,
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      for (var i = 0; i < 9; i++)
-                        _Cell(
-                          value: _board[i],
-                          highlight: _winLine?.contains(i) ?? false,
-                          onTap: () => _tap(i),
-                        ),
-                    ],
-                  ),
+      body: _wrapConfetti(
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Insets.lg),
+            child: Column(
+              children: [
+                // Mode toggle.
+                Row(
+                  children: [
+                    _ModeChip(
+                      label: l.gamePlayPhone,
+                      icon: Icons.smartphone_rounded,
+                      selected: _mode == _Mode.ai,
+                      onTap: () => _setMode(_Mode.ai),
+                    ),
+                    const SizedBox(width: Insets.sm),
+                    _ModeChip(
+                      label: l.game2Players,
+                      icon: Icons.people_alt_rounded,
+                      selected: _mode == _Mode.pass,
+                      onTap: () => _setMode(_Mode.pass),
+                    ),
+                  ],
                 ),
-              ).animate().fadeIn(duration: 300.ms).scale(
-                    begin: const Offset(0.96, 0.96),
-                    end: const Offset(1, 1),
-                    curve: Curves.easeOut,
-                  ),
-              const SizedBox(height: Insets.lg),
-              // Scores.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _Score(label: xLabel, value: _xWins, color: AppColors.primary),
-                  _Score(label: l.gameDraws, value: _draws, color: AppColors.inkMuted),
-                  _Score(label: oLabel, value: _oWins, color: AppColors.accentDeep),
-                ],
-              ),
-              const Spacer(),
-              // New game.
-              GestureDetector(
-                onTap: _reset,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: Radii.pill,
-                  ),
-                  child: Text(
-                    l.gameNewGame,
-                    style: const TextStyle(
+                const SizedBox(height: Insets.lg),
+                Text(_statusText(l), style: t.titleLarge)
+                    .animate(key: ValueKey(_statusText(l)))
+                    .fadeIn(duration: 250.ms)
+                    .slideY(begin: 0.2, end: 0, curve: Curves.easeOut),
+                const SizedBox(height: Insets.lg),
+                // Board.
+                AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.06),
+                          borderRadius: Radii.lgAll,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: GridView.count(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            for (var i = 0; i < 9; i++)
+                              _Cell(
+                                value: _board[i],
+                                highlight: _winLine?.contains(i) ?? false,
+                                onTap: () => _tap(i),
+                              ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 300.ms)
+                    .scale(
+                      begin: const Offset(0.96, 0.96),
+                      end: const Offset(1, 1),
+                      curve: Curves.easeOut,
+                    ),
+                const SizedBox(height: Insets.lg),
+                // Scores.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _Score(
+                      label: xLabel,
+                      value: _xWins,
+                      color: AppColors.primary,
+                    ),
+                    _Score(
+                      label: l.gameDraws,
+                      value: _draws,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    _Score(
+                      label: oLabel,
+                      value: _oWins,
+                      color: AppColors.accentDeep,
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                // New game.
+                GestureDetector(
+                  onTap: _reset,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: Radii.pill,
+                    ),
+                    child: Text(
+                      l.gameNewGame,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 15),
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 
@@ -322,24 +342,31 @@ class _ModeChip extends StatelessWidget {
                 : Theme.of(context).colorScheme.surface,
             borderRadius: Radii.pill,
             border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
+              color: selected
+                  ? AppColors.primary
+                  : Theme.of(context).colorScheme.outline,
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon,
-                  size: 16,
-                  color: selected ? AppColors.primaryDeep : AppColors.inkMuted),
+              Icon(
+                icon,
+                size: 16,
+                color: selected
+                    ? AppColors.primaryDeep
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color:
-                        selected ? AppColors.primaryDeep : AppColors.inkMuted,
+                    color: selected
+                        ? AppColors.primaryDeep
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -369,18 +396,18 @@ class _Cell extends StatelessWidget {
     final mark = value == 0
         ? null
         : Icon(
-            isX ? Icons.close_rounded : Icons.radio_button_unchecked,
-            size: 44,
-            color: isX ? AppColors.primary : AppColors.accentDeep,
-          )
-            // Pop the mark in when it's placed.
-            .animate(key: ValueKey(value))
-            .scale(
-              begin: const Offset(0.3, 0.3),
-              end: const Offset(1, 1),
-              duration: 220.ms,
-              curve: Curves.easeOutBack,
-            );
+                isX ? Icons.close_rounded : Icons.radio_button_unchecked,
+                size: 44,
+                color: isX ? AppColors.primary : AppColors.accentDeep,
+              )
+              // Pop the mark in when it's placed.
+              .animate(key: ValueKey(value))
+              .scale(
+                begin: const Offset(0.3, 0.3),
+                end: const Offset(1, 1),
+                duration: 220.ms,
+                curve: Curves.easeOutBack,
+              );
     final cell = GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -393,7 +420,9 @@ class _Cell extends StatelessWidget {
               : Theme.of(context).colorScheme.surface,
           borderRadius: Radii.card,
           border: Border.all(
-            color: highlight ? AppColors.primary : AppColors.border,
+            color: highlight
+                ? AppColors.primary
+                : Theme.of(context).colorScheme.outline,
             width: highlight ? 2 : 1,
           ),
         ),
@@ -403,8 +432,13 @@ class _Cell extends StatelessWidget {
     // Winning cells breathe gently.
     return highlight
         ? cell
-            .animate(onPlay: (c) => c.repeat(reverse: true))
-            .scaleXY(begin: 1, end: 1.06, duration: 700.ms, curve: Curves.easeInOut)
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scaleXY(
+                begin: 1,
+                end: 1.06,
+                duration: 700.ms,
+                curve: Curves.easeInOut,
+              )
         : cell;
   }
 }
@@ -420,8 +454,13 @@ class _Score extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Column(
       children: [
-        Text('$value',
-            style: t.headlineSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
+        Text(
+          '$value',
+          style: t.headlineSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         const SizedBox(height: 2),
         Text(label, style: t.bodyMedium),
       ],

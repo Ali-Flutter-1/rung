@@ -11,13 +11,13 @@ import 'pod_models.dart';
 /// Localized display for a canonical (English) report reason. The English value
 /// is what gets sent to the server, so moderators always see a stable string.
 String _reasonLabel(AppLocalizations l, String reason) => switch (reason) {
-      'Harassment or bullying' => l.reportHarassment,
-      'Hate or harmful language' => l.reportHate,
-      'Spam or scam' => l.reportSpam,
-      'Makes me feel unsafe' => l.reportUnsafe,
-      'Something else' => l.reportOther,
-      _ => reason,
-    };
+  'Harassment or bullying' => l.reportHarassment,
+  'Hate or harmful language' => l.reportHate,
+  'Spam or scam' => l.reportSpam,
+  'Makes me feel unsafe' => l.reportUnsafe,
+  'Something else' => l.reportOther,
+  _ => reason,
+};
 
 /// WhatsApp-style member detail sheet. Honours the privacy lock, and (when
 /// opened from a real cloud message) wires real Block + Report via Supabase.
@@ -102,9 +102,12 @@ class _MemberSheet extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(
-                      child: Text(member.name,
-                          overflow: TextOverflow.ellipsis,
-                          style: t.headlineSmall)),
+                    child: Text(
+                      member.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.headlineSmall,
+                    ),
+                  ),
                   if (member.isPremium) ...[
                     const SizedBox(width: 6),
                     const _PremiumTag(),
@@ -113,27 +116,33 @@ class _MemberSheet extends ConsumerWidget {
               ),
               if (member.bio.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
-                Text(member.bio,
-                    textAlign: TextAlign.center, style: t.bodyLarge),
+                Text(
+                  member.bio,
+                  textAlign: TextAlign.center,
+                  style: t.bodyLarge,
+                ),
               ],
               const SizedBox(height: Insets.md),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _Chip(
-                      icon: Icons.local_fire_department_rounded,
-                      text: l.memberStreak(member.streak)),
+                    icon: Icons.local_fire_department_rounded,
+                    text: l.memberStreak(member.streak),
+                  ),
                   const SizedBox(width: Insets.sm),
                   _Chip(
-                      icon: Icons.done_all_rounded,
-                      text: l.memberChallenges(member.challenges)),
+                    icon: Icons.done_all_rounded,
+                    text: l.memberChallenges(member.challenges),
+                  ),
                 ],
               ),
               if (member.climbing.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
                 _Chip(
-                    icon: Icons.stairs_rounded,
-                    text: l.memberClimbing(member.climbing)),
+                  icon: Icons.stairs_rounded,
+                  text: l.memberClimbing(member.climbing),
+                ),
               ],
             ],
             const SizedBox(height: Insets.lg),
@@ -150,7 +159,8 @@ class _MemberSheet extends ConsumerWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.intensityHigh),
+                      foregroundColor: AppColors.intensityHigh,
+                    ),
                     onPressed: () => _block(context, ref, cloud),
                     icon: const Icon(Icons.block_rounded, size: 18),
                     label: Text(l.memberBlock),
@@ -187,29 +197,35 @@ class _MemberSheet extends ConsumerWidget {
       if (context.mounted) {
         final messenger = ScaffoldMessenger.of(context);
         Navigator.of(context).pop(); // close the member sheet
-        messenger.showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 6),
-          content: Text(l.memberReportThanks),
-          action: SnackBarAction(
-            label: l.memberBlockToo,
-            onPressed: () async {
-              try {
-                await repo.blockUser(userId!);
-                onBlocked?.call(userId!);
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(l.memberBlocked),
-                ));
-              } catch (_) {
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(l.memberBlockError),
-                ));
-              }
-            },
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 6),
+            content: Text(l.memberReportThanks),
+            action: SnackBarAction(
+              label: l.memberBlockToo,
+              onPressed: () async {
+                try {
+                  await repo.blockUser(userId!);
+                  onBlocked?.call(userId!);
+                  messenger.showSnackBar(
+                    SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(l.memberBlocked),
+                    ),
+                  );
+                } catch (_) {
+                  messenger.showSnackBar(
+                    SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(l.memberBlockError),
+                    ),
+                  );
+                }
+              },
+            ),
           ),
-        ));
+        );
       }
     } catch (_) {
       if (context.mounted) _toast(context, l.memberReportError);
@@ -230,11 +246,13 @@ class _MemberSheet extends ConsumerWidget {
         content: Text(l.memberBlockConfirmBody),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: Text(l.commonCancel)),
+            onPressed: () => Navigator.of(dialogCtx).pop(false),
+            child: Text(l.commonCancel),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(true),
-              child: Text(l.memberBlock)),
+            onPressed: () => Navigator.of(dialogCtx).pop(true),
+            child: Text(l.memberBlock),
+          ),
         ],
       ),
     );
@@ -248,15 +266,19 @@ class _MemberSheet extends ConsumerWidget {
       await repo.blockUser(userId!);
       onBlocked?.call(userId!);
       navigator.pop();
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.memberBlocked),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.memberBlocked),
+        ),
+      );
     } catch (_) {
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.memberBlockError),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.memberBlockError),
+        ),
+      );
     }
   }
 
@@ -286,9 +308,13 @@ class _PremiumTag extends StatelessWidget {
         children: [
           const Text('✨', style: TextStyle(fontSize: 11)),
           const SizedBox(width: 3),
-          Text(AppLocalizations.of(context).profilePremium,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.accentDeep, fontWeight: FontWeight.w700)),
+          Text(
+            AppLocalizations.of(context).profilePremium,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.accentDeep,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -306,7 +332,12 @@ class _ReasonPicker extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.sm),
+            padding: const EdgeInsets.fromLTRB(
+              Insets.lg,
+              0,
+              Insets.lg,
+              Insets.sm,
+            ),
             child: Text(l.memberWhatsWrong, style: t.titleLarge),
           ),
           for (final r in _reportReasons)
@@ -328,8 +359,10 @@ class _Chip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: Insets.md, vertical: Insets.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Insets.md,
+        vertical: Insets.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.10),
         borderRadius: Radii.pill,
@@ -339,11 +372,12 @@ class _Chip extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: AppColors.primaryDeep),
           const SizedBox(width: 6),
-          Text(text,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: AppColors.primaryDeep)),
+          Text(
+            text,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.primaryDeep),
+          ),
         ],
       ),
     );

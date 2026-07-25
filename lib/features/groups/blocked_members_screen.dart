@@ -59,16 +59,20 @@ class _BlockedMembersScreenState extends ConsumerState<BlockedMembersScreen> {
     } catch (_) {
       // Put it back if the server call failed.
       if (mounted && !_ids.contains(id)) setState(() => _ids = [..._ids, id]);
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.blockedUnblockError),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.blockedUnblockError),
+        ),
+      );
       return;
     }
-    messenger.showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text(l.blockedUnblocked(name)),
-    ));
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(l.blockedUnblocked(name)),
+      ),
+    );
   }
 
   String _nameFor(String id) {
@@ -83,33 +87,38 @@ class _BlockedMembersScreenState extends ConsumerState<BlockedMembersScreen> {
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
-          title: Text(AppLocalizations.of(context).profileBlockedTitle)),
+        title: Text(AppLocalizations.of(context).profileBlockedTitle),
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _ids.isEmpty
-              ? const _EmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(
-                      Insets.lg, Insets.md, Insets.lg, Insets.xl),
-                  itemCount: _ids.length + 1,
-                  itemBuilder: (context, i) {
-                    if (i == 0) return const _Intro();
-                    final id = _ids[i - 1];
-                    // Fixed finite width — never let an unbounded layout pass
-                    // through to the row.
-                    return SizedBox(
-                      width: width - Insets.lg * 2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: Insets.sm),
-                        child: _BlockedCard(
-                          name: _nameFor(id),
-                          avatarId: _profiles[id]?.avatarId,
-                          onUnblock: () => _unblock(id),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          ? const _EmptyState()
+          : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(
+                Insets.lg,
+                Insets.md,
+                Insets.lg,
+                Insets.xl,
+              ),
+              itemCount: _ids.length + 1,
+              itemBuilder: (context, i) {
+                if (i == 0) return const _Intro();
+                final id = _ids[i - 1];
+                // Fixed finite width — never let an unbounded layout pass
+                // through to the row.
+                return SizedBox(
+                  width: width - Insets.lg * 2,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: Insets.sm),
+                    child: _BlockedCard(
+                      name: _nameFor(id),
+                      avatarId: _profiles[id]?.avatarId,
+                      onUnblock: () => _unblock(id),
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
@@ -130,8 +139,11 @@ class _Intro extends StatelessWidget {
 }
 
 class _BlockedCard extends StatelessWidget {
-  const _BlockedCard(
-      {required this.name, this.avatarId, required this.onUnblock});
+  const _BlockedCard({
+    required this.name,
+    this.avatarId,
+    required this.onUnblock,
+  });
   final String name;
   final String? avatarId;
   final VoidCallback onUnblock;
@@ -141,11 +153,13 @@ class _BlockedCard extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: Insets.md, vertical: Insets.sm),
+        horizontal: Insets.md,
+        vertical: Insets.sm,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Row(
         children: [
@@ -156,20 +170,26 @@ class _BlockedCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: t.titleSmall),
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: t.titleSmall,
+                ),
                 const SizedBox(height: 2),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.block_rounded,
-                        size: 13, color: AppColors.inkMuted),
+                    Icon(
+                      Icons.block_rounded,
+                      size: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 4),
-                    Text(AppLocalizations.of(context).blockedLabel,
-                        style:
-                            t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
+                    Text(
+                      AppLocalizations.of(context).blockedLabel,
+                      style: t.bodySmall?.copyWith(color: t.bodyMedium?.color),
+                    ),
                   ],
                 ),
               ],
@@ -183,7 +203,9 @@ class _BlockedCard extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: Insets.md, vertical: 8),
+                horizontal: Insets.md,
+                vertical: 8,
+              ),
               decoration: BoxDecoration(
                 borderRadius: Radii.pill,
                 border: Border.all(color: AppColors.primary),
@@ -191,7 +213,9 @@ class _BlockedCard extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context).blockedUnblock,
                 style: t.labelLarge?.copyWith(
-                    color: AppColors.primaryDeep, fontWeight: FontWeight.w700),
+                  color: AppColors.primaryDeep,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -220,12 +244,17 @@ class _EmptyState extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: AppColors.primary.withValues(alpha: 0.10),
               ),
-              child: const Icon(Icons.verified_user_outlined,
-                  size: 34, color: AppColors.primary),
+              child: const Icon(
+                Icons.verified_user_outlined,
+                size: 34,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(height: Insets.lg),
-            Text(AppLocalizations.of(context).blockedEmptyTitle,
-                style: t.titleLarge),
+            Text(
+              AppLocalizations.of(context).blockedEmptyTitle,
+              style: t.titleLarge,
+            ),
             const SizedBox(height: Insets.sm),
             Text(
               AppLocalizations.of(context).blockedEmptyBody,

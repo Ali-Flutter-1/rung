@@ -41,14 +41,22 @@ class NotificationService {
   Future<bool> requestPermission() async {
     if (!_ready) return false;
     try {
-      final ios = _plugin.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
+      final ios = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       if (ios != null) {
-        final ok = await ios.requestPermissions(alert: true, badge: true, sound: true);
+        final ok = await ios.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
         return ok ?? false;
       }
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (android != null) {
         final ok = await android.requestNotificationsPermission();
         return ok ?? true;
@@ -84,7 +92,9 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time, // repeat daily
       );
-    } catch (_) {/* never block the UI */}
+    } catch (_) {
+      /* never block the UI */
+    }
   }
 
   Future<void> cancelDaily() async {
@@ -142,8 +152,9 @@ class NotificationService {
     }
 
     // Comeback (2/5/10 day milestones, one reminder for the nearest milestone).
-    final daysInactive =
-        lastCompletedAt == null ? null : now.difference(lastCompletedAt).inDays;
+    final daysInactive = lastCompletedAt == null
+        ? null
+        : now.difference(lastCompletedAt).inDays;
     if (daysInactive == null || !{2, 5, 10}.contains(daysInactive)) {
       await _plugin.cancel(id: _comebackId);
     } else {
@@ -185,13 +196,21 @@ class NotificationService {
         notificationDetails: _details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       );
-    } catch (_) {/* never block the UI */}
+    } catch (_) {
+      /* never block the UI */
+    }
   }
 
   tz.TZDateTime _nextInstanceOf(TimeOfDay time) {
     final now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, time.hour, time.minute);
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     if (!scheduled.isAfter(now)) {
       scheduled = scheduled.add(const Duration(days: 1));
     }

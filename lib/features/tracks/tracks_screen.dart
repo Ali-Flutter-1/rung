@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../app/router.dart';
 import '../../core/analytics/analytics.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/today_suggestion.dart';
@@ -42,8 +41,9 @@ class TracksScreen extends ConsumerWidget {
                 _ => null,
               };
               if (page != null) {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => page));
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => page));
               }
             },
             itemBuilder: (_) => [
@@ -70,7 +70,12 @@ class TracksScreen extends ConsumerWidget {
       floatingActionButton: const HelpNowButton(),
       body: tracks.when(
         loading: () => ListView(
-          padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, 96),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            Insets.sm,
+            Insets.lg,
+            96,
+          ),
           children: [
             const Skeleton(width: 180, height: 28),
             const SizedBox(height: Insets.sm),
@@ -84,7 +89,12 @@ class TracksScreen extends ConsumerWidget {
         ),
         error: (e, _) => Center(child: Text('${l.tracksLoadError}\n$e')),
         data: (list) => ListView(
-          padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, 96),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            Insets.sm,
+            Insets.lg,
+            96,
+          ),
           children: [
             Text(l.tracksTitle, style: t.headlineMedium),
             const SizedBox(height: Insets.xs),
@@ -143,10 +153,7 @@ class _TrackCard extends ConsumerWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        accent,
-                        Color.lerp(accent, Colors.black, 0.25)!,
-                      ],
+                      colors: [accent, Color.lerp(accent, Colors.black, 0.25)!],
                     ),
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
@@ -157,22 +164,31 @@ class _TrackCard extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Icon(TrackVisuals.iconFor(track),
-                      color: Colors.white, size: 24),
+                  child: Icon(
+                    TrackVisuals.iconFor(track),
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
                 const Spacer(),
                 loading
                     ? const Skeleton(width: 64, height: 14)
                     : Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: Radii.pill,
                         ),
-                        child: Text('$pctLabel%',
-                            style: t.bodyMedium?.copyWith(
-                                color: accent, fontWeight: FontWeight.w800)),
+                        child: Text(
+                          '$pctLabel%',
+                          style: t.bodyMedium?.copyWith(
+                            color: accent,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                       ),
               ],
             ),
@@ -181,10 +197,12 @@ class _TrackCard extends ConsumerWidget {
             const SizedBox(height: 2),
             loading
                 ? const Skeleton(width: 90, height: 14)
-                : Text(AppLocalizations.of(context).tracksRungsCount(done, total),
+                : Text(
+                    AppLocalizations.of(context).tracksRungsCount(done, total),
                     style: t.bodyMedium,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                    overflow: TextOverflow.ellipsis,
+                  ),
             const SizedBox(height: Insets.sm),
             ClipRRect(
               borderRadius: BorderRadius.circular(99),
@@ -223,7 +241,8 @@ class _ContinueCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final suggestion = ref.watch(todaysRungProvider).asData?.value;
     if (suggestion == null) return const SizedBox.shrink();
-    final relevant = suggestion.reason == TodayReason.resumeInProgress ||
+    final relevant =
+        suggestion.reason == TodayReason.resumeInProgress ||
         suggestion.reason == TodayReason.nextInActiveTrack;
     if (!relevant) return const SizedBox.shrink();
 
@@ -232,7 +251,8 @@ class _ContinueCard extends ConsumerWidget {
     final resume = suggestion.inProgressAttempt != null;
     final cleared = ref.watch(clearedRungIdsProvider).asData?.value ?? const {};
     final ladder =
-        ref.watch(ladderProvider(suggestion.track.id)).asData?.value ?? const [];
+        ref.watch(ladderProvider(suggestion.track.id)).asData?.value ??
+        const [];
     final done = ladder.where((r) => cleared.contains(r.id)).length;
 
     return Padding(
@@ -247,7 +267,7 @@ class _ContinueCard extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: Radii.lgAll,
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
             boxShadow: [
               BoxShadow(
                 color: accent.withValues(alpha: 0.10),
@@ -274,14 +294,17 @@ class _ContinueCard extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(suggestion.rung.title,
-                        style: t.titleLarge,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
+                    Text(
+                      suggestion.rung.title,
+                      style: t.titleLarge,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
                     Text(
-                        '${suggestion.track.title} · ${AppLocalizations.of(context).tracksClimbedCount(done, ladder.length)}',
-                        style: t.bodyMedium),
+                      '${suggestion.track.title} · ${AppLocalizations.of(context).tracksClimbedCount(done, ladder.length)}',
+                      style: t.bodyMedium,
+                    ),
                   ],
                 ),
               ),

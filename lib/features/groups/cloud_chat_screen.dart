@@ -230,7 +230,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   Future<void> _markSeen() async {
     try {
       await _repo.markPodSeen(widget.pod.id);
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
     if (mounted) ref.invalidate(unreadPodsProvider);
   }
 
@@ -307,7 +309,9 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
         await repo.editMessage(editing.id, text);
       } else {
         await repo.sendMessage(widget.pod.id, text, replyTo: replyingTo?.id);
-        repo.markPodSeen(widget.pod.id).ignore(); // fire-and-forget, errors dropped
+        repo
+            .markPodSeen(widget.pod.id)
+            .ignore(); // fire-and-forget, errors dropped
         ref.read(analyticsProvider).capture(Ev.messageSent); // never log body
       }
     } on CloudActionException catch (e) {
@@ -648,10 +652,15 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       GestureDetector(
                         onTap: _dismissPrompt,
                         behavior: HitTestBehavior.opaque,
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: Insets.sm),
-                          child: Icon(Icons.close_rounded,
-                              size: 18, color: AppColors.inkMuted),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: Insets.sm),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
@@ -708,8 +717,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                         ),
                       ),
                       const SizedBox(width: Insets.sm),
-                      Text(l.chatCheckedInCount(_todayCheckIns),
-                          style: t.bodySmall),
+                      Text(
+                        l.chatCheckedInCount(_todayCheckIns),
+                        style: t.bodySmall,
+                      ),
                     ],
                   ),
                 ],
@@ -830,7 +841,15 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                       // Reply preview: whose message + a snippet.
                       label: _editing != null
                           ? l.chatEditingMessage
-                          : l.chatReplyingTo((_replyingTo!.userId == (ref.read(authRepositoryProvider).currentUser?.id)) ? l.chatYourself : _memberFor(_replyingTo!.userId).name),
+                          : l.chatReplyingTo(
+                              (_replyingTo!.userId ==
+                                      (ref
+                                          .read(authRepositoryProvider)
+                                          .currentUser
+                                          ?.id))
+                                  ? l.chatYourself
+                                  : _memberFor(_replyingTo!.userId).name,
+                            ),
                       snippet: _editing != null ? null : _replyingTo!.body,
                       onCancel: _cancelCompose,
                     ),
@@ -852,14 +871,14 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                             ),
                             border: OutlineInputBorder(
                               borderRadius: Radii.pill,
-                              borderSide: const BorderSide(
-                                color: AppColors.border,
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.outline,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: Radii.pill,
-                              borderSide: const BorderSide(
-                                color: AppColors.border,
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.outline,
                               ),
                             ),
                           ),
@@ -947,7 +966,9 @@ class _Bubble extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    m.locked ? AppLocalizations.of(context).chatPrivateMember : m.name,
+                    m.locked
+                        ? AppLocalizations.of(context).chatPrivateMember
+                        : m.name,
                     overflow: TextOverflow.ellipsis,
                     style: t.bodyMedium?.copyWith(
                       color: AppColors.primaryDeep,
@@ -1000,7 +1021,7 @@ class _Bubble extends StatelessWidget {
           ),
           border: (mine || message.isDeleted)
               ? null
-              : Border.all(color: AppColors.border),
+              : Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: content,
       ),
@@ -1064,7 +1085,7 @@ class _Bubble extends StatelessWidget {
                         ? (onBubble ? Colors.white : AppColors.primary)
                         : (onBubble
                               ? Colors.white.withValues(alpha: 0.30)
-                              : AppColors.border),
+                              : Theme.of(context).colorScheme.outline),
                   ),
                 ),
                 child: Text(

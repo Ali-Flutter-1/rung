@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
 
 /// A soft shimmering placeholder shown while real data settles — so the UI
@@ -17,13 +16,15 @@ class Skeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: cs.onSurface.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(radius),
-      ),
-    ).animate(onPlay: (c) => c.repeat()).shimmer(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: cs.onSurface.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(radius),
+          ),
+        )
+        .animate(onPlay: (c) => c.repeat())
+        .shimmer(
           duration: 1100.ms,
           color: cs.onSurface.withValues(alpha: 0.05),
         );
@@ -37,12 +38,14 @@ class StatsRowSkeleton extends StatelessWidget {
   Widget _card(BuildContext context) {
     return Expanded(
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(vertical: Insets.md, horizontal: 12),
+        padding: const EdgeInsets.symmetric(
+          vertical: Insets.md,
+          horizontal: 12,
+        ),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: Radii.card,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: const Column(
           children: [

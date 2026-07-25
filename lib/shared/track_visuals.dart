@@ -17,8 +17,7 @@ class TrackVisuals {
     'bolt': Icons.bolt_outlined,
   };
 
-  static IconData icon(String key) =>
-      _icons[key] ?? Icons.circle_outlined;
+  static IconData icon(String key) => _icons[key] ?? Icons.circle_outlined;
 
   static Color color(Track track) => AppColors.seed(track.colorSeed);
 

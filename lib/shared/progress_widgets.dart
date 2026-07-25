@@ -82,7 +82,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         children: [
@@ -96,13 +96,19 @@ class _StatCard extends StatelessWidget {
             child: Icon(icon, color: tint, size: 22),
           ),
           const SizedBox(height: Insets.sm),
-          Text(value,
-              style: t.headlineMedium, maxLines: 1, overflow: TextOverflow.clip),
-          Text(label,
-              style: t.bodyMedium,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis),
+          Text(
+            value,
+            style: t.headlineMedium,
+            maxLines: 1,
+            overflow: TextOverflow.clip,
+          ),
+          Text(
+            label,
+            style: t.bodyMedium,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
@@ -132,7 +138,7 @@ class WeekStrip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.lgAll,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,10 +150,12 @@ class WeekStrip extends StatelessWidget {
             children: [
               for (var i = 0; i < 7; i++)
                 _DayDot(
-                  label: DateFormat.EEEEE(localeName)
-                      .format(startOfWeek.add(Duration(days: i))),
+                  label: DateFormat.EEEEE(
+                    localeName,
+                  ).format(startOfWeek.add(Duration(days: i))),
                   active: activeDays.contains(
-                      _dayKey(startOfWeek.add(Duration(days: i)))),
+                    _dayKey(startOfWeek.add(Duration(days: i))),
+                  ),
                   isToday: startOfWeek.add(Duration(days: i)) == today,
                 ),
             ],
@@ -159,8 +167,11 @@ class WeekStrip extends StatelessWidget {
 }
 
 class _DayDot extends StatelessWidget {
-  const _DayDot(
-      {required this.label, required this.active, required this.isToday});
+  const _DayDot({
+    required this.label,
+    required this.active,
+    required this.isToday,
+  });
   final String label;
   final bool active;
   final bool isToday;
@@ -179,7 +190,9 @@ class _DayDot extends StatelessWidget {
             border: Border.all(
               color: active
                   ? AppColors.primary
-                  : (isToday ? AppColors.primary : AppColors.border),
+                  : (isToday
+                        ? AppColors.primary
+                        : Theme.of(context).colorScheme.outline),
               width: isToday && !active ? 2 : 1,
             ),
           ),
@@ -194,11 +207,14 @@ class _DayDot extends StatelessWidget {
           width: 34,
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(label,
-                maxLines: 1,
-                softWrap: false,
-                style: t.bodyMedium?.copyWith(
-                    fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+            child: Text(
+              label,
+              maxLines: 1,
+              softWrap: false,
+              style: t.bodyMedium?.copyWith(
+                fontWeight: isToday ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
           ),
         ),
       ],
@@ -223,7 +239,7 @@ class CategoryBreakdown extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.lgAll,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,45 +247,54 @@ class CategoryBreakdown extends ConsumerWidget {
           Text(l.progressCategoryBreakdown, style: t.titleMedium),
           const SizedBox(height: Insets.md),
           for (final track in tracks)
-            Consumer(builder: (context, ref, _) {
-              final ladder =
-                  ref.watch(ladderProvider(track.id)).asData?.value ?? const [];
-              final total = ladder.length;
-              final done = ladder.where((r) => cleared.contains(r.id)).length;
-              final accent = TrackVisuals.color(track);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: Insets.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration:
-                              BoxDecoration(shape: BoxShape.circle, color: accent),
-                        ),
-                        const SizedBox(width: Insets.sm),
-                        Expanded(child: Text(track.title, style: t.titleMedium)),
-                        Text('$done',
-                            style: t.titleMedium?.copyWith(color: accent)),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(99),
-                      child: LinearProgressIndicator(
-                        value: total == 0 ? 0 : done / total,
-                        minHeight: 6,
-                        backgroundColor: accent.withValues(alpha: 0.14),
-                        valueColor: AlwaysStoppedAnimation(accent),
+            Consumer(
+              builder: (context, ref, _) {
+                final ladder =
+                    ref.watch(ladderProvider(track.id)).asData?.value ??
+                    const [];
+                final total = ladder.length;
+                final done = ladder.where((r) => cleared.contains(r.id)).length;
+                final accent = TrackVisuals.color(track);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: Insets.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: accent,
+                            ),
+                          ),
+                          const SizedBox(width: Insets.sm),
+                          Expanded(
+                            child: Text(track.title, style: t.titleMedium),
+                          ),
+                          Text(
+                            '$done',
+                            style: t.titleMedium?.copyWith(color: accent),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(99),
+                        child: LinearProgressIndicator(
+                          value: total == 0 ? 0 : done / total,
+                          minHeight: 6,
+                          backgroundColor: accent.withValues(alpha: 0.14),
+                          valueColor: AlwaysStoppedAnimation(accent),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );

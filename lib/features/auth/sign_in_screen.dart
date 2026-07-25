@@ -71,7 +71,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   String? _validateConfirm(String? v) {
     if (!_signUp) return null;
-    if ((v ?? '') != _password.text) return AppLocalizations.of(context).authPwMismatch;
+    if ((v ?? '') != _password.text) {
+      return AppLocalizations.of(context).authPwMismatch;
+    }
     return null;
   }
 
@@ -126,8 +128,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() =>
-            _error = isOfflineError(e) ? l.errorOffline : l.authGenericError);
+        setState(
+          () =>
+              _error = isOfflineError(e) ? l.errorOffline : l.authGenericError,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -150,17 +154,23 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     try {
       await auth.resetPassword(email);
       if (!mounted) return;
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 6),
-        content: Text(l.authResetSent),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 6),
+          content: Text(l.authResetSent),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(isOfflineError(e) ? l.errorOffline : l.authGenericError),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            isOfflineError(e) ? l.errorOffline : l.authGenericError,
+          ),
+        ),
+      );
     }
   }
 
@@ -192,7 +202,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         await settings.setBio(p.bio);
         await settings.setProfileLocked(p.isLocked);
       }
-    } catch (_) {/* identity load is best-effort */}
+    } catch (_) {
+      /* identity load is best-effort */
+    }
 
     // Pull this account's backed-up progress, streak and custom rungs into
     // local storage. After an account switch local was wiped, so this restores
@@ -200,7 +212,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     // on-device — they're never backed up.
     try {
       await ref.read(syncServiceProvider).restoreFromCloud();
-    } catch (_) {/* restore is best-effort; never block sign-in */}
+    } catch (_) {
+      /* restore is best-effort; never block sign-in */
+    }
 
     // Local now reflects this account's real numbers, so a full profile push
     // (incl. stats) is safe and keeps the pod profile == the dashboard.
@@ -219,12 +233,19 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             key: _formKey,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
-                  Insets.lg, Insets.lg, Insets.lg, Insets.xl),
+                Insets.lg,
+                Insets.lg,
+                Insets.lg,
+                Insets.xl,
+              ),
               children: [
                 const Center(child: RungLogo(size: 72)),
                 const SizedBox(height: Insets.lg),
-                Text(_signUp ? l.authCreateTitle : l.authWelcomeBack,
-                    textAlign: TextAlign.center, style: t.headlineMedium),
+                Text(
+                  _signUp ? l.authCreateTitle : l.authWelcomeBack,
+                  textAlign: TextAlign.center,
+                  style: t.headlineMedium,
+                ),
                 const SizedBox(height: Insets.xs),
                 Text(
                   _signUp ? l.authSignUpSub : l.authSignInSub,
@@ -269,10 +290,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   controller: _password,
                   focusNode: _passwordFocus,
                   obscureText: _obscure,
-                  textInputAction:
-                      _signUp ? TextInputAction.next : TextInputAction.done,
+                  textInputAction: _signUp
+                      ? TextInputAction.next
+                      : TextInputAction.done,
                   autofillHints: [
-                    _signUp ? AutofillHints.newPassword : AutofillHints.password
+                    _signUp
+                        ? AutofillHints.newPassword
+                        : AutofillHints.password,
                   ],
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: _validatePassword,
@@ -286,10 +310,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     prefixIcon: const Icon(Icons.lock_outline_rounded),
                     helperText: _signUp ? l.authMin6 : null,
                     suffixIcon: IconButton(
-                      icon: Icon(_obscure
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined),
-                      tooltip: _obscure ? l.authShowPassword : l.authHidePassword,
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      tooltip: _obscure
+                          ? l.authShowPassword
+                          : l.authHidePassword,
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                     border: const OutlineInputBorder(),
@@ -337,7 +365,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : Text(_signUp ? l.authCreateCta : l.authSignInCta),
                 ),
                 const SizedBox(height: Insets.sm),
@@ -345,10 +376,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   onPressed: _busy
                       ? null
                       : () => setState(() {
-                            _signUp = !_signUp;
-                            _error = null;
-                            _formKey.currentState?.reset();
-                          }),
+                          _signUp = !_signUp;
+                          _error = null;
+                          _formKey.currentState?.reset();
+                        }),
                   child: Text(_signUp ? l.authHaveAccount : l.authNewAccount),
                 ),
                 const SizedBox(height: Insets.sm),
@@ -373,8 +404,9 @@ class _ForgotPasswordDialog extends StatefulWidget {
 }
 
 class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
-  late final TextEditingController _email =
-      TextEditingController(text: widget.initialEmail);
+  late final TextEditingController _email = TextEditingController(
+    text: widget.initialEmail,
+  );
   final _formKey = GlobalKey<FormState>();
 
   static final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
@@ -448,15 +480,18 @@ class _LegalFooter extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final muted = t.bodySmall?.copyWith(color: t.bodyMedium?.color);
     final link = t.bodySmall?.copyWith(
-        color: AppColors.primaryDeep, fontWeight: FontWeight.w600);
-    void open(Widget page) => Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => page));
+      color: AppColors.primaryDeep,
+      fontWeight: FontWeight.w600,
+    );
+    void open(Widget page) =>
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
     return Text.rich(
       TextSpan(
         style: muted,
         children: [
           TextSpan(
-              text: signUp ? l.authLegalPrefixSignUp : l.authLegalPrefixSignIn),
+            text: signUp ? l.authLegalPrefixSignUp : l.authLegalPrefixSignIn,
+          ),
           TextSpan(
             text: l.authTerms,
             style: link,
@@ -494,12 +529,17 @@ class _ErrorBanner extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded,
-              size: 20, color: AppColors.accentDeep),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: 20,
+            color: AppColors.accentDeep,
+          ),
           const SizedBox(width: Insets.sm),
           Expanded(
-            child: Text(message,
-                style: t.bodyMedium?.copyWith(color: AppColors.accentDeep)),
+            child: Text(
+              message,
+              style: t.bodyMedium?.copyWith(color: AppColors.accentDeep),
+            ),
           ),
         ],
       ),

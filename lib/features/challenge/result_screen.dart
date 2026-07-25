@@ -34,8 +34,9 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
   }
 
   Future<void> _load() async {
-    final a =
-        await ref.read(attemptRepositoryProvider).getAttempt(widget.attemptId);
+    final a = await ref
+        .read(attemptRepositoryProvider)
+        .getAttempt(widget.attemptId);
     final r = a == null
         ? null
         : await ref.read(trackRepositoryProvider).getRung(a.rungId);
@@ -57,7 +58,9 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final track = ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
-    final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final accent = track == null
+        ? AppColors.primary
+        : TrackVisuals.color(track);
     final cleared = a.outcome != null && a.outcome!.counts;
     final l = AppLocalizations.of(context);
 
@@ -74,11 +77,12 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
               ),
               if (cleared) ...[
                 _CopyWinButton(rung: rung),
-                Text(l.resultQuietDelight,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontStyle: FontStyle.italic)),
+                Text(
+                  l.resultQuietDelight,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
+                ),
                 const SizedBox(height: Insets.sm),
               ],
               const SizedBox(height: Insets.sm),
@@ -129,9 +133,9 @@ class _ClearedView extends StatelessWidget {
     final reduction = predicted == 0 ? 0 : ((gap / predicted) * 100).round();
     final (headline, sub) = switch (gap) {
       > 0 => (
-          l.resultGapHeadline(predicted, actual),
-          l.resultGapSub(predicted, actual),
-        ),
+        l.resultGapHeadline(predicted, actual),
+        l.resultGapSub(predicted, actual),
+      ),
       0 => (l.resultRightHeadline, l.resultRightSub),
       _ => (l.resultTougherHeadline, l.resultTougherSub),
     };
@@ -144,47 +148,53 @@ class _ClearedView extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: accent.withValues(alpha: 0.12),
-              ),
-            )
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: accent.withValues(alpha: 0.12),
+                  ),
+                )
                 .animate()
                 .scale(
-                    begin: const Offset(0.4, 0.4),
-                    end: const Offset(1.4, 1.4),
-                    duration: Motion.celebrate,
-                    curve: Curves.easeOut)
+                  begin: const Offset(0.4, 0.4),
+                  end: const Offset(1.4, 1.4),
+                  duration: Motion.celebrate,
+                  curve: Curves.easeOut,
+                )
                 .fadeOut(delay: 400.ms, duration: 900.ms),
             CircleAvatar(
               radius: 44,
               backgroundColor: accent,
-              child: const Icon(Icons.check_rounded,
-                  color: Colors.white, size: 44),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 44,
+              ),
             ).animate().scale(
-                  begin: const Offset(0.5, 0.5),
-                  end: const Offset(1, 1),
-                  duration: 360.ms,
-                  curve: Curves.easeOutBack,
-                ),
+              begin: const Offset(0.5, 0.5),
+              end: const Offset(1, 1),
+              duration: 360.ms,
+              curve: Curves.easeOutBack,
+            ),
           ],
         ),
         const SizedBox(height: Insets.xl),
-        Text(headline,
-            textAlign: TextAlign.center, style: t.headlineMedium)
-            .animate()
-            .fadeIn(delay: 200.ms),
+        Text(
+          headline,
+          textAlign: TextAlign.center,
+          style: t.headlineMedium,
+        ).animate().fadeIn(delay: 200.ms),
         const SizedBox(height: Insets.md),
         // The number comparison is the hero (§4.3).
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _GapStat(
-                label: l.resultPredicted,
-                value: predicted,
-                color: AppColors.inkMuted),
+              label: l.resultPredicted,
+              value: predicted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
               child: Icon(Icons.arrow_forward_rounded, color: accent),
@@ -196,27 +206,36 @@ class _ClearedView extends StatelessWidget {
           const SizedBox(height: Insets.lg),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: Insets.md, vertical: Insets.sm),
+              horizontal: Insets.md,
+              vertical: Insets.sm,
+            ),
             decoration: BoxDecoration(
               color: AppColors.primarySoft,
               borderRadius: Radii.pill,
             ),
-            child: Text(l.resultLighter(reduction),
-                style: t.titleMedium?.copyWith(color: AppColors.primaryDeep)),
+            child: Text(
+              l.resultLighter(reduction),
+              style: t.titleMedium?.copyWith(color: AppColors.primaryDeep),
+            ),
           ).animate().fadeIn(delay: 450.ms),
         ],
         const SizedBox(height: Insets.lg),
-        Text(sub, textAlign: TextAlign.center, style: t.bodyLarge)
-            .animate()
-            .fadeIn(delay: 500.ms),
+        Text(
+          sub,
+          textAlign: TextAlign.center,
+          style: t.bodyLarge,
+        ).animate().fadeIn(delay: 500.ms),
       ],
     );
   }
 }
 
 class _GapStat extends StatelessWidget {
-  const _GapStat(
-      {required this.label, required this.value, required this.color});
+  const _GapStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
   final String label;
   final int value;
   final Color color;
@@ -225,9 +244,14 @@ class _GapStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('$value',
-            style: TextStyle(
-                fontSize: 56, fontWeight: FontWeight.w800, color: color)),
+        Text(
+          '$value',
+          style: TextStyle(
+            fontSize: 56,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
         Text(label, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
@@ -252,8 +276,11 @@ class _SkippedView extends StatelessWidget {
           child: Icon(Icons.nightlight_outlined, color: accent, size: 36),
         ),
         const SizedBox(height: Insets.xl),
-        Text(l.resultSkippedHeadline,
-            textAlign: TextAlign.center, style: t.headlineSmall),
+        Text(
+          l.resultSkippedHeadline,
+          textAlign: TextAlign.center,
+          style: t.headlineSmall,
+        ),
         const SizedBox(height: Insets.md),
         Text(
           l.resultSkippedSub,

@@ -24,14 +24,13 @@ class UserProgress {
     int? streak,
     int? streakFreezesRemaining,
     String? lastActivityDay,
-  }) =>
-      UserProgress(
-        trackId: trackId,
-        currentRungId: currentRungId ?? this.currentRungId,
-        rungsCleared: rungsCleared ?? this.rungsCleared,
-        streak: streak ?? this.streak,
-        streakFreezesRemaining:
-            streakFreezesRemaining ?? this.streakFreezesRemaining,
-        lastActivityDay: lastActivityDay ?? this.lastActivityDay,
-      );
+  }) => UserProgress(
+    trackId: trackId,
+    currentRungId: currentRungId ?? this.currentRungId,
+    rungsCleared: rungsCleared ?? this.rungsCleared,
+    streak: streak ?? this.streak,
+    streakFreezesRemaining:
+        streakFreezesRemaining ?? this.streakFreezesRemaining,
+    lastActivityDay: lastActivityDay ?? this.lastActivityDay,
+  );
 }

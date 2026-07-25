@@ -51,8 +51,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   }
 
   Future<void> _onSubscribe() async {
-    ref.read(analyticsProvider).capture(
-        Ev.subscribeTapped, {'plan': _yearly ? 'yearly' : 'monthly'});
+    ref.read(analyticsProvider).capture(Ev.subscribeTapped, {
+      'plan': _yearly ? 'yearly' : 'monthly',
+    });
     final settings = ref.read(settingsRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
     final l = AppLocalizations.of(context);
@@ -60,21 +61,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     // Dev / no-keys fallback: simulate the tier so pod rules stay testable.
     if (!purchasesReady) {
       await settings.setSubscriptionTier(
-          _yearly ? SubscriptionTier.yearly : SubscriptionTier.monthly);
+        _yearly ? SubscriptionTier.yearly : SubscriptionTier.monthly,
+      );
       await pushIdentityToCloud(ref);
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.paywallSimulated),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.paywallSimulated),
+        ),
+      );
       return;
     }
 
     final pkg = _selectedPackage;
     if (pkg == null) {
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.paywallPlanUnavailable),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.paywallPlanUnavailable),
+        ),
+      );
       return;
     }
     setState(() => _busy = true);
@@ -82,17 +88,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       final tier = await ref.read(purchaseServiceProvider).buy(pkg);
       await settings.setSubscriptionTier(tier);
       await pushIdentityToCloud(ref);
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.paywallThankYou),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.paywallThankYou),
+        ),
+      );
     } on PurchaseCancelled {
       // User backed out — nothing to say.
     } catch (_) {
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.paywallPurchaseFailed),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.paywallPurchaseFailed),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -107,16 +117,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       final tier = await ref.read(purchaseServiceProvider).restore();
       await settings.setSubscriptionTier(tier);
       await pushIdentityToCloud(ref);
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content:
-            Text(tier.isPremium ? l.paywallRestored : l.paywallNoRestore),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            tier.isPremium ? l.paywallRestored : l.paywallNoRestore,
+          ),
+        ),
+      );
     } catch (_) {
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.paywallRestoreFailed),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.paywallRestoreFailed),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -126,20 +141,20 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // for. Every line is really enforced. Lead with belonging (pods), then the
   // "make it yours" levers (unlimited ladders, deeper steps).
   List<(IconData, String)> _headlineBenefits(AppLocalizations l) => [
-        (Icons.spa_rounded, l.paywallBenefitCoach),
-        (Icons.diversity_3_rounded, l.paywallBenefitPods),
-        (Icons.edit_note_rounded, l.paywallBenefitCustom),
-        (Icons.stairs_rounded, l.paywallBenefitDepth),
-      ];
+    (Icons.spa_rounded, l.paywallBenefitCoach),
+    (Icons.diversity_3_rounded, l.paywallBenefitPods),
+    (Icons.edit_note_rounded, l.paywallBenefitCustom),
+    (Icons.stairs_rounded, l.paywallBenefitDepth),
+  ];
 
   // The "and also" tail — real, but nobody subscribes *for* these. They make
   // the bundle feel full; they never lead.
   List<(IconData, String)> _plusBenefits(AppLocalizations l) => [
-        (Icons.shield_moon_outlined, l.paywallPlusStreak),
-        (Icons.insights_rounded, l.paywallPlusInsights),
-        (Icons.emoji_emotions_outlined, l.paywallPlusShare),
-        (Icons.lock_outline_rounded, l.paywallPlusPrivacy),
-      ];
+    (Icons.shield_moon_outlined, l.paywallPlusStreak),
+    (Icons.insights_rounded, l.paywallPlusInsights),
+    (Icons.emoji_emotions_outlined, l.paywallPlusShare),
+    (Icons.lock_outline_rounded, l.paywallPlusPrivacy),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +178,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(Insets.lg, Insets.sm, Insets.lg, Insets.xl),
+        padding: const EdgeInsets.fromLTRB(
+          Insets.lg,
+          Insets.sm,
+          Insets.lg,
+          Insets.xl,
+        ),
         children: [
           Container(
             width: double.infinity,
@@ -179,16 +199,22 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.workspace_premium_outlined,
-                    color: Colors.white, size: 32),
+                const Icon(
+                  Icons.workspace_premium_outlined,
+                  color: Colors.white,
+                  size: 32,
+                ),
                 const SizedBox(height: Insets.sm),
-                Text(l.paywallHeroTitle,
-                    style: t.headlineSmall?.copyWith(color: Colors.white)),
+                Text(
+                  l.paywallHeroTitle,
+                  style: t.headlineSmall?.copyWith(color: Colors.white),
+                ),
                 const SizedBox(height: Insets.xs),
                 Text(
                   l.paywallHeroBody,
                   style: t.bodyLarge?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9)),
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
                 ),
               ],
             ),
@@ -227,22 +253,26 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               // background, so lift the alpha in dark mode and add a border for
               // definition in both.
               color: AppColors.primary.withValues(
-                  alpha: Theme.of(context).brightness == Brightness.dark
-                      ? 0.14
-                      : 0.05),
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.14
+                    : 0.05,
+              ),
               borderRadius: Radii.lgAll,
-              border:
-                  Border.all(color: AppColors.primary.withValues(alpha: 0.18)),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.18),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l.paywallPlusHeader,
-                    style: t.labelLarge?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.7))),
+                Text(
+                  l.paywallPlusHeader,
+                  style: t.labelLarge?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
                 const SizedBox(height: Insets.sm),
                 for (final (icon, label) in _plusBenefits(l))
                   Padding(
@@ -252,11 +282,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         Icon(icon, color: AppColors.primary, size: 18),
                         const SizedBox(width: Insets.sm),
                         Expanded(
-                            child: Text(label,
-                                style: t.bodyMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface))),
+                          child: Text(
+                            label,
+                            style: t.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -298,13 +330,19 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
-                : Text(tier.isPremium
-                    ? (_yearly ? l.paywallSwitchYearly : l.paywallSwitchMonthly)
-                    : (_yearly
-                        ? l.paywallStartYearly(_priceLabel(true))
-                        : l.paywallStartMonthly(_priceLabel(false)))),
+                : Text(
+                    tier.isPremium
+                        ? (_yearly
+                              ? l.paywallSwitchYearly
+                              : l.paywallSwitchMonthly)
+                        : (_yearly
+                              ? l.paywallStartYearly(_priceLabel(true))
+                              : l.paywallStartMonthly(_priceLabel(false))),
+                  ),
           ),
           if (purchasesReady) ...[
             const SizedBox(height: Insets.xs),
@@ -318,14 +356,15 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           const SizedBox(height: Insets.sm),
           Center(
             child: Text(
-                tier.isPremium
-                    ? l.paywallCurrentPlan(switch (tier) {
-                        SubscriptionTier.free => l.tierFree,
-                        SubscriptionTier.monthly => l.tierMonthly,
-                        SubscriptionTier.yearly => l.tierYearly,
-                      })
-                    : l.paywallCancelAnytime,
-                style: t.bodyMedium),
+              tier.isPremium
+                  ? l.paywallCurrentPlan(switch (tier) {
+                      SubscriptionTier.free => l.tierFree,
+                      SubscriptionTier.monthly => l.tierMonthly,
+                      SubscriptionTier.yearly => l.tierYearly,
+                    })
+                  : l.paywallCancelAnytime,
+              style: t.bodyMedium,
+            ),
           ),
         ],
       ),
@@ -363,7 +402,9 @@ class _PlanCard extends StatelessWidget {
               : Theme.of(context).colorScheme.surface,
           borderRadius: Radii.lgAll,
           border: Border.all(
-            color: highlight ? AppColors.primary : AppColors.border,
+            color: highlight
+                ? AppColors.primary
+                : Theme.of(context).colorScheme.outline,
             width: highlight ? 2 : 1,
           ),
         ),
@@ -373,38 +414,47 @@ class _PlanCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(title,
-                      style: t.titleMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    title,
+                    style: t.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (badge != null) ...[
                   const SizedBox(width: 6),
                   Flexible(
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.accent,
                         borderRadius: Radii.pill,
                       ),
-                      child: Text(badge!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11)),
+                      child: Text(
+                        badge!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 11,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ],
             ),
             const SizedBox(height: Insets.sm),
-            Text(price,
-                style: t.headlineSmall,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+            Text(
+              price,
+              style: t.headlineSmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             Text(per, style: t.bodyMedium, maxLines: 2),
           ],
         ),

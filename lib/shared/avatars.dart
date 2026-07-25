@@ -146,8 +146,11 @@ class UserAvatar extends StatelessWidget {
     final emoji = Avatars.emojiFor(avatarId);
     Widget child;
     if (locked) {
-      child = Icon(Icons.lock_outline_rounded,
-          size: radius, color: AppColors.primaryDeep);
+      child = Icon(
+        Icons.lock_outline_rounded,
+        size: radius,
+        color: AppColors.primaryDeep,
+      );
     } else if (emoji != null) {
       child = Text(emoji, style: TextStyle(fontSize: radius * 1.05));
     } else {

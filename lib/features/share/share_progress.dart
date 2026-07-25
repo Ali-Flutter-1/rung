@@ -73,14 +73,16 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
       final router = GoRouter.of(context);
       final l = AppLocalizations.of(context);
       Navigator.of(context).pop();
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.sharePremiumPerk),
-        action: SnackBarAction(
-          label: l.shareSeePremium,
-          onPressed: () => router.go(Routes.subscription),
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.sharePremiumPerk),
+          action: SnackBarAction(
+            label: l.shareSeePremium,
+            onPressed: () => router.go(Routes.subscription),
+          ),
         ),
-      ));
+      );
       return;
     }
     setState(() => _style = i);
@@ -91,8 +93,8 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
     final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
-      final boundary = _cardKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      final boundary =
+          _cardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return;
       final image = await boundary.toImage(pixelRatio: 3);
       final data = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -101,15 +103,19 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
       final file = File('${dir.path}/rung_progress.png');
       await file.writeAsBytes(data.buffer.asUint8List());
       ref.read(analyticsProvider).capture('progress_shared');
-      await SharePlus.instance.share(ShareParams(
-        files: [XFile(file.path, mimeType: 'image/png')],
-        text: l.shareText,
-      ));
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'image/png')],
+          text: l.shareText,
+        ),
+      );
     } catch (_) {
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.shareError),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.shareError),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -120,7 +126,10 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
     ref.watch(settingsChangesProvider);
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
-    final isPremium = ref.watch(settingsRepositoryProvider).subscriptionTier.isPremium;
+    final isPremium = ref
+        .watch(settingsRepositoryProvider)
+        .subscriptionTier
+        .isPremium;
     final streak = ref.watch(streakProvider).asData?.value ?? 0;
     final cleared = ref.watch(totalClearedProvider).asData?.value ?? 0;
     final best = ref.watch(bestStreakProvider).asData?.value ?? 0;
@@ -128,14 +137,19 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            0,
+            Insets.lg,
+            Insets.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(l.shareTitle, style: t.titleLarge),
               const SizedBox(height: Insets.xs),
               // bodyMedium is ALREADY the theme's muted colour, which flips with
-              // brightness. Overriding it with AppColors.inkMuted (a fixed
+              // brightness. Overriding it with Theme.of(context).colorScheme.onSurfaceVariant (a fixed
               // light-mode grey) made this unreadable in dark mode.
               Text(l.shareSubtitle, style: t.bodyMedium),
               const SizedBox(height: Insets.lg),
@@ -175,7 +189,10 @@ class _ShareSheetState extends ConsumerState<_ShareSheet> {
                           height: 18,
                           width: 18,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Icon(Icons.ios_share_rounded, size: 18),
                   label: Text(l.shareCta),
                 ),
@@ -223,36 +240,49 @@ class _ShareCard extends StatelessWidget {
             children: [
               const Icon(Icons.stairs_rounded, color: Colors.white, size: 22),
               const SizedBox(width: 8),
-              Text('Rung',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.95),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800)),
+              Text(
+                'Rung',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
-          Text(l.shareCardHeadline,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85), fontSize: 15)),
+          Text(
+            l.shareCardHeadline,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: 15,
+            ),
+          ),
           const SizedBox(height: 6),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('$cleared',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 56,
-                      fontWeight: FontWeight.w800,
-                      height: 1)),
+              Text(
+                '$cleared',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 56,
+                  fontWeight: FontWeight.w800,
+                  height: 1,
+                ),
+              ),
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text(l.shareCardFearsFaced,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600)),
+                child: Text(
+                  l.shareCardFearsFaced,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -267,11 +297,14 @@ class _ShareCard extends StatelessWidget {
           const SizedBox(height: 22),
           Container(height: 1, color: Colors.white.withValues(alpha: 0.2)),
           const SizedBox(height: 14),
-          Text(l.shareCardTagline,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 13,
-                  height: 1.35)),
+          Text(
+            l.shareCardTagline,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: 13,
+              height: 1.35,
+            ),
+          ),
         ],
       ),
     );
@@ -335,15 +368,22 @@ class _Stat extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800)),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: 2),
-            Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85), fontSize: 12)),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.85),
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),

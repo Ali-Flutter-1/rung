@@ -14,10 +14,10 @@ class AppConfig {
 
   // ── Paste your Supabase project values here (or use --dart-define) ────────
   static const _inlineUrl = 'https://qrouiinilylxahdyrxsg.supabase.co';
-  static const _inlineAnonKey = 'sb_publishable_sQNEil2AjzZQg-yM9fKgEg_8bmj1Wvm';
+  static const _inlineAnonKey =
+      'sb_publishable_sQNEil2AjzZQg-yM9fKgEg_8bmj1Wvm';
 
-  static String get supabaseUrl =>
-      _envUrl.isNotEmpty ? _envUrl : _inlineUrl;
+  static String get supabaseUrl => _envUrl.isNotEmpty ? _envUrl : _inlineUrl;
   static String get supabaseAnonKey =>
       _envAnonKey.isNotEmpty ? _envAnonKey : _inlineAnonKey;
 
@@ -27,7 +27,8 @@ class AppConfig {
 
   // ── Analytics (PostHog) — optional; events no-op until a key is present ────
   static const _envPosthogKey = String.fromEnvironment('POSTHOG_KEY');
-  static const _inlinePosthogKey = 'phc_xFbsFwfgtpUpq88Ev96BnX2jQkYUYAkYWNjr2WFH7uNF'; // paste your PostHog project API key
+  static const _inlinePosthogKey =
+      'phc_xFbsFwfgtpUpq88Ev96BnX2jQkYUYAkYWNjr2WFH7uNF'; // paste your PostHog project API key
   static const _inlinePosthogHost = 'https://us.i.posthog.com';
 
   static String get posthogKey =>
@@ -52,4 +53,3 @@ class AppConfig {
   static bool get hasRevenueCat =>
       revenueCatIosKey.isNotEmpty || revenueCatAndroidKey.isNotEmpty;
 }
-

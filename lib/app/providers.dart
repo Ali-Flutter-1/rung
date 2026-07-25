@@ -48,7 +48,8 @@ final settingsChangesProvider = StreamProvider<int>((ref) {
 
 /// Analytics seam — PostHog when configured, no-op otherwise.
 final analyticsProvider = Provider<Analytics>(
-  (_) => AppConfig.hasPosthog ? const PostHogAnalytics() : const NoopAnalytics(),
+  (_) =>
+      AppConfig.hasPosthog ? const PostHogAnalytics() : const NoopAnalytics(),
 );
 
 // ── Cloud (Supabase) — only active when configured ───────────────────────
@@ -73,8 +74,9 @@ final syncServiceProvider = Provider<SyncService>(
 );
 
 /// RevenueCat purchases. No-ops until a RevenueCat key is configured.
-final purchaseServiceProvider =
-    Provider<PurchaseService>((_) => const PurchaseService());
+final purchaseServiceProvider = Provider<PurchaseService>(
+  (_) => const PurchaseService(),
+);
 
 /// On sign-in: tie purchases to the user and sync their entitlement tier into
 /// local settings + the cloud profile (so server-side pod/content limits match).
@@ -89,24 +91,30 @@ final purchaseSyncProvider = FutureProvider<void>((ref) async {
   if (settings.subscriptionTier != tier) {
     await settings.setSubscriptionTier(tier);
     try {
-      await ref.read(cloudRepositoryProvider).upsertProfile(
+      await ref
+          .read(cloudRepositoryProvider)
+          .upsertProfile(
             displayName: settings.displayName,
             bio: settings.bio,
             isLocked: settings.profileLocked,
             tier: tier,
             avatarId: settings.avatarId,
           );
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 });
 
 /// Push-notification token lifecycle (FCM). No-ops until Firebase is ready.
-final pushServiceProvider = Provider<PushService>((ref) => PushService(
-      onRegister: (token, platform) =>
-          ref.read(cloudRepositoryProvider).upsertDeviceToken(token, platform),
-      onDelete: (token) =>
-          ref.read(cloudRepositoryProvider).deleteDeviceToken(token),
-    ));
+final pushServiceProvider = Provider<PushService>(
+  (ref) => PushService(
+    onRegister: (token, platform) =>
+        ref.read(cloudRepositoryProvider).upsertDeviceToken(token, platform),
+    onDelete: (token) =>
+        ref.read(cloudRepositoryProvider).deleteDeviceToken(token),
+  ),
+);
 
 /// True while a password-reset recovery is in progress: supabase_flutter has
 /// processed the reset deep link (a short-lived session exists) but the user
@@ -221,7 +229,9 @@ final progressRepositoryProvider = Provider<ProgressRepository>(
 final streakProtectionProvider = FutureProvider<void>((ref) async {
   ref.watch(settingsChangesProvider); // re-run on tier change
   final tier = ref.read(settingsRepositoryProvider).subscriptionTier;
-  await ref.read(progressRepositoryProvider).autoProtectStreak(
+  await ref
+      .read(progressRepositoryProvider)
+      .autoProtectStreak(
         weeklyAllowance: ContentRules.weeklyStreakFreezes(tier),
       );
 });
@@ -241,14 +251,14 @@ final smartReminderPlannerProvider = FutureProvider<void>((ref) async {
   final completed = attempts
       .where((a) => a.completedAt != null && (a.outcome?.counts ?? false))
       .toList();
-  final hasCompletedToday =
-      completed.any((a) => _ymd(a.completedAt!) == todayYmd);
+  final hasCompletedToday = completed.any(
+    (a) => _ymd(a.completedAt!) == todayYmd,
+  );
   final lastCompletedAt = completed.isEmpty
       ? null
-      : (completed
-            ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!)))
-          .first
-          .completedAt;
+      : (completed..sort((a, b) => b.completedAt!.compareTo(a.completedAt!)))
+            .first
+            .completedAt;
 
   await NotificationService.instance.syncSmartReminders(
     enabled: settings.reminderTime != null,
@@ -273,11 +283,11 @@ final weeklyCompletedCountProvider = StreamProvider<int>((ref) {
   return db.watch(() {
     final start = _startOfWeek(DateTime.now()).millisecondsSinceEpoch;
     final rows = db.select(
-          "SELECT COUNT(*) AS n FROM attempts "
-          "WHERE outcome IN ('done','partial') AND completed_at IS NOT NULL "
-          "AND deleted_at IS NULL AND completed_at >= ?;",
-          [start],
-        );
+      "SELECT COUNT(*) AS n FROM attempts "
+      "WHERE outcome IN ('done','partial') AND completed_at IS NOT NULL "
+      "AND deleted_at IS NULL AND completed_at >= ?;",
+      [start],
+    );
     return rows.first['n'] as int;
   });
 });
@@ -290,16 +300,16 @@ final tracksProvider = StreamProvider<List<Track>>(
 /// Tier-capped ladder: free sees 10 rungs/track, monthly 40, yearly 60 (capped
 /// at the rungs that actually exist). Custom rungs are always shown. Rebuilds
 /// when the subscription tier changes.
-final ladderProvider = StreamProvider.family<List<Rung>, String>(
-  (ref, trackId) {
-    ref.watch(settingsChangesProvider);
-    final tier = ref.watch(settingsRepositoryProvider).subscriptionTier;
-    return ref.watch(trackRepositoryProvider).watchLadder(
-          trackId,
-          maxBaseRungs: ContentRules.maxRungsPerTrack(tier),
-        );
-  },
-);
+final ladderProvider = StreamProvider.family<List<Rung>, String>((
+  ref,
+  trackId,
+) {
+  ref.watch(settingsChangesProvider);
+  final tier = ref.watch(settingsRepositoryProvider).subscriptionTier;
+  return ref
+      .watch(trackRepositoryProvider)
+      .watchLadder(trackId, maxBaseRungs: ContentRules.maxRungsPerTrack(tier));
+});
 
 final todaysRungProvider = StreamProvider<TodaySuggestion?>(
   (ref) => ref.watch(progressRepositoryProvider).watchTodaysRung(),

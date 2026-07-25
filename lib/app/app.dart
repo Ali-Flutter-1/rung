@@ -13,7 +13,9 @@ class RungApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final settings = ref.watch(settingsRepositoryProvider);
-    ref.watch(settingsChangesProvider); // rebuild on theme/tone/language changes
+    ref.watch(
+      settingsChangesProvider,
+    ); // rebuild on theme/tone/language changes
     final code = settings.localeCode;
     return MaterialApp.router(
       title: 'Rung',

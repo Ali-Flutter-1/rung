@@ -8,14 +8,18 @@ import '../../domain/entities/subscription.dart';
 
 /// Lets a user add their own rung to a track (§1.6 Should-have, §2.5).
 Future<void> showAddCustomRungSheet(
-    BuildContext context, WidgetRef ref, String trackId) {
+  BuildContext context,
+  WidgetRef ref,
+  String trackId,
+) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => Padding(
       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: _AddCustomRungForm(trackId: trackId),
     ),
   );
@@ -53,21 +57,20 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
     final int count;
     if (ContentRules.customRungCapIsMonthly(tier)) {
       final now = DateTime.now();
-      final monthStartMs =
-          DateTime(now.year, now.month).millisecondsSinceEpoch;
+      final monthStartMs = DateTime(now.year, now.month).millisecondsSinceEpoch;
       count = await repo.customRungCountSince(monthStartMs);
     } else {
       count = await repo.customRungCount();
     }
     if (!ContentRules.canAddCustomRung(tier, count)) {
       final cap = ContentRules.maxCustomRungs(tier);
-      final msg =
-          tier.isPremium ? l.customLimitPremium(cap) : l.customLimitFree;
+      final msg = tier.isPremium
+          ? l.customLimitPremium(cap)
+          : l.customLimitFree;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(msg),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(behavior: SnackBarBehavior.floating, content: Text(msg)),
+        );
       }
       return;
     }
@@ -91,10 +94,12 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
       // the user's input so the rung they wrote isn't lost.
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.errorSaveFailed),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.errorSaveFailed),
+        ),
+      );
       return;
     }
     ref.read(syncServiceProvider).scheduleBackup(); // back up the new rung
@@ -106,8 +111,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          Insets.lg, 0, Insets.lg, Insets.lg),
+      padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,6 +122,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
           const SizedBox(height: Insets.lg),
           TextField(
             controller: _title,
+            onTapOutside: (_) {},
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               labelText: l.customWhatLabel,
@@ -128,6 +133,7 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
           const SizedBox(height: Insets.md),
           TextField(
             controller: _what,
+            onTapOutside: (_) {},
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               labelText: l.customNoteLabel,
@@ -151,7 +157,8 @@ class _AddCustomRungFormState extends ConsumerState<_AddCustomRungForm> {
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : Text(l.customAddToLadder),
           ),
         ],

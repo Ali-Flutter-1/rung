@@ -62,13 +62,15 @@ class LocalAttemptRepository implements AttemptRepository {
     if (trackRows.isEmpty) return;
     final trackId = trackRows.first['track_id'] as String;
 
-    final cleared = _db.select(
-      "SELECT COUNT(DISTINCT a.rung_id) AS n FROM attempts a "
-      "JOIN rungs r ON r.id = a.rung_id "
-      "WHERE r.track_id = ? AND a.outcome IN ('done','partial') "
-      "AND a.deleted_at IS NULL;",
-      [trackId],
-    ).first['n'] as int;
+    final cleared =
+        _db.select(
+              "SELECT COUNT(DISTINCT a.rung_id) AS n FROM attempts a "
+              "JOIN rungs r ON r.id = a.rung_id "
+              "WHERE r.track_id = ? AND a.outcome IN ('done','partial') "
+              "AND a.deleted_at IS NULL;",
+              [trackId],
+            ).first['n']
+            as int;
 
     final nextRows = _db.select(
       "SELECT id FROM rungs WHERE track_id = ? AND deleted_at IS NULL "
@@ -142,7 +144,9 @@ class LocalAttemptRepository implements AttemptRepository {
       GapRange.last7 =>
         DateTime.now().subtract(const Duration(days: 7)).millisecondsSinceEpoch,
       GapRange.last30 =>
-        DateTime.now().subtract(const Duration(days: 30)).millisecondsSinceEpoch,
+        DateTime.now()
+            .subtract(const Duration(days: 30))
+            .millisecondsSinceEpoch,
       GapRange.all => 0,
     };
     final rows = _db.select(
@@ -154,14 +158,16 @@ class LocalAttemptRepository implements AttemptRepository {
     );
     if (rows.isEmpty) return GapSeries.empty;
     final points = rows
-        .map((r) => GapPoint(
-              date: DateTime.fromMillisecondsSinceEpoch(r['completed_at'] as int),
-              predicted: r['predicted_suds'] as int,
-              actual: r['actual_suds'] as int,
-            ))
+        .map(
+          (r) => GapPoint(
+            date: DateTime.fromMillisecondsSinceEpoch(r['completed_at'] as int),
+            predicted: r['predicted_suds'] as int,
+            actual: r['actual_suds'] as int,
+          ),
+        )
         .toList();
-    final avgP = points.map((p) => p.predicted).reduce((a, b) => a + b) /
-        points.length;
+    final avgP =
+        points.map((p) => p.predicted).reduce((a, b) => a + b) / points.length;
     final avgA =
         points.map((p) => p.actual).reduce((a, b) => a + b) / points.length;
     return GapSeries(points: points, avgPredicted: avgP, avgActual: avgA);

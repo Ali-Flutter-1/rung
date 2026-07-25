@@ -19,8 +19,10 @@ class PremiumInsights extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(settingsChangesProvider);
-    final isPremium =
-        ref.watch(settingsRepositoryProvider).subscriptionTier.isPremium;
+    final isPremium = ref
+        .watch(settingsRepositoryProvider)
+        .subscriptionTier
+        .isPremium;
     return isPremium ? _unlocked(context) : _locked(context);
   }
 
@@ -33,7 +35,7 @@ class PremiumInsights extends ConsumerWidget {
       decoration: BoxDecoration(
         borderRadius: Radii.lgAll,
         color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,14 +46,15 @@ class PremiumInsights extends ConsumerWidget {
               const SizedBox(width: Insets.sm),
               Text(l.insightsDeeperTitle, style: t.titleMedium),
               const Spacer(),
-              const Icon(Icons.lock_rounded, size: 16, color: AppColors.inkMuted),
+              Icon(
+                Icons.lock_rounded,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ],
           ),
           const SizedBox(height: Insets.sm),
-          Text(
-            l.insightsLockedBody,
-            style: t.bodyMedium,
-          ),
+          Text(l.insightsLockedBody, style: t.bodyMedium),
           const SizedBox(height: Insets.md),
           Align(
             alignment: Alignment.centerLeft,
@@ -76,28 +79,31 @@ class PremiumInsights extends ConsumerWidget {
 
     bool counts(Attempt a) =>
         a.actualSuds != null && (a.outcome?.counts ?? false);
-    final thisMonth =
-        attempts.where((a) => counts(a) && !a.createdAt.isBefore(monthStart));
-    final lastMonth = attempts.where((a) =>
-        counts(a) &&
-        !a.createdAt.isBefore(prevStart) &&
-        a.createdAt.isBefore(monthStart));
+    final thisMonth = attempts.where(
+      (a) => counts(a) && !a.createdAt.isBefore(monthStart),
+    );
+    final lastMonth = attempts.where(
+      (a) =>
+          counts(a) &&
+          !a.createdAt.isBefore(prevStart) &&
+          a.createdAt.isBefore(monthStart),
+    );
 
     final n = thisMonth.length;
     final lastN = lastMonth.length;
 
     Widget body;
     if (n == 0) {
-      body = Text(
-        l.insightsNoSteps,
-        style: t.bodyMedium,
-      );
+      body = Text(l.insightsNoSteps, style: t.bodyMedium);
     } else {
       final avgGap =
-          thisMonth.map((a) => a.predictedSuds - a.actualSuds!).reduce((x, y) => x + y) /
-              n;
-      final overCount =
-          thisMonth.where((a) => a.predictedSuds > a.actualSuds!).length;
+          thisMonth
+              .map((a) => a.predictedSuds - a.actualSuds!)
+              .reduce((x, y) => x + y) /
+          n;
+      final overCount = thisMonth
+          .where((a) => a.predictedSuds > a.actualSuds!)
+          .length;
       final overRate = (overCount / n * 100).round();
       final trend = n - lastN;
 
@@ -108,10 +114,13 @@ class PremiumInsights extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('$n',
-                  style: t.displaySmall?.copyWith(
-                      color: AppColors.primaryDeep,
-                      fontWeight: FontWeight.w800)),
+              Text(
+                '$n',
+                style: t.displaySmall?.copyWith(
+                  color: AppColors.primaryDeep,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
@@ -119,18 +128,15 @@ class PremiumInsights extends ConsumerWidget {
               ),
             ],
           ),
-          if (lastN > 0) ...[
-            const SizedBox(height: 2),
-            _Trend(trend: trend),
-          ],
+          if (lastN > 0) ...[const SizedBox(height: 2), _Trend(trend: trend)],
           const SizedBox(height: Insets.md),
           _Line(
             icon: Icons.trending_down_rounded,
             text: avgGap > 0.2
                 ? l.insightsGapHotter(avgGap.toStringAsFixed(1))
                 : avgGap < -0.2
-                    ? l.insightsGapTougher
-                    : l.insightsGapSpotOn,
+                ? l.insightsGapTougher
+                : l.insightsGapSpotOn,
           ),
           const SizedBox(height: Insets.sm),
           _Line(
@@ -153,7 +159,7 @@ class PremiumInsights extends ConsumerWidget {
             AppColors.accent.withValues(alpha: 0.08),
           ],
         ),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,20 +186,26 @@ class _Trend extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final up = trend >= 0;
-    final color = up ? AppColors.primary : AppColors.inkMuted;
+    final color = up
+        ? AppColors.primary
+        : Theme.of(context).colorScheme.onSurfaceVariant;
     final label = trend == 0
         ? l.insightsTrendSame
         : up
-            ? l.insightsTrendMore(trend.abs())
-            : l.insightsTrendFewer(trend.abs());
+        ? l.insightsTrendMore(trend.abs())
+        : l.insightsTrendFewer(trend.abs());
     return Row(
       children: [
-        Icon(up ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
-            size: 14, color: color),
+        Icon(
+          up ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+          size: 14,
+          color: color,
+        ),
         const SizedBox(width: 4),
-        Text(label,
-            style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(color: color)),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color),
+        ),
       ],
     );
   }
@@ -210,7 +222,9 @@ class _Line extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: AppColors.primary),
         const SizedBox(width: Insets.sm),
-        Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyLarge)),
+        Expanded(
+          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
+        ),
       ],
     );
   }

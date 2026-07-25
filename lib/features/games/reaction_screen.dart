@@ -80,30 +80,26 @@ class _ReactionState extends State<ReactionScreen> {
   ({Color bg, String big, String small}) _look(AppLocalizations l) =>
       switch (_phase) {
         _Phase.idle => (
-            bg: AppColors.primary,
-            big: l.rxTapStart,
-            small: l.rxWaitGreen,
-          ),
+          bg: AppColors.primary,
+          big: l.rxTapStart,
+          small: l.rxWaitGreen,
+        ),
         _Phase.waiting => (
-            bg: AppColors.accentDeep,
-            big: l.rxWait,
-            small: l.rxTapMoment,
-          ),
-        _Phase.go => (
-            bg: const Color(0xFF3FA46A),
-            big: l.rxTap,
-            small: '',
-          ),
+          bg: AppColors.accentDeep,
+          big: l.rxWait,
+          small: l.rxTapMoment,
+        ),
+        _Phase.go => (bg: const Color(0xFF3FA46A), big: l.rxTap, small: ''),
         _Phase.result => (
-            bg: AppColors.primary,
-            big: '$_lastMs ms',
-            small: _bestMs != null ? l.rxBestRetry(_bestMs!) : l.rxTapRetry,
-          ),
+          bg: AppColors.primary,
+          big: '$_lastMs ms',
+          small: _bestMs != null ? l.rxBestRetry(_bestMs!) : l.rxTapRetry,
+        ),
         _Phase.tooSoon => (
-            bg: AppColors.intensityHigh,
-            big: l.rxTooSoon,
-            small: l.rxWaitRetry,
-          ),
+          bg: AppColors.intensityHigh,
+          big: l.rxTooSoon,
+          small: l.rxWaitRetry,
+        ),
       };
 
   @override
@@ -135,13 +131,14 @@ class _ReactionState extends State<ReactionScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    look.big,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.w800),
-                  )
+                        look.big,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      )
                       .animate(key: ValueKey(look.big))
                       .scale(
                         begin: const Offset(0.8, 0.8),
@@ -156,8 +153,9 @@ class _ReactionState extends State<ReactionScreen> {
                       look.small,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 15),
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 15,
+                      ),
                     ),
                   ],
                 ],

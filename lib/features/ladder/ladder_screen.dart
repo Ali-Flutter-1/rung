@@ -23,7 +23,9 @@ class LadderScreen extends ConsumerWidget {
     final track = ref.watch(trackByIdProvider(trackId)).asData?.value;
     final ladder = ref.watch(ladderProvider(trackId));
     final cleared = ref.watch(clearedRungIdsProvider).asData?.value ?? const {};
-    final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final accent = track == null
+        ? AppColors.primary
+        : TrackVisuals.color(track);
     final l = AppLocalizations.of(context);
 
     return Scaffold(
@@ -34,12 +36,15 @@ class LadderScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('${l.ladderLoadError}\n$e')),
         data: (rungs) {
           // The current focus = first uncleared rung.
-          final currentIndex =
-              rungs.indexWhere((r) => !cleared.contains(r.id));
+          final currentIndex = rungs.indexWhere((r) => !cleared.contains(r.id));
           final done = rungs.where((r) => cleared.contains(r.id)).length;
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(
-                Insets.lg, Insets.md, Insets.lg, 96),
+              Insets.lg,
+              Insets.md,
+              Insets.lg,
+              96,
+            ),
             itemCount: rungs.length + 2,
             itemBuilder: (_, i) {
               if (i == 0) {
@@ -103,8 +108,7 @@ class _LadderHeader extends StatelessWidget {
         children: [
           if (track != null)
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.12),
                 borderRadius: Radii.pill,
@@ -112,10 +116,11 @@ class _LadderHeader extends StatelessWidget {
               child: Text(
                 (track.description as String).toUpperCase(),
                 style: t.bodyMedium?.copyWith(
-                    color: accent,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    fontSize: 11),
+                  color: accent,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  fontSize: 11,
+                ),
               ),
             ),
           const SizedBox(height: Insets.md),
@@ -124,8 +129,10 @@ class _LadderHeader extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text('$done', style: t.headlineMedium?.copyWith(color: accent)),
-              Text(' ${AppLocalizations.of(context).ladderOfClimbed(total)}',
-                  style: t.headlineSmall),
+              Text(
+                ' ${AppLocalizations.of(context).ladderOfClimbed(total)}',
+                style: t.headlineSmall,
+              ),
             ],
           ),
           const SizedBox(height: Insets.sm),
@@ -185,7 +192,7 @@ class _RungRow extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 2,
-                    color: AppColors.border,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
             ],
@@ -209,7 +216,7 @@ class _RungRow extends StatelessWidget {
                       border: Border.all(
                         color: isCurrent
                             ? accent.withValues(alpha: 0.4)
-                            : AppColors.border,
+                            : Theme.of(context).colorScheme.outline,
                       ),
                       // The next step gets a soft glow so the eye lands on it.
                       boxShadow: isCurrent
@@ -228,32 +235,44 @@ class _RungRow extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(rung.title,
-                                  style: t.titleMedium?.copyWith(
-                                    decoration: isCleared
-                                        ? TextDecoration.lineThrough
-                                        : null,
-                                    color: isCleared
-                                        ? AppColors.inkMuted
-                                        : null,
-                                  )),
+                              child: Text(
+                                rung.title,
+                                style: t.titleMedium?.copyWith(
+                                  decoration: isCleared
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                  color: isCleared
+                                      ? Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant
+                                      : null,
+                                ),
+                              ),
                             ),
                             if (rung.isCustom)
-                              const Icon(Icons.edit_outlined,
-                                  size: 15, color: AppColors.inkFaint),
+                              const Icon(
+                                Icons.edit_outlined,
+                                size: 15,
+                                color: AppColors.inkFaint,
+                              ),
                           ],
                         ),
                         const SizedBox(height: Insets.sm),
                         Row(
                           children: [
                             DifficultyBadge(
-                                difficulty: rung.difficulty, color: accent),
+                              difficulty: rung.difficulty,
+                              color: accent,
+                            ),
                             const Spacer(),
                             if (isCurrent)
-                              Text(AppLocalizations.of(context).todayNext,
-                                  style: t.bodyMedium?.copyWith(
-                                      color: accent,
-                                      fontWeight: FontWeight.w600)),
+                              Text(
+                                AppLocalizations.of(context).todayNext,
+                                style: t.bodyMedium?.copyWith(
+                                  color: accent,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                           ],
                         ),
                       ],
@@ -270,8 +289,11 @@ class _RungRow extends StatelessWidget {
 }
 
 class _Node extends StatelessWidget {
-  const _Node(
-      {required this.accent, required this.cleared, required this.current});
+  const _Node({
+    required this.accent,
+    required this.cleared,
+    required this.current,
+  });
   final Color accent;
   final bool cleared;
   final bool current;
@@ -293,7 +315,9 @@ class _Node extends StatelessWidget {
         shape: BoxShape.circle,
         color: current ? accent : Theme.of(context).colorScheme.surface,
         border: Border.all(
-            color: current ? accent : AppColors.border, width: 2),
+          color: current ? accent : Theme.of(context).colorScheme.outline,
+          width: 2,
+        ),
       ),
     );
   }

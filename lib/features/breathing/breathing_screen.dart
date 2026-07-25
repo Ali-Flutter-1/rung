@@ -109,10 +109,10 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   String _phaseLabel(AppLocalizations l) => switch (_phase) {
-        _Phase.inhale => l.breatheIn,
-        _Phase.hold => l.breatheHold,
-        _Phase.exhale => l.breatheOut,
-      };
+    _Phase.inhale => l.breatheIn,
+    _Phase.hold => l.breatheHold,
+    _Phase.exhale => l.breatheOut,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -132,9 +132,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         ],
       ),
       extendBodyBehindAppBar: true,
-      body: SafeArea(
-        child: _done ? _doneView(t, l) : _breathingView(t, l),
-      ),
+      body: SafeArea(child: _done ? _doneView(t, l) : _breathingView(t, l)),
     );
   }
 
@@ -142,9 +140,11 @@ class _BreathingScreenState extends State<BreathingScreen>
     return Column(
       children: [
         const Spacer(),
-        Text(l.breatheIntro,
-            textAlign: TextAlign.center,
-            style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color)),
+        Text(
+          l.breatheIntro,
+          textAlign: TextAlign.center,
+          style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color),
+        ),
         const Spacer(),
         SizedBox(
           height: 260,
@@ -192,12 +192,17 @@ class _BreathingScreenState extends State<BreathingScreen>
         children: [
           const Icon(Icons.spa_rounded, size: 56, color: AppColors.primary),
           const SizedBox(height: Insets.lg),
-          Text(l.breatheDoneTitle,
-              textAlign: TextAlign.center, style: t.headlineSmall),
+          Text(
+            l.breatheDoneTitle,
+            textAlign: TextAlign.center,
+            style: t.headlineSmall,
+          ),
           const SizedBox(height: Insets.sm),
-          Text(l.breatheDoneSub,
-              textAlign: TextAlign.center,
-              style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color)),
+          Text(
+            l.breatheDoneSub,
+            textAlign: TextAlign.center,
+            style: t.bodyLarge?.copyWith(color: t.bodyMedium?.color),
+          ),
           const SizedBox(height: Insets.xl),
           SizedBox(
             width: double.infinity,

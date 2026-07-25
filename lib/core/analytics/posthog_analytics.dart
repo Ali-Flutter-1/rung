@@ -20,7 +20,9 @@ class PostHogAnalytics implements Analytics {
           if (e.value != null) e.key: e.value!,
       };
       Posthog().capture(eventName: event, properties: clean);
-    } catch (_) {/* analytics must never break the app */}
+    } catch (_) {
+      /* analytics must never break the app */
+    }
   }
 
   @override

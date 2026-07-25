@@ -16,7 +16,12 @@ Future<bool> showPodRulesSheet(BuildContext context) async {
       final l = AppLocalizations.of(ctx);
       return SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(Insets.lg, 0, Insets.lg, Insets.lg),
+          padding: const EdgeInsets.fromLTRB(
+            Insets.lg,
+            0,
+            Insets.lg,
+            Insets.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,8 +34,7 @@ Future<bool> showPodRulesSheet(BuildContext context) async {
               _Rule(icon: Icons.block_rounded, text: l.podRule2),
               _Rule(icon: Icons.flag_outlined, text: l.podRule3),
               _Rule(icon: Icons.lock_outline_rounded, text: l.podRule4),
-              _Rule(
-                  icon: Icons.health_and_safety_outlined, text: l.podRule5),
+              _Rule(icon: Icons.health_and_safety_outlined, text: l.podRule5),
               const SizedBox(height: Insets.lg),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -65,7 +69,8 @@ class _Rule extends StatelessWidget {
           Icon(icon, color: AppColors.primary, size: 20),
           const SizedBox(width: Insets.md),
           Expanded(
-              child: Text(text, style: Theme.of(context).textTheme.bodyLarge)),
+            child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
+          ),
         ],
       ),
     );

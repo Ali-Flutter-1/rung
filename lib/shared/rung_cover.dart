@@ -60,8 +60,10 @@ class RungCover extends StatelessWidget {
               left: Insets.md,
               bottom: Insets.md,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface.withValues(alpha: 0.92),
                   borderRadius: Radii.pill,
@@ -74,9 +76,9 @@ class RungCover extends StatelessWidget {
                     Text(
                       'Difficulty $difficulty / 10',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.ink,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: AppColors.ink,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),

@@ -53,9 +53,12 @@ class ProfileScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name ?? l.profileAddName,
-                        style: t.titleLarge?.copyWith(
-                            color: name == null ? AppColors.inkFaint : null)),
+                    Text(
+                      name ?? l.profileAddName,
+                      style: t.titleLarge?.copyWith(
+                        color: name == null ? AppColors.inkFaint : null,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       settings.bio?.isNotEmpty == true
@@ -81,13 +84,15 @@ class ProfileScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: Radii.card,
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: SwitchListTile(
               value: settings.profileLocked,
               onChanged: (v) async {
                 await settings.setProfileLocked(v);
-                await pushIdentityToCloud(ref); // reflect lock for pod members now
+                await pushIdentityToCloud(
+                  ref,
+                ); // reflect lock for pod members now
               },
               secondary: Icon(
                 settings.profileLocked
@@ -96,9 +101,11 @@ class ProfileScreen extends ConsumerWidget {
                 color: AppColors.primary,
               ),
               title: Text(l.profileLockTitle),
-              subtitle: Text(settings.profileLocked
-                  ? l.profileLockedSub
-                  : l.profileUnlockedSub),
+              subtitle: Text(
+                settings.profileLocked
+                    ? l.profileLockedSub
+                    : l.profileUnlockedSub,
+              ),
             ),
           ),
           const SizedBox(height: Insets.lg),
@@ -119,21 +126,20 @@ class ProfileScreen extends ConsumerWidget {
 
           Text(l.yourTone, style: t.titleMedium),
           const SizedBox(height: Insets.sm),
-          Text(
-            l.profileToneDesc,
-            style: t.bodyMedium,
-          ),
+          Text(l.profileToneDesc, style: t.bodyMedium),
           const SizedBox(height: Insets.md),
           SegmentedButton<ToneMode>(
             segments: [
               ButtonSegment(
-                  value: ToneMode.introvert,
-                  label: Text(l.profileToneIntrovert),
-                  icon: const Icon(Icons.spa_outlined)),
+                value: ToneMode.introvert,
+                label: Text(l.profileToneIntrovert),
+                icon: const Icon(Icons.spa_outlined),
+              ),
               ButtonSegment(
-                  value: ToneMode.situational,
-                  label: Text(l.profileToneSituational),
-                  icon: const Icon(Icons.bolt_outlined)),
+                value: ToneMode.situational,
+                label: Text(l.profileToneSituational),
+                icon: const Icon(Icons.bolt_outlined),
+              ),
             ],
             selected: {settings.toneMode},
             onSelectionChanged: (s) => settings.setToneMode(s.first),
@@ -143,7 +149,10 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: Insets.md),
           SegmentedButton<ThemeMode>(
             segments: [
-              ButtonSegment(value: ThemeMode.system, label: Text(l.themeSystem)),
+              ButtonSegment(
+                value: ThemeMode.system,
+                label: Text(l.themeSystem),
+              ),
               ButtonSegment(value: ThemeMode.light, label: Text(l.themeLight)),
               ButtonSegment(value: ThemeMode.dark, label: Text(l.themeDark)),
             ],
@@ -167,9 +176,10 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.health_and_safety_outlined,
             title: l.menuIsThisRight,
             subtitle: l.profileSafetySub,
-            onTap: () => Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(builder: (_) => const SafetyScreen()),
-            ),
+            onTap: () => Navigator.of(
+              context,
+              rootNavigator: true,
+            ).push(MaterialPageRoute(builder: (_) => const SafetyScreen())),
           ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(
@@ -188,22 +198,29 @@ class ProfileScreen extends ConsumerWidget {
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 final sync = ref.read(syncServiceProvider);
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(l.profileRestoring),
-                ));
+                messenger.showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text(l.profileRestoring),
+                  ),
+                );
                 final ok = await sync.restoreFromCloud();
                 messenger.hideCurrentSnackBar();
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 6),
-                  content: Text(ok
-                      ? l.profileRestoreOk
-                      : isOfflineError(sync.lastError)
+                messenger.showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 6),
+                    content: Text(
+                      ok
+                          ? l.profileRestoreOk
+                          : isOfflineError(sync.lastError)
                           ? l.errorOffline
                           : l.profileRestoreFail(
-                              sync.lastError ?? 'unknown error')),
-                ));
+                              sync.lastError ?? 'unknown error',
+                            ),
+                    ),
+                  ),
+                );
               },
             ),
           if (ref.watch(cloudEnabledProvider))
@@ -218,7 +235,8 @@ class ProfileScreen extends ConsumerWidget {
               icon: Icons.logout_rounded,
               title: l.profileLogout,
               subtitle:
-                  ref.watch(authUserProvider).asData?.value?.email ?? l.profileSignedIn,
+                  ref.watch(authUserProvider).asData?.value?.email ??
+                  l.profileSignedIn,
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 final confirmed = await showDialog<bool>(
@@ -228,20 +246,24 @@ class ProfileScreen extends ConsumerWidget {
                     content: Text(l.profileLogoutConfirmBody),
                     actions: [
                       TextButton(
-                          onPressed: () => Navigator.of(dialogCtx).pop(false),
-                          child: Text(l.commonCancel)),
+                        onPressed: () => Navigator.of(dialogCtx).pop(false),
+                        child: Text(l.commonCancel),
+                      ),
                       FilledButton(
-                          onPressed: () => Navigator.of(dialogCtx).pop(true),
-                          child: Text(l.profileLogout)),
+                        onPressed: () => Navigator.of(dialogCtx).pop(true),
+                        child: Text(l.profileLogout),
+                      ),
                     ],
                   ),
                 );
                 if (confirmed != true) return;
                 Haptics.medium();
-                messenger.showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  content: Text(l.profileLoggingOut),
-                ));
+                messenger.showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text(l.profileLoggingOut),
+                  ),
+                );
                 // Flush any unsaved progress to the cloud BEFORE logging out, so
                 // it can be restored next sign-in (no lost rungs on switch), and
                 // remove this device's push token so it stops getting pushes.
@@ -280,9 +302,10 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.description_outlined,
             title: l.profileTermsTitle,
             subtitle: l.profileTermsSub,
-            onTap: () => Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(builder: (_) => const TermsScreen()),
-            ),
+            onTap: () => Navigator.of(
+              context,
+              rootNavigator: true,
+            ).push(MaterialPageRoute(builder: (_) => const TermsScreen())),
           ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(
@@ -315,11 +338,13 @@ class ProfileScreen extends ConsumerWidget {
         content: Text(l.profileDeleteConfirmBody),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: Text(l.commonCancel)),
+            onPressed: () => Navigator.of(dialogCtx).pop(false),
+            child: Text(l.commonCancel),
+          ),
           FilledButton(
-            style:
-                FilledButton.styleFrom(backgroundColor: AppColors.intensityHigh),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.intensityHigh,
+            ),
             onPressed: () => Navigator.of(dialogCtx).pop(true),
             child: Text(l.profileDelete),
           ),
@@ -327,18 +352,22 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
     if (confirmed != true) return;
-    messenger.showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text(l.profileDeleting),
-    ));
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(l.profileDeleting),
+      ),
+    );
     try {
       await ref.read(cloudRepositoryProvider).deleteAccount();
     } catch (_) {
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.profileDeleteFail),
-      ));
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.profileDeleteFail),
+        ),
+      );
       return;
     }
     // Wipe everything local so nothing of the deleted account lingers, then
@@ -392,13 +421,14 @@ class _LanguageControl extends ConsumerWidget {
     final settings = ref.watch(settingsRepositoryProvider);
     final l = AppLocalizations.of(context);
     final code = settings.localeCode;
-    final current =
-        code == null ? l.languageSystemDefault : (_languages[code] ?? code);
+    final current = code == null
+        ? l.languageSystemDefault
+        : (_languages[code] ?? code);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: ListTile(
         leading: const Icon(Icons.language_rounded, color: AppColors.primary),
@@ -418,15 +448,15 @@ class _LanguageControl extends ConsumerWidget {
       showDragHandle: true,
       builder: (sheetCtx) {
         Widget row(String? value, String label) => ListTile(
-              title: Text(label),
-              trailing: value == current
-                  ? const Icon(Icons.check_rounded, color: AppColors.primary)
-                  : null,
-              onTap: () {
-                settings.setLocaleCode(value);
-                Navigator.of(sheetCtx).pop();
-              },
-            );
+          title: Text(label),
+          trailing: value == current
+              ? const Icon(Icons.check_rounded, color: AppColors.primary)
+              : null,
+          onTap: () {
+            settings.setLocaleCode(value);
+            Navigator.of(sheetCtx).pop();
+          },
+        );
         return SafeArea(
           child: ListView(
             shrinkWrap: true,
@@ -454,11 +484,13 @@ class _HapticsControl extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: SwitchListTile(
-        secondary:
-            const Icon(Icons.vibration_rounded, color: AppColors.primary),
+        secondary: const Icon(
+          Icons.vibration_rounded,
+          color: AppColors.primary,
+        ),
         title: Text(l.profileHaptics),
         subtitle: Text(l.profileHapticsSub),
         value: settings.hapticsEnabled,
@@ -486,11 +518,13 @@ class _AnalyticsControl extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: SwitchListTile(
-        secondary:
-            const Icon(Icons.insights_outlined, color: AppColors.primary),
+        secondary: const Icon(
+          Icons.insights_outlined,
+          color: AppColors.primary,
+        ),
         title: Text(l.profileAnalytics),
         subtitle: Text(l.profileAnalyticsSub),
         value: settings.analyticsEnabled,
@@ -517,13 +551,15 @@ class _NotificationControls extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         children: [
           SwitchListTile(
-            secondary: const Icon(Icons.notifications_active_outlined,
-                color: AppColors.primary),
+            secondary: const Icon(
+              Icons.notifications_active_outlined,
+              color: AppColors.primary,
+            ),
             title: Text(l.profileNotifications),
             subtitle: Text(l.profileNotificationsSub),
             value: pushOn,
@@ -539,8 +575,10 @@ class _NotificationControls extends ConsumerWidget {
           ),
           const Divider(height: 1),
           SwitchListTile(
-            secondary:
-                const Icon(Icons.forum_outlined, color: AppColors.primary),
+            secondary: const Icon(
+              Icons.forum_outlined,
+              color: AppColors.primary,
+            ),
             title: Text(l.profilePodAlerts),
             subtitle: Text(l.profilePodAlertsSub),
             value: pushOn && settings.podAlertsEnabled,
@@ -566,10 +604,12 @@ class _ReminderControl extends ConsumerWidget {
     if (!context.mounted) return;
     final l = AppLocalizations.of(context);
     if (!granted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.profileEnableNotifs),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.profileEnableNotifs),
+        ),
+      );
       return;
     }
     final picked = await showTimePicker(
@@ -580,8 +620,9 @@ class _ReminderControl extends ConsumerWidget {
     if (picked == null) return;
     await NotificationService.instance.scheduleDaily(picked);
     await ref.read(settingsRepositoryProvider).setReminderTime(picked);
-    ref.read(analyticsProvider).capture(Ev.reminderEnabled,
-        {'hour': picked.hour});
+    ref.read(analyticsProvider).capture(Ev.reminderEnabled, {
+      'hour': picked.hour,
+    });
   }
 
   Future<void> _disable(WidgetRef ref) async {
@@ -599,17 +640,19 @@ class _ReminderControl extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Radii.card,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: SwitchListTile(
         value: on,
         onChanged: (v) => v ? _enable(context, ref) : _disable(ref),
-        secondary: const Icon(Icons.notifications_none_rounded,
-            color: AppColors.primary),
+        secondary: const Icon(
+          Icons.notifications_none_rounded,
+          color: AppColors.primary,
+        ),
         title: Text(l.profileReminderTitle),
-        subtitle: Text(on
-            ? l.profileReminderOn(time.format(context))
-            : l.profileReminderOff),
+        subtitle: Text(
+          on ? l.profileReminderOn(time.format(context)) : l.profileReminderOff,
+        ),
       ),
     );
   }
@@ -645,10 +688,15 @@ class _Avatar extends StatelessWidget {
                 color: AppColors.primary,
                 shape: BoxShape.circle,
                 border: Border.all(
-                    color: Theme.of(context).colorScheme.surface, width: 2),
+                  color: Theme.of(context).colorScheme.surface,
+                  width: 2,
+                ),
               ),
-              child: Icon(locked ? Icons.lock_rounded : Icons.edit_rounded,
-                  size: 12, color: Colors.white),
+              child: Icon(
+                locked ? Icons.lock_rounded : Icons.edit_rounded,
+                size: 12,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -681,11 +729,15 @@ Future<void> showAvatarPickerSheet(BuildContext context, WidgetRef ref) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppLocalizations.of(sheetCtx).profileAvatarTitle,
-                style: Theme.of(sheetCtx).textTheme.titleLarge),
+            Text(
+              AppLocalizations.of(sheetCtx).profileAvatarTitle,
+              style: Theme.of(sheetCtx).textTheme.titleLarge,
+            ),
             const SizedBox(height: Insets.xs),
-            Text(AppLocalizations.of(sheetCtx).profileAvatarSub,
-                style: Theme.of(sheetCtx).textTheme.bodyMedium),
+            Text(
+              AppLocalizations.of(sheetCtx).profileAvatarSub,
+              style: Theme.of(sheetCtx).textTheme.bodyMedium,
+            ),
             const SizedBox(height: Insets.lg),
             // Scroll if the grid is taller than the sheet (avoids a Column
             // overflow when there are many avatars / a short sheet).
@@ -751,9 +803,7 @@ class _AvatarOption extends StatelessWidget {
         ),
         child: Stack(
           alignment: Alignment.center,
-          children: [
-            UserAvatar(avatarId: avatarId, name: name, radius: 26),
-          ],
+          children: [UserAvatar(avatarId: avatarId, name: name, radius: 26)],
         ),
       ),
     );
@@ -784,9 +834,13 @@ class _Tile extends StatelessWidget {
       title: Text(title),
       subtitle: Text(subtitle),
       trailing: trailingText != null
-          ? Text(trailingText!,
+          ? Text(
+              trailingText!,
               style: const TextStyle(
-                  color: AppColors.primaryDeep, fontWeight: FontWeight.w700))
+                color: AppColors.primaryDeep,
+                fontWeight: FontWeight.w700,
+              ),
+            )
           : const Icon(Icons.chevron_right_rounded, color: AppColors.inkFaint),
       onTap: onTap,
     );

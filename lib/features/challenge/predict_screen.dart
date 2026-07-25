@@ -36,7 +36,9 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
     final l = AppLocalizations.of(context);
     setState(() => _saving = true);
     try {
-      await ref.read(attemptRepositoryProvider).startChallenge(
+      await ref
+          .read(attemptRepositoryProvider)
+          .startChallenge(
             rungId: widget.rungId,
             predictedSuds: _suds,
             predictedNote: _note.text.trim().isEmpty ? null : _note.text.trim(),
@@ -46,13 +48,17 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
       // if it saved — tell the user and let them retry.
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(l.errorSaveFailed),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.errorSaveFailed),
+        ),
+      );
       return;
     }
-    ref.read(analyticsProvider).capture(Ev.predictStarted, {'predicted': _suds});
+    ref.read(analyticsProvider).capture(Ev.predictStarted, {
+      'predicted': _suds,
+    });
     if (!mounted) return;
     context.go(Routes.dashboard);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -66,9 +72,12 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
   @override
   Widget build(BuildContext context) {
     final rung = ref.watch(rungByIdProvider(widget.rungId)).asData?.value;
-    final track =
-        rung == null ? null : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
-    final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final track = rung == null
+        ? null
+        : ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
+    final accent = track == null
+        ? AppColors.primary
+        : TrackVisuals.color(track);
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
 
@@ -85,8 +94,11 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                       children: [
                         Text(rung.title, style: t.headlineSmall),
                         const SizedBox(height: Insets.xl),
-                        Text(l.predictQuestion,
-                            textAlign: TextAlign.center, style: t.titleMedium),
+                        Text(
+                          l.predictQuestion,
+                          textAlign: TextAlign.center,
+                          style: t.titleMedium,
+                        ),
                         const SizedBox(height: Insets.lg),
                         SudsSlider(
                           value: _suds,
@@ -96,6 +108,7 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                         const SizedBox(height: Insets.xl),
                         TextField(
                           controller: _note,
+                          onTapOutside: (_) {},
                           textCapitalization: TextCapitalization.sentences,
                           maxLines: 2,
                           decoration: InputDecoration(
@@ -105,10 +118,7 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                           ),
                         ),
                         const SizedBox(height: Insets.sm),
-                        Text(
-                          l.predictCompare,
-                          style: t.bodyMedium,
-                        ),
+                        Text(l.predictCompare, style: t.bodyMedium),
                         const SizedBox(height: Insets.lg),
                         Center(
                           child: TextButton.icon(
@@ -135,7 +145,10 @@ class _PredictScreenState extends ConsumerState<PredictScreen> {
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white))
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : Text(l.predictDoIt),
                     ),
                   ),

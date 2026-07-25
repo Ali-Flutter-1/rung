@@ -27,13 +27,13 @@ class SudsSlider extends StatelessWidget {
   final String highLabel;
 
   String get _label => switch (value) {
-        0 => 'Totally calm',
-        1 || 2 => 'Barely a blip',
-        3 || 4 => 'A little nervous',
-        5 || 6 => 'Pretty anxious',
-        7 || 8 => 'Very anxious',
-        _ => 'About as big as it gets',
-      };
+    0 => 'Totally calm',
+    1 || 2 => 'Barely a blip',
+    3 || 4 => 'A little nervous',
+    5 || 6 => 'Pretty anxious',
+    7 || 8 => 'Very anxious',
+    _ => 'About as big as it gets',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,10 @@ class SudsSlider extends StatelessWidget {
           ),
         ),
         const SizedBox(height: Insets.xs),
-        Text(_label,
-            style: t.titleMedium?.copyWith(color: t.bodyMedium?.color)),
+        Text(
+          _label,
+          style: t.titleMedium?.copyWith(color: t.bodyMedium?.color),
+        ),
         const SizedBox(height: Insets.lg),
         _GradientTrack(value: value, onChanged: onChanged),
         const SizedBox(height: Insets.sm),
@@ -103,8 +105,10 @@ class _GradientTrack extends StatelessWidget {
               inactiveTrackColor: Colors.transparent,
               thumbColor: Colors.white,
               overlayColor: AppColors.intensity(value).withValues(alpha: 0.14),
-              thumbShape:
-                  const RoundSliderThumbShape(enabledThumbRadius: 13, elevation: 3),
+              thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 13,
+                elevation: 3,
+              ),
               trackShape: const RoundedRectSliderTrackShape(),
             ),
             child: Slider(

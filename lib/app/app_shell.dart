@@ -29,11 +29,27 @@ class AppShell extends ConsumerWidget {
   final StatefulNavigationShell shell;
 
   static const _items = <({IconData icon, IconData active, String label})>[
-    (icon: Icons.dashboard_outlined, active: Icons.dashboard_rounded, label: 'Home'),
+    (
+      icon: Icons.dashboard_outlined,
+      active: Icons.dashboard_rounded,
+      label: 'Home',
+    ),
     (icon: Icons.stairs_outlined, active: Icons.stairs_rounded, label: 'Rung'),
-    (icon: Icons.groups_2_outlined, active: Icons.groups_2_rounded, label: 'Groups'),
-    (icon: Icons.workspace_premium_outlined, active: Icons.workspace_premium_rounded, label: 'Premium'),
-    (icon: Icons.person_outline_rounded, active: Icons.person_rounded, label: 'Profile'),
+    (
+      icon: Icons.groups_2_outlined,
+      active: Icons.groups_2_rounded,
+      label: 'Groups',
+    ),
+    (
+      icon: Icons.workspace_premium_outlined,
+      active: Icons.workspace_premium_rounded,
+      label: 'Premium',
+    ),
+    (
+      icon: Icons.person_outline_rounded,
+      active: Icons.person_rounded,
+      label: 'Profile',
+    ),
   ];
 
   void _go(int index) {
@@ -44,7 +60,9 @@ class AppShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(contentSyncProvider); // refresh global content on sign-in/startup
-    ref.watch(progressSyncProvider); // auto-restore/sync progress on start/switch
+    ref.watch(
+      progressSyncProvider,
+    ); // auto-restore/sync progress on start/switch
     ref.watch(pushRegistrationProvider); // register FCM token when signed in
     ref.watch(purchaseSyncProvider); // sync entitlement tier on sign-in
     ref.watch(streakProtectionProvider); // auto-protect streak (tier allowance)
@@ -100,7 +118,9 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.primaryDeep : AppColors.inkMuted;
+    final color = selected
+        ? AppColors.primaryDeep
+        : Theme.of(context).colorScheme.onSurfaceVariant;
     return InkResponse(
       onTap: onTap,
       radius: 48,
@@ -120,15 +140,20 @@ class _NavItem extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(selected ? data.active : data.icon,
-                    color: color, size: 22),
+                Icon(
+                  selected ? data.active : data.icon,
+                  color: color,
+                  size: 22,
+                ),
                 if (badgeCount > 0)
                   Positioned(
                     right: -8,
                     top: -8,
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.intensityHigh,
                         borderRadius: BorderRadius.circular(999),

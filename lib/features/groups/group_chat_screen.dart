@@ -37,14 +37,22 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   final _scroll = ScrollController();
 
   late final List<_Message> _messages = [
-    _Message(sampleMembers[0],
-        'Did anyone do their rung today? I asked a barista a question 😅'),
-    _Message(sampleMembers[1],
-        'Nice!! I predicted an 8, it was like a 3. Wild how that works.'),
-    _Message(sampleMembers[2],
-        'Still building up to mine. Reading your wins helps though.'),
-    _Message(sampleMembers[0],
-        'No rush at all. We are all just one small step at a time here.'),
+    _Message(
+      sampleMembers[0],
+      'Did anyone do their rung today? I asked a barista a question 😅',
+    ),
+    _Message(
+      sampleMembers[1],
+      'Nice!! I predicted an 8, it was like a 3. Wild how that works.',
+    ),
+    _Message(
+      sampleMembers[2],
+      'Still building up to mine. Reading your wins helps though.',
+    ),
+    _Message(
+      sampleMembers[0],
+      'No rush at all. We are all just one small step at a time here.',
+    ),
   ];
 
   @override
@@ -64,8 +72,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scroll.hasClients) {
-        _scroll.animateTo(_scroll.position.maxScrollExtent,
-            duration: Motion.base, curve: Motion.ease);
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: Motion.base,
+          curve: Motion.ease,
+        );
       }
     });
   }
@@ -80,8 +91,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.podName, style: t.titleMedium),
-            Text(l.chatIntrosBeKind(widget.memberCount, widget.capacity),
-                style: t.bodyMedium),
+            Text(
+              l.chatIntrosBeKind(widget.memberCount, widget.capacity),
+              style: t.bodyMedium,
+            ),
           ],
         ),
       ),
@@ -100,7 +113,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             top: false,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
-                  Insets.md, Insets.sm, Insets.md, Insets.md),
+                Insets.md,
+                Insets.sm,
+                Insets.md,
+                Insets.md,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -113,14 +130,20 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: Insets.md, vertical: 12),
+                          horizontal: Insets.md,
+                          vertical: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: Radii.pill,
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: Radii.pill,
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
                         ),
                       ),
                     ),
@@ -128,7 +151,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   const SizedBox(width: Insets.sm),
                   IconButton.filled(
                     style: IconButton.styleFrom(
-                        backgroundColor: AppColors.primary),
+                      backgroundColor: AppColors.primary,
+                    ),
                     onPressed: _send,
                     icon: const Icon(Icons.arrow_upward_rounded),
                   ),
@@ -150,13 +174,14 @@ class _PreviewBanner extends StatelessWidget {
       width: double.infinity,
       color: AppColors.accentSoft,
       padding: const EdgeInsets.symmetric(
-          horizontal: Insets.lg, vertical: Insets.sm),
+        horizontal: Insets.lg,
+        vertical: Insets.sm,
+      ),
       child: Text(
         AppLocalizations.of(context).chatPreviewBanner,
-        style: Theme.of(context)
-            .textTheme
-            .bodyMedium
-            ?.copyWith(color: AppColors.accentDeep),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: AppColors.accentDeep),
       ),
     );
   }
@@ -174,8 +199,9 @@ class _Bubble extends StatelessWidget {
 
     final bubble = Container(
       padding: const EdgeInsets.all(Insets.md),
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.68,
+      ),
       decoration: BoxDecoration(
         color: mine ? AppColors.primary : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.only(
@@ -184,20 +210,30 @@ class _Bubble extends StatelessWidget {
           bottomLeft: Radius.circular(mine ? 16 : 4),
           bottomRight: Radius.circular(mine ? 4 : 16),
         ),
-        border: mine ? null : Border.all(color: AppColors.border),
+        border: mine
+            ? null
+            : Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!mine)
-            Text(m.locked ? 'Private member' : m.name,
-                style: t.bodyMedium?.copyWith(
-                    color: AppColors.primaryDeep,
-                    fontWeight: FontWeight.w700)),
+            Text(
+              m.locked ? 'Private member' : m.name,
+              style: t.bodyMedium?.copyWith(
+                color: AppColors.primaryDeep,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           if (!mine) const SizedBox(height: 2),
-          Text(message.text,
-              style: t.bodyLarge
-                  ?.copyWith(color: mine ? Colors.white : Theme.of(context).colorScheme.onSurface)),
+          Text(
+            message.text,
+            style: t.bodyLarge?.copyWith(
+              color: mine
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );
@@ -206,7 +242,9 @@ class _Bubble extends StatelessWidget {
       return Align(
         alignment: Alignment.centerRight,
         child: Padding(
-            padding: const EdgeInsets.only(bottom: Insets.md), child: bubble),
+          padding: const EdgeInsets.only(bottom: Insets.md),
+          child: bubble,
+        ),
       );
     }
 
@@ -222,12 +260,18 @@ class _Bubble extends StatelessWidget {
               radius: 16,
               backgroundColor: AppColors.primary.withValues(alpha: 0.15),
               child: m.locked
-                  ? const Icon(Icons.lock_outline_rounded,
-                      size: 16, color: AppColors.primaryDeep)
-                  : Text(m.initial,
+                  ? const Icon(
+                      Icons.lock_outline_rounded,
+                      size: 16,
+                      color: AppColors.primaryDeep,
+                    )
+                  : Text(
+                      m.initial,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryDeep)),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryDeep,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: Insets.sm),

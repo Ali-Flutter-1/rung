@@ -10,7 +10,7 @@ class LocalProgressRepository implements ProgressRepository {
 
   final AppDatabase _db;
 
-  // ── Progress 
+  // ── Progress
   @override
   Future<UserProgress> getProgress(String trackId) async {
     final rows = _db.select(
@@ -33,10 +33,14 @@ class LocalProgressRepository implements ProgressRepository {
   @override
   Stream<List<UserProgress>> watchAllProgress() => _db.watch(_allProgress);
 
-  int _totalCleared() => _db
-      .select('SELECT COALESCE(SUM(rungs_cleared), 0) AS n '
-          'FROM user_track_progress;')
-      .first['n'] as int;
+  int _totalCleared() =>
+      _db
+              .select(
+                'SELECT COALESCE(SUM(rungs_cleared), 0) AS n '
+                'FROM user_track_progress;',
+              )
+              .first['n']
+          as int;
 
   @override
   Future<int> totalRungsCleared() async => _totalCleared();
@@ -65,11 +69,12 @@ class LocalProgressRepository implements ProgressRepository {
     // between two consecutive local midnights across a spring-forward is 23h,
     // which `.inDays` truncates to 0. The day then counts as neither
     // consecutive nor a break, silently shortening the best streak.
-    final dates = dayKeys
-        .map((k) => DateTime.tryParse('${k}T00:00:00Z'))
-        .whereType<DateTime>()
-        .toList()
-      ..sort();
+    final dates =
+        dayKeys
+            .map((k) => DateTime.tryParse('${k}T00:00:00Z'))
+            .whereType<DateTime>()
+            .toList()
+          ..sort();
     var best = 1, run = 1;
     for (var i = 1; i < dates.length; i++) {
       final diff = dates[i].difference(dates[i - 1]).inDays;
@@ -91,8 +96,11 @@ class LocalProgressRepository implements ProgressRepository {
           "WHERE outcome IN ('done','partial') AND completed_at IS NOT NULL "
           "AND deleted_at IS NULL;",
         )
-        .map((r) =>
-            dayKey(DateTime.fromMillisecondsSinceEpoch(r['completed_at'] as int)))
+        .map(
+          (r) => dayKey(
+            DateTime.fromMillisecondsSinceEpoch(r['completed_at'] as int),
+          ),
+        )
         .toSet();
     days.addAll(_frozenDays());
     return days;
@@ -142,15 +150,22 @@ class LocalProgressRepository implements ProgressRepository {
     );
     if (inProg.isNotEmpty) {
       final attempt = attemptFromRow(inProg.first);
-      final s = _suggestion(attempt.rungId, TodayReason.resumeInProgress,
-          attempt: attempt);
+      final s = _suggestion(
+        attempt.rungId,
+        TodayReason.resumeInProgress,
+        attempt: attempt,
+      );
       if (s != null) return s;
     }
 
-    final hasAnyAttempt = (_db
-            .select('SELECT COUNT(*) AS n FROM attempts '
-                'WHERE deleted_at IS NULL;')
-            .first['n'] as int) >
+    final hasAnyAttempt =
+        (_db
+                .select(
+                  'SELECT COUNT(*) AS n FROM attempts '
+                  'WHERE deleted_at IS NULL;',
+                )
+                .first['n']
+            as int) >
         0;
 
     // Build an ordered candidate list of (rungId, reason).
@@ -177,12 +192,14 @@ class LocalProgressRepository implements ProgressRepository {
     // Fallback: the easiest uncleared rung anywhere (fresh start).
     final anyNext = _easiestUnclearedRungAnywhere();
     if (anyNext != null) {
-      candidates.add(MapEntry(
-        anyNext,
-        hasAnyAttempt
-            ? TodayReason.nextInActiveTrack
-            : TodayReason.freshStart,
-      ));
+      candidates.add(
+        MapEntry(
+          anyNext,
+          hasAnyAttempt
+              ? TodayReason.nextInActiveTrack
+              : TodayReason.freshStart,
+        ),
+      );
     }
 
     if (candidates.isEmpty) return null;
@@ -246,14 +263,17 @@ class LocalProgressRepository implements ProgressRepository {
     return rows.isEmpty ? null : rows.first['id'] as String;
   }
 
-  TodaySuggestion? _suggestion(String rungId, TodayReason reason,
-      {Attempt? attempt}) {
-    final rungRows =
-        _db.select('SELECT * FROM rungs WHERE id = ?;', [rungId]);
+  TodaySuggestion? _suggestion(
+    String rungId,
+    TodayReason reason, {
+    Attempt? attempt,
+  }) {
+    final rungRows = _db.select('SELECT * FROM rungs WHERE id = ?;', [rungId]);
     if (rungRows.isEmpty) return null;
     final rung = rungFromRow(rungRows.first);
-    final trackRows =
-        _db.select('SELECT * FROM tracks WHERE id = ?;', [rung.trackId]);
+    final trackRows = _db.select('SELECT * FROM tracks WHERE id = ?;', [
+      rung.trackId,
+    ]);
     if (trackRows.isEmpty) return null;
     return TodaySuggestion(
       rung: rung,
@@ -329,7 +349,8 @@ class LocalProgressRepository implements ProgressRepository {
   String _weekKey(DateTime d) {
     // Simple ISO-ish week bucket: year + ordinal week. Good enough for resets.
     final firstDay = DateTime(d.year, 1, 1);
-    final week = ((d.difference(firstDay).inDays + firstDay.weekday) / 7).ceil();
+    final week = ((d.difference(firstDay).inDays + firstDay.weekday) / 7)
+        .ceil();
     return '${d.year}-W$week';
   }
 }

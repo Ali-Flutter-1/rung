@@ -18,7 +18,8 @@ class InsightsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
-    final attempts = ref.watch(recentAttemptsProvider).asData?.value ?? const [];
+    final attempts =
+        ref.watch(recentAttemptsProvider).asData?.value ?? const [];
     final streak = ref.watch(streakProvider).asData?.value ?? 0;
     final cleared = ref.watch(totalClearedProvider).asData?.value ?? 0;
     final best = ref.watch(bestStreakProvider).asData?.value ?? 0;

@@ -26,7 +26,8 @@ Future<void> showRateAppSheet(BuildContext context, WidgetRef ref) {
     builder: (_) => Padding(
       // Lift above the keyboard when the comment field is focused.
       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: const _RateAppSheet(),
     ),
   );
@@ -51,11 +52,11 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
   }
 
   String _promptText(AppLocalizations l) => switch (_rating) {
-        0 => l.ratePromptNone,
-        1 || 2 => l.ratePromptLow,
-        3 => l.ratePromptMid,
-        _ => l.ratePromptHigh,
-      };
+    0 => l.ratePromptNone,
+    1 || 2 => l.ratePromptLow,
+    3 => l.ratePromptMid,
+    _ => l.ratePromptHigh,
+  };
 
   Future<void> _submit() async {
     if (_rating == 0 || _busy) return;
@@ -72,7 +73,9 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
     // Save the comment/rating privately (best-effort; never blocks the user).
     if (ref.read(cloudEnabledProvider)) {
       try {
-        await ref.read(cloudRepositoryProvider).submitFeedback(
+        await ref
+            .read(cloudRepositoryProvider)
+            .submitFeedback(
               rating: rating,
               comment: comment.isEmpty ? null : comment,
               platform: defaultTargetPlatform.name,
@@ -95,10 +98,12 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
 
     if (!mounted) return;
     nav.pop();
-    messenger.showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      content: Text(rating >= 4 ? l.rateThanksHigh : l.rateThanksLow),
-    ));
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(rating >= 4 ? l.rateThanksHigh : l.rateThanksLow),
+      ),
+    );
   }
 
   @override
@@ -109,17 +114,26 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-            Insets.lg, Insets.xs, Insets.lg, Insets.lg),
+          Insets.lg,
+          Insets.xs,
+          Insets.lg,
+          Insets.lg,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l.rateTitle,
-                textAlign: TextAlign.center, style: t.headlineSmall),
+            Text(
+              l.rateTitle,
+              textAlign: TextAlign.center,
+              style: t.headlineSmall,
+            ),
             const SizedBox(height: Insets.xs),
-            Text(_promptText(l),
-                textAlign: TextAlign.center,
-                style: t.bodyMedium),
+            Text(
+              _promptText(l),
+              textAlign: TextAlign.center,
+              style: t.bodyMedium,
+            ),
             const SizedBox(height: Insets.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -149,6 +163,7 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
             const SizedBox(height: Insets.lg),
             TextField(
               controller: _comment,
+              onTapOutside: (_) {},
               minLines: 2,
               maxLines: 4,
               maxLength: 500,
@@ -166,7 +181,10 @@ class _RateAppSheetState extends ConsumerState<_RateAppSheet> {
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : Text(l.rateSend),
             ),
           ],

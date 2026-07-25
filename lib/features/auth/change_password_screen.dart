@@ -81,17 +81,21 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         await ref.read(authRepositoryProvider).signOut();
         passwordRecoveryActive.value = false;
         if (!mounted) return;
-        messenger.showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(l.profileChangePwSaved),
-        ));
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(l.profileChangePwSaved),
+          ),
+        );
         // The router redirect (refresh fires on signOut + the flag change)
         // moves us to the sign-in screen; nothing else to do.
       } else {
-        messenger.showSnackBar(SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(l.profileChangePwSaved),
-        ));
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(l.profileChangePwSaved),
+          ),
+        );
         // go (not pop): updatePassword fires a userUpdated auth event that trips
         // the router refresh; go_router restores imperatively-pushed routes on
         // refresh, so replacing the location avoids the screen reappearing.
@@ -103,8 +107,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() =>
-            _error = isOfflineError(e) ? l.errorOffline : l.authGenericError);
+        setState(
+          () =>
+              _error = isOfflineError(e) ? l.errorOffline : l.authGenericError,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -121,10 +127,16 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
-                Insets.lg, Insets.lg, Insets.lg, Insets.xl),
+              Insets.lg,
+              Insets.lg,
+              Insets.lg,
+              Insets.xl,
+            ),
             children: [
-              Text(l.profileChangePwSub,
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                l.profileChangePwSub,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
               const SizedBox(height: Insets.lg),
               TextFormField(
                 controller: _password,
@@ -137,9 +149,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   prefixIcon: const Icon(Icons.lock_outline_rounded),
                   helperText: l.authMin6,
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined),
+                    icon: Icon(
+                      _obscure
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
                     tooltip: _obscure ? l.authShowPassword : l.authHidePassword,
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
@@ -162,9 +176,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: Insets.md),
-                Text(_error!,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.error)),
+                Text(
+                  _error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
               ],
               const SizedBox(height: Insets.lg),
               FilledButton(
@@ -177,7 +192,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white))
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : Text(l.authUpdatePasswordCta),
               ),
             ],

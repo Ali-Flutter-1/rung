@@ -70,21 +70,23 @@ class LocalTrackRepository implements TrackRepository {
   }
 
   @override
-  Future<int> customRungCount() async => _db
-      .select(
-        'SELECT COUNT(*) AS n FROM rungs '
-        'WHERE is_custom = 1 AND deleted_at IS NULL;',
-      )
-      .first['n'] as int;
+  Future<int> customRungCount() async =>
+      _db
+              .select(
+                'SELECT COUNT(*) AS n FROM rungs '
+                'WHERE is_custom = 1 AND deleted_at IS NULL;',
+              )
+              .first['n']
+          as int;
 
   @override
-  Future<int> customRungCountSince(int sinceMs) async => _db
-      .select(
-        'SELECT COUNT(*) AS n FROM rungs '
-        'WHERE is_custom = 1 AND deleted_at IS NULL AND updated_at >= ?;',
-        [sinceMs],
-      )
-      .first['n'] as int;
+  Future<int> customRungCountSince(int sinceMs) async =>
+      _db.select(
+            'SELECT COUNT(*) AS n FROM rungs '
+            'WHERE is_custom = 1 AND deleted_at IS NULL AND updated_at >= ?;',
+            [sinceMs],
+          ).first['n']
+          as int;
 
   @override
   Future<Rung> addCustomRung({
@@ -96,20 +98,29 @@ class LocalTrackRepository implements TrackRepository {
   }) async {
     final id = _uuid.v4();
     final now = DateTime.now().millisecondsSinceEpoch;
-    final nextOrder = _db
-        .select(
-          'SELECT COALESCE(MAX(sort_order), 0) + 1 AS n FROM rungs '
-          'WHERE track_id = ?;',
-          [trackId],
-        )
-        .first['n'] as int;
+    final nextOrder =
+        _db.select(
+              'SELECT COALESCE(MAX(sort_order), 0) + 1 AS n FROM rungs '
+              'WHERE track_id = ?;',
+              [trackId],
+            ).first['n']
+            as int;
     _db.transaction(() {
       _db.run(
         'INSERT INTO rungs (id, track_id, title, what_to_do, why_it_helps, '
         'difficulty, sort_order, is_custom, owner_id, est_minutes, updated_at) '
         'VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, 2, ?);',
-        [id, trackId, title, whatToDo, whyItHelps, difficulty, nextOrder,
-            'local', now],
+        [
+          id,
+          trackId,
+          title,
+          whatToDo,
+          whyItHelps,
+          difficulty,
+          nextOrder,
+          'local',
+          now,
+        ],
       );
     });
     return (await getRung(id))!;

@@ -33,8 +33,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  void _next() => _controller.nextPage(
-      duration: Motion.base, curve: Motion.ease);
+  void _next() =>
+      _controller.nextPage(duration: Motion.base, curve: Motion.ease);
 
   Future<void> _finish(List<Track> tracks) async {
     final slug = _trackSlug ?? (tracks.isNotEmpty ? tracks.first.slug : null);
@@ -43,8 +43,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await settings.setToneMode(_tone);
     await settings.setStartingTrackSlug(slug);
     await settings.setCompletedOnboarding(true);
-    ref.read(analyticsProvider).capture(Ev.onboardingComplete,
-        {'tone': _tone.name, 'picked_track': slug != null});
+    ref.read(analyticsProvider).capture(Ev.onboardingComplete, {
+      'tone': _tone.name,
+      'picked_track': slug != null,
+    });
     // Router redirect takes us to /dashboard once onboarding completes.
   }
 
@@ -126,7 +128,9 @@ class _Progress extends StatelessWidget {
             width: i == page ? 22 : 8,
             height: 8,
             decoration: BoxDecoration(
-              color: i <= page ? AppColors.primary : AppColors.border,
+              color: i <= page
+                  ? AppColors.primary
+                  : Theme.of(context).colorScheme.outline,
               borderRadius: BorderRadius.circular(99),
             ),
           ),
@@ -225,15 +229,9 @@ class _SafetyPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l.onbSafetyBody1,
-            style: t.bodyLarge,
-          ),
+          Text(l.onbSafetyBody1, style: t.bodyLarge),
           const SizedBox(height: Insets.lg),
-          Text(
-            l.onbSafetyBody2,
-            style: t.bodyLarge,
-          ),
+          Text(l.onbSafetyBody2, style: t.bodyLarge),
           const SizedBox(height: Insets.lg),
           Container(
             padding: const EdgeInsets.all(Insets.md),
@@ -274,16 +272,10 @@ class _FearPage extends StatelessWidget {
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               children: [
-                Text(
-                  l.onbFearBody,
-                  style: t.bodyMedium,
-                ),
+                Text(l.onbFearBody, style: t.bodyMedium),
                 const SizedBox(height: Insets.md),
                 for (final track in tracks) ...[
-                  _FearTile(
-                    track: track,
-                    onTap: () => onSelect(track.slug),
-                  ),
+                  _FearTile(track: track, onTap: () => onSelect(track.slug)),
                   const SizedBox(height: Insets.sm),
                 ],
                 const SizedBox(height: Insets.sm),
@@ -299,16 +291,23 @@ class _FearPage extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.explore_outlined,
-                            color: AppColors.primaryDeep),
+                        const Icon(
+                          Icons.explore_outlined,
+                          color: AppColors.primaryDeep,
+                        ),
                         const SizedBox(width: Insets.md),
                         Expanded(
-                          child: Text(l.onbExploreOwn,
-                              style: t.titleMedium
-                                  ?.copyWith(color: AppColors.primaryDeep)),
+                          child: Text(
+                            l.onbExploreOwn,
+                            style: t.titleMedium?.copyWith(
+                              color: AppColors.primaryDeep,
+                            ),
+                          ),
                         ),
-                        const Icon(Icons.chevron_right_rounded,
-                            color: AppColors.primaryDeep),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppColors.primaryDeep,
+                        ),
                       ],
                     ),
                   ),
@@ -334,7 +333,7 @@ class _FearTile extends StatelessWidget {
         padding: const EdgeInsets.all(Insets.md),
         decoration: BoxDecoration(
           borderRadius: Radii.card,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           children: [
@@ -376,8 +375,11 @@ class _TonePage extends StatelessWidget {
             onTap: () => onSelect(ToneMode.situational),
           ),
           const Spacer(),
-          Text(l.onbToneFootnote,
-              style: t.bodyMedium, textAlign: TextAlign.center),
+          Text(
+            l.onbToneFootnote,
+            style: t.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -406,7 +408,7 @@ class _ToneOption extends StatelessWidget {
         padding: const EdgeInsets.all(Insets.md),
         decoration: BoxDecoration(
           borderRadius: Radii.card,
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,10 +450,15 @@ class _StartingPointPage extends ConsumerWidget {
       if (tr.slug == trackSlug) track = tr;
     }
     track ??= tracks.isNotEmpty ? tracks.first : null;
-    final ladder =
-        track == null ? null : ref.watch(ladderProvider(track.id)).asData?.value;
-    final firstRung = (ladder != null && ladder.isNotEmpty) ? ladder.first : null;
-    final accent = track == null ? AppColors.primary : TrackVisuals.color(track);
+    final ladder = track == null
+        ? null
+        : ref.watch(ladderProvider(track.id)).asData?.value;
+    final firstRung = (ladder != null && ladder.isNotEmpty)
+        ? ladder.first
+        : null;
+    final accent = track == null
+        ? AppColors.primary
+        : TrackVisuals.color(track);
     final l = AppLocalizations.of(context);
 
     return _Scaffold(
@@ -477,13 +484,15 @@ class _StartingPointPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      trackSlug == null
-                          ? l.onbGentleFirstStep
-                          : l.onbGoodPlaceToStart,
-                      style: t.bodyMedium?.copyWith(
-                          color: accent,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.w700)),
+                    trackSlug == null
+                        ? l.onbGentleFirstStep
+                        : l.onbGoodPlaceToStart,
+                    style: t.bodyMedium?.copyWith(
+                      color: accent,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: Insets.sm),
                   Text(firstRung.title, style: t.titleLarge),
                   const SizedBox(height: 4),
@@ -515,9 +524,13 @@ class _Step extends StatelessWidget {
           CircleAvatar(
             radius: 14,
             backgroundColor: AppColors.primarySoft,
-            child: Text(n,
-                style: const TextStyle(
-                    color: AppColors.primaryDeep, fontWeight: FontWeight.w700)),
+            child: Text(
+              n,
+              style: const TextStyle(
+                color: AppColors.primaryDeep,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
           const SizedBox(width: Insets.md),
           Expanded(child: Text(text, style: t.bodyLarge)),

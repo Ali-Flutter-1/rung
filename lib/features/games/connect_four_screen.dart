@@ -26,7 +26,10 @@ class ConnectFourScreen extends StatefulWidget {
 
 class _ConnectFourState extends State<ConnectFourScreen> {
   _Mode _mode = _Mode.ai;
-  List<int> _board = List.filled(_cols * _rows, 0); // 0 empty · 1 red · 2 yellow
+  List<int> _board = List.filled(
+    _cols * _rows,
+    0,
+  ); // 0 empty · 1 red · 2 yellow
   int _turn = 1; // 1 = red (P1/you), 2 = yellow (P2/phone)
   int? _winner; // null · 0 draw · 1 · 2
   Set<int> _winCells = {};
@@ -123,7 +126,11 @@ class _ConnectFourState extends State<ConnectFourScreen> {
       final cells = <int>{cell};
       for (final sign in [1, -1]) {
         var r = r0 + d[0] * sign, c = c0 + d[1] * sign;
-        while (r >= 0 && r < _rows && c >= 0 && c < _cols && b[_idx(r, c)] == p) {
+        while (r >= 0 &&
+            r < _rows &&
+            c >= 0 &&
+            c < _cols &&
+            b[_idx(r, c)] == p) {
           cells.add(_idx(r, c));
           r += d[0] * sign;
           c += d[1] * sign;
@@ -199,102 +206,121 @@ class _ConnectFourState extends State<ConnectFourScreen> {
           ]),
         ],
       ),
-      body: _wrapConfetti(SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Insets.lg),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  _ModeChip(
-                    label: l.gamePlayPhone,
-                    icon: Icons.smartphone_rounded,
-                    selected: _mode == _Mode.ai,
-                    onTap: () => _setMode(_Mode.ai),
-                  ),
-                  const SizedBox(width: Insets.sm),
-                  _ModeChip(
-                    label: l.game2Players,
-                    icon: Icons.people_alt_rounded,
-                    selected: _mode == _Mode.pass,
-                    onTap: () => _setMode(_Mode.pass),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Insets.md),
-              Text(_statusText(l), style: t.titleMedium),
-              const SizedBox(height: Insets.md),
-              Expanded(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: _cols / _rows,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
-                        borderRadius: Radii.lgAll,
-                      ),
-                      child: Row(
-                        children: [
-                          for (var c = 0; c < _cols; c++)
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => _tapCol(c),
-                                behavior: HitTestBehavior.opaque,
-                                child: Column(
-                                  children: [
-                                    for (var r = 0; r < _rows; r++)
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(3),
-                                          child: _Slot(
-                                            value: _board[_idx(r, c)],
-                                            win: _winCells.contains(_idx(r, c)),
+      body: _wrapConfetti(
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Insets.lg),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    _ModeChip(
+                      label: l.gamePlayPhone,
+                      icon: Icons.smartphone_rounded,
+                      selected: _mode == _Mode.ai,
+                      onTap: () => _setMode(_Mode.ai),
+                    ),
+                    const SizedBox(width: Insets.sm),
+                    _ModeChip(
+                      label: l.game2Players,
+                      icon: Icons.people_alt_rounded,
+                      selected: _mode == _Mode.pass,
+                      onTap: () => _setMode(_Mode.pass),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Insets.md),
+                Text(_statusText(l), style: t.titleMedium),
+                const SizedBox(height: Insets.md),
+                Expanded(
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: _cols / _rows,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.12),
+                          borderRadius: Radii.lgAll,
+                        ),
+                        child: Row(
+                          children: [
+                            for (var c = 0; c < _cols; c++)
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => _tapCol(c),
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Column(
+                                    children: [
+                                      for (var r = 0; r < _rows; r++)
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(3),
+                                            child: _Slot(
+                                              value: _board[_idx(r, c)],
+                                              win: _winCells.contains(
+                                                _idx(r, c),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: Insets.md),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _Score(label: p1Label, value: _p1, color: const Color(0xFFE0574F)),
-                  _Score(label: l.gameDraws, value: _draws, color: AppColors.inkMuted),
-                  _Score(label: p2Label, value: _p2, color: const Color(0xFFEBB13E)),
-                ],
-              ),
-              const SizedBox(height: Insets.md),
-              GestureDetector(
-                onTap: _reset,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: Radii.pill,
-                  ),
-                  child: Text(l.gameNewGame,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15)),
+                const SizedBox(height: Insets.md),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _Score(
+                      label: p1Label,
+                      value: _p1,
+                      color: const Color(0xFFE0574F),
+                    ),
+                    _Score(
+                      label: l.gameDraws,
+                      value: _draws,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    _Score(
+                      label: p2Label,
+                      value: _p2,
+                      color: const Color(0xFFEBB13E),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: Insets.md),
+                GestureDetector(
+                  onTap: _reset,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: Radii.pill,
+                    ),
+                    child: Text(
+                      l.gameNewGame,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -309,22 +335,26 @@ class _Slot extends StatelessWidget {
     final color = value == 1
         ? const Color(0xFFE0574F)
         : value == 2
-            ? const Color(0xFFEBB13E)
-            : Theme.of(context).colorScheme.surface;
+        ? const Color(0xFFEBB13E)
+        : Theme.of(context).colorScheme.surface;
     Widget slot = AnimatedContainer(
       duration: Motion.fast,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
         border: Border.all(
-          color: win ? AppColors.primaryDeep : Colors.black.withValues(alpha: 0.05),
+          color: win
+              ? AppColors.primaryDeep
+              : Colors.black.withValues(alpha: 0.05),
           width: win ? 3 : 1,
         ),
       ),
     );
     // Drop-in pop when a token lands.
     if (value != 0) {
-      slot = slot.animate(key: ValueKey(value)).scale(
+      slot = slot
+          .animate(key: ValueKey(value))
+          .scale(
             begin: const Offset(0.4, 0.4),
             end: const Offset(1, 1),
             duration: 240.ms,
@@ -335,7 +365,12 @@ class _Slot extends StatelessWidget {
     if (win) {
       slot = slot
           .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scaleXY(begin: 1, end: 1.08, duration: 700.ms, curve: Curves.easeInOut);
+          .scaleXY(
+            begin: 1,
+            end: 1.08,
+            duration: 700.ms,
+            curve: Curves.easeInOut,
+          );
     }
     return slot;
   }
@@ -368,26 +403,35 @@ class _ModeChip extends StatelessWidget {
                 : Theme.of(context).colorScheme.surface,
             borderRadius: Radii.pill,
             border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
+              color: selected
+                  ? AppColors.primary
+                  : Theme.of(context).colorScheme.outline,
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon,
-                  size: 16,
-                  color: selected ? AppColors.primaryDeep : AppColors.inkMuted),
+              Icon(
+                icon,
+                size: 16,
+                color: selected
+                    ? AppColors.primaryDeep
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
               Flexible(
-                child: Text(label,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color:
-                          selected ? AppColors.primaryDeep : AppColors.inkMuted,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    )),
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: selected
+                        ? AppColors.primaryDeep
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
               ),
             ],
           ),
@@ -408,9 +452,13 @@ class _Score extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Column(
       children: [
-        Text('$value',
-            style: t.headlineSmall
-                ?.copyWith(color: color, fontWeight: FontWeight.w800)),
+        Text(
+          '$value',
+          style: t.headlineSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         const SizedBox(height: 2),
         Text(label, style: t.bodyMedium),
       ],

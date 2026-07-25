@@ -23,8 +23,9 @@ Future<bool> initSupabase() async {
       // itself, so it works regardless of where the link is opened and reliably
       // fires passwordRecovery. Normal email/password sign-in doesn't use a
       // redirect, so it's unaffected either way.
-      authOptions:
-          const FlutterAuthClientOptions(authFlowType: AuthFlowType.implicit),
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.implicit,
+      ),
       // Bound every REST call (auth/db/functions) so a slow network fails fast
       // instead of hanging the UI. Realtime WebSockets are unaffected.
       httpClient: TimeoutHttpClient(http.Client()),

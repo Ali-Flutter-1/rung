@@ -31,30 +31,40 @@ class RungDetailScreen extends ConsumerWidget {
           if (rung == null) {
             return Center(child: Text(l.detailNotExist));
           }
-          final track = ref.watch(trackByIdProvider(rung.trackId)).asData?.value;
-          final accent =
-              track == null ? AppColors.primary : TrackVisuals.color(track);
-          final inProgress =
-              ref.watch(inProgressAttemptProvider).asData?.value;
-          final resumable =
-              inProgress != null && inProgress.rungId == rungId;
-          final history = (ref.watch(recentAttemptsProvider).asData?.value ??
-                  const <Attempt>[])
-              .where((a) => a.rungId == rungId && !a.isInProgress)
-              .toList();
+          final track = ref
+              .watch(trackByIdProvider(rung.trackId))
+              .asData
+              ?.value;
+          final accent = track == null
+              ? AppColors.primary
+              : TrackVisuals.color(track);
+          final inProgress = ref.watch(inProgressAttemptProvider).asData?.value;
+          final resumable = inProgress != null && inProgress.rungId == rungId;
+          final history =
+              (ref.watch(recentAttemptsProvider).asData?.value ??
+                      const <Attempt>[])
+                  .where((a) => a.rungId == rungId && !a.isInProgress)
+                  .toList();
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(
-                Insets.lg, 0, Insets.lg, Insets.xxl),
+              Insets.lg,
+              0,
+              Insets.lg,
+              Insets.xxl,
+            ),
             children: [
               if (track != null) ...[
                 RungCover(track: track, difficulty: rung.difficulty),
                 const SizedBox(height: Insets.lg),
-                Text(track.description.toUpperCase(),
-                    style: t.bodyMedium?.copyWith(
-                        color: accent,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  track.description.toUpperCase(),
+                  style: t.bodyMedium?.copyWith(
+                    color: accent,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
               const SizedBox(height: Insets.sm),
               Text(rung.title, style: t.displaySmall),
@@ -84,16 +94,16 @@ class RungDetailScreen extends ConsumerWidget {
                 onPressed: () => resumable
                     ? context.push(Routes.reflect(inProgress.id))
                     : context.push(Routes.predict(rung.id)),
-                icon: Icon(resumable
-                    ? Icons.play_circle_outline_rounded
-                    : Icons.arrow_forward_rounded),
+                icon: Icon(
+                  resumable
+                      ? Icons.play_circle_outline_rounded
+                      : Icons.arrow_forward_rounded,
+                ),
                 label: Text(resumable ? l.todayResumeCta : l.detailDoThis),
               ),
               if (history.isNotEmpty) ...[
                 const SizedBox(height: Insets.sm),
-                Center(
-                  child: Text(l.detailReattempt, style: t.bodyMedium),
-                ),
+                Center(child: Text(l.detailReattempt, style: t.bodyMedium)),
               ],
             ],
           );
