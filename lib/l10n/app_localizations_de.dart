@@ -578,6 +578,48 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profilePremium => 'Premium';
 
   @override
+  String get coachTitle => 'Dein Coach';
+
+  @override
+  String get coachRehearse => 'Üben';
+
+  @override
+  String get coachDebrief => 'Nachbesprechen';
+
+  @override
+  String get coachIntroRehearse =>
+      'Hi — ich bin bei dir. Steht etwas an, das dir im Kopf herumgeht? Erzähl es mir und wir machen dich bereit, Schritt für Schritt.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Hey — du hast heute etwas getan, und das zählt. Magst du mir erzählen, wie es lief? Hier wird nicht geurteilt.';
+
+  @override
+  String get coachComposerHint => 'Sag, was dir auf dem Herzen liegt…';
+
+  @override
+  String get coachPremiumOnly => 'Dein Coach gehört zu Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'Das war viel gute Arbeit heute — machen wir morgen weiter.';
+
+  @override
+  String get coachUnconfigured =>
+      'Der Coach ist noch nicht aktiviert. Versuch es bald wieder.';
+
+  @override
+  String get coachError =>
+      'Ich konnte den Coach gerade nicht erreichen. Versuch es noch einmal.';
+
+  @override
+  String get dashCoachTitle => 'Sprich mit deinem Coach';
+
+  @override
+  String get dashCoachSub =>
+      'Übe etwas Bevorstehendes oder sprich darüber, wie es lief.';
+
+  @override
   String get profileUpgrade => 'Upgraden';
 
   @override

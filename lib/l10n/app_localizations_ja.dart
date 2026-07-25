@@ -545,6 +545,44 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profilePremium => 'プレミアム';
 
   @override
+  String get coachTitle => 'あなたのコーチ';
+
+  @override
+  String get coachRehearse => 'リハーサル';
+
+  @override
+  String get coachDebrief => '振り返り';
+
+  @override
+  String get coachIntroRehearse =>
+      'こんにちは。あなたと一緒にいます。気になっている予定はありますか？教えてください。小さな一歩ずつ、準備していきましょう。';
+
+  @override
+  String get coachIntroDebrief =>
+      'おつかれさま。今日は何かに取り組んだ、それが大切です。どうだったか話してみませんか？ここでは決めつけません。';
+
+  @override
+  String get coachComposerHint => '気になっていることを話してください…';
+
+  @override
+  String get coachPremiumOnly => 'コーチは Premium の機能です。';
+
+  @override
+  String get coachDailyLimit => '今日はよく頑張りました。続きはまた明日にしましょう。';
+
+  @override
+  String get coachUnconfigured => 'コーチはまだ有効になっていません。しばらくしてからお試しください。';
+
+  @override
+  String get coachError => 'いまコーチに接続できませんでした。もう一度お試しください。';
+
+  @override
+  String get dashCoachTitle => 'コーチに相談する';
+
+  @override
+  String get dashCoachSub => 'これからの予定をリハーサルしたり、どうだったかを話したりできます。';
+
+  @override
   String get profileUpgrade => 'アップグレード';
 
   @override

@@ -572,6 +572,48 @@ class AppLocalizationsDa extends AppLocalizations {
   String get profilePremium => 'Premium';
 
   @override
+  String get coachTitle => 'Din coach';
+
+  @override
+  String get coachRehearse => 'Øve';
+
+  @override
+  String get coachDebrief => 'Opsummere';
+
+  @override
+  String get coachIntroRehearse =>
+      'Hej — jeg er her med dig. Er der noget på vej, som fylder hos dig? Fortæl mig om det, så gør vi dig klar, ét lille skridt ad gangen.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Hej — du gjorde noget i dag, og det betyder noget. Vil du fortælle mig, hvordan det gik? Her dømmer ingen.';
+
+  @override
+  String get coachComposerHint => 'Sig, hvad du tænker på…';
+
+  @override
+  String get coachPremiumOnly => 'Din coach er en del af Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'Det var meget godt arbejde i dag — vi tager fat igen i morgen.';
+
+  @override
+  String get coachUnconfigured =>
+      'Coachen er ikke slået til endnu. Prøv igen snart.';
+
+  @override
+  String get coachError =>
+      'Jeg kunne ikke få fat i coachen lige nu. Prøv igen.';
+
+  @override
+  String get dashCoachTitle => 'Tal med din coach';
+
+  @override
+  String get dashCoachSub =>
+      'Øv på noget, der er på vej, eller tal om, hvordan det gik.';
+
+  @override
   String get profileUpgrade => 'Opgrader';
 
   @override

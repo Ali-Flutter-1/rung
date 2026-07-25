@@ -547,6 +547,44 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profilePremium => '프리미엄';
 
   @override
+  String get coachTitle => '당신의 코치';
+
+  @override
+  String get coachRehearse => '리허설';
+
+  @override
+  String get coachDebrief => '돌아보기';
+
+  @override
+  String get coachIntroRehearse =>
+      '안녕하세요, 함께 있어요. 마음에 걸리는 다가오는 일이 있나요? 이야기해 주면 작은 한 걸음씩 준비해 볼게요.';
+
+  @override
+  String get coachIntroDebrief =>
+      '오늘 뭔가를 해냈고, 그게 중요해요. 어땠는지 이야기해 볼래요? 여기선 아무도 판단하지 않아요.';
+
+  @override
+  String get coachComposerHint => '마음에 있는 걸 말해 보세요…';
+
+  @override
+  String get coachPremiumOnly => '코치는 Premium 기능이에요.';
+
+  @override
+  String get coachDailyLimit => '오늘 정말 잘했어요 — 내일 다시 이어가요.';
+
+  @override
+  String get coachUnconfigured => '코치가 아직 켜지지 않았어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get coachError => '지금 코치에 연결하지 못했어요. 다시 시도해 주세요.';
+
+  @override
+  String get dashCoachTitle => '코치와 이야기하기';
+
+  @override
+  String get dashCoachSub => '다가오는 일을 리허설하거나, 어땠는지 이야기해 보세요.';
+
+  @override
   String get profileUpgrade => '업그레이드';
 
   @override

@@ -570,6 +570,47 @@ class AppLocalizationsId extends AppLocalizations {
   String get profilePremium => 'Premium';
 
   @override
+  String get coachTitle => 'Coach-mu';
+
+  @override
+  String get coachRehearse => 'Latihan';
+
+  @override
+  String get coachDebrief => 'Ulas';
+
+  @override
+  String get coachIntroRehearse =>
+      'Hai — aku di sini bersamamu. Ada sesuatu yang akan datang dan mengganggu pikiranmu? Ceritakan, dan kita akan siapkan kamu, satu langkah kecil sekaligus.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Hei — hari ini kamu melakukan sesuatu, dan itu berarti. Mau cerita bagaimana jadinya? Di sini tidak ada penghakiman.';
+
+  @override
+  String get coachComposerHint => 'Katakan apa yang ada di pikiranmu…';
+
+  @override
+  String get coachPremiumOnly => 'Coach-mu adalah bagian dari Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'Sudah banyak kerja bagus hari ini — lanjutkan lagi besok.';
+
+  @override
+  String get coachUnconfigured => 'Coach belum diaktifkan. Coba lagi nanti.';
+
+  @override
+  String get coachError =>
+      'Aku tidak bisa menghubungi coach sekarang. Coba lagi.';
+
+  @override
+  String get dashCoachTitle => 'Bicara dengan coach-mu';
+
+  @override
+  String get dashCoachSub =>
+      'Latih sesuatu yang akan datang, atau bahas bagaimana jadinya.';
+
+  @override
   String get profileUpgrade => 'Tingkatkan';
 
   @override

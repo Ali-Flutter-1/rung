@@ -572,6 +572,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profilePremium => 'Premium';
 
   @override
+  String get coachTitle => 'Seu coach';
+
+  @override
+  String get coachRehearse => 'Ensaiar';
+
+  @override
+  String get coachDebrief => 'Refletir';
+
+  @override
+  String get coachIntroRehearse =>
+      'Oi — estou aqui com você. Tem algo chegando que está na sua cabeça? Me conte e vamos te preparar, um passo de cada vez.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Ei — você fez algo hoje, e isso importa. Quer me contar como foi? Aqui não há julgamento.';
+
+  @override
+  String get coachComposerHint => 'Diga o que está na sua cabeça…';
+
+  @override
+  String get coachPremiumOnly => 'Seu coach faz parte do Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'Foi muito trabalho bom hoje — vamos retomar amanhã.';
+
+  @override
+  String get coachUnconfigured =>
+      'O coach ainda não está ativado. Tente de novo em breve.';
+
+  @override
+  String get coachError =>
+      'Não consegui falar com o coach agora. Tente de novo.';
+
+  @override
+  String get dashCoachTitle => 'Fale com seu coach';
+
+  @override
+  String get dashCoachSub =>
+      'Ensaie algo que está chegando, ou converse sobre como foi.';
+
+  @override
   String get profileUpgrade => 'Fazer upgrade';
 
   @override
@@ -2594,6 +2636,48 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get profilePremium => 'Premium';
+
+  @override
+  String get coachTitle => 'O teu coach';
+
+  @override
+  String get coachRehearse => 'Ensaiar';
+
+  @override
+  String get coachDebrief => 'Refletir';
+
+  @override
+  String get coachIntroRehearse =>
+      'Olá — estou aqui contigo. Há algo a aproximar-se que te preocupa? Conta-me e vamos preparar-te, um pequeno passo de cada vez.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Ei — hoje fizeste algo, e isso importa. Queres contar-me como correu? Aqui não há julgamentos.';
+
+  @override
+  String get coachComposerHint => 'Diz o que te vai na cabeça…';
+
+  @override
+  String get coachPremiumOnly => 'O teu coach faz parte do Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'Foi muito bom trabalho hoje — retomamos amanhã.';
+
+  @override
+  String get coachUnconfigured =>
+      'O coach ainda não está ativado. Tenta novamente em breve.';
+
+  @override
+  String get coachError =>
+      'Não consegui contactar o coach agora. Tenta novamente.';
+
+  @override
+  String get dashCoachTitle => 'Fala com o teu coach';
+
+  @override
+  String get dashCoachSub =>
+      'Ensaia algo que se aproxima, ou fala sobre como correu.';
 
   @override
   String get profileUpgrade => 'Fazer upgrade';

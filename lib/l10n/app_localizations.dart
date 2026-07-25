@@ -1111,6 +1111,78 @@ abstract class AppLocalizations {
   /// **'Premium'**
   String get profilePremium;
 
+  /// No description provided for @coachTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coach'**
+  String get coachTitle;
+
+  /// No description provided for @coachRehearse.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearse'**
+  String get coachRehearse;
+
+  /// No description provided for @coachDebrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Debrief'**
+  String get coachDebrief;
+
+  /// No description provided for @coachIntroRehearse.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi — I\'m here with you. Is there something coming up that\'s on your mind? Tell me about it and we\'ll get you ready, one small step at a time.'**
+  String get coachIntroRehearse;
+
+  /// No description provided for @coachIntroDebrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Hey — you did something today, and that matters. Want to tell me how it went? No judgement here.'**
+  String get coachIntroDebrief;
+
+  /// No description provided for @coachComposerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what\'s on your mind…'**
+  String get coachComposerHint;
+
+  /// No description provided for @coachPremiumOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coach is part of Premium.'**
+  String get coachPremiumOnly;
+
+  /// No description provided for @coachDailyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s a lot of good work today — let\'s pick this up again tomorrow.'**
+  String get coachDailyLimit;
+
+  /// No description provided for @coachUnconfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'The coach isn\'t switched on yet. Try again soon.'**
+  String get coachUnconfigured;
+
+  /// No description provided for @coachError.
+  ///
+  /// In en, this message translates to:
+  /// **'I couldn\'t reach the coach just now. Try again.'**
+  String get coachError;
+
+  /// No description provided for @dashCoachTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to your coach'**
+  String get dashCoachTitle;
+
+  /// No description provided for @dashCoachSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearse something coming up, or talk through how it went.'**
+  String get dashCoachSub;
+
   /// No description provided for @profileUpgrade.
   ///
   /// In en, this message translates to:

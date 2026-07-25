@@ -561,6 +561,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePremium => 'بريميوم';
 
   @override
+  String get coachTitle => 'مدرّبك';
+
+  @override
+  String get coachRehearse => 'تدرّب';
+
+  @override
+  String get coachDebrief => 'استعراض';
+
+  @override
+  String get coachIntroRehearse =>
+      'مرحبًا — أنا هنا معك. هل هناك أمر قادم يشغل بالك؟ أخبرني عنه وسنجهّزك، خطوة صغيرة تلو الأخرى.';
+
+  @override
+  String get coachIntroDebrief =>
+      'مرحبًا — لقد فعلت شيئًا اليوم، وهذا مهم. أتريد أن تخبرني كيف سار الأمر؟ لا حكم هنا.';
+
+  @override
+  String get coachComposerHint => 'قل ما يدور في ذهنك…';
+
+  @override
+  String get coachPremiumOnly => 'مدرّبك جزء من Premium.';
+
+  @override
+  String get coachDailyLimit => 'هذا الكثير من العمل الجيد اليوم — لنكمل غدًا.';
+
+  @override
+  String get coachUnconfigured =>
+      'لم يُفعَّل المدرّب بعد. حاول مرة أخرى قريبًا.';
+
+  @override
+  String get coachError =>
+      'لم أتمكن من الوصول إلى المدرّب الآن. حاول مرة أخرى.';
+
+  @override
+  String get dashCoachTitle => 'تحدّث إلى مدرّبك';
+
+  @override
+  String get dashCoachSub => 'تدرّب على أمر قادم، أو تحدّث عن كيف سار الأمر.';
+
+  @override
   String get profileUpgrade => 'ترقية';
 
   @override

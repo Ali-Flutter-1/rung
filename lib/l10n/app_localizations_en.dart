@@ -568,6 +568,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePremium => 'Premium';
 
   @override
+  String get coachTitle => 'Your coach';
+
+  @override
+  String get coachRehearse => 'Rehearse';
+
+  @override
+  String get coachDebrief => 'Debrief';
+
+  @override
+  String get coachIntroRehearse =>
+      'Hi — I\'m here with you. Is there something coming up that\'s on your mind? Tell me about it and we\'ll get you ready, one small step at a time.';
+
+  @override
+  String get coachIntroDebrief =>
+      'Hey — you did something today, and that matters. Want to tell me how it went? No judgement here.';
+
+  @override
+  String get coachComposerHint => 'Say what\'s on your mind…';
+
+  @override
+  String get coachPremiumOnly => 'Your coach is part of Premium.';
+
+  @override
+  String get coachDailyLimit =>
+      'That\'s a lot of good work today — let\'s pick this up again tomorrow.';
+
+  @override
+  String get coachUnconfigured =>
+      'The coach isn\'t switched on yet. Try again soon.';
+
+  @override
+  String get coachError => 'I couldn\'t reach the coach just now. Try again.';
+
+  @override
+  String get dashCoachTitle => 'Talk to your coach';
+
+  @override
+  String get dashCoachSub =>
+      'Rehearse something coming up, or talk through how it went.';
+
+  @override
   String get profileUpgrade => 'Upgrade';
 
   @override
