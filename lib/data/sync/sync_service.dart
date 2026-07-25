@@ -311,6 +311,15 @@ class SyncService {
           ],
         );
       }
+      // Progress rows merge last-write-wins, but attempts merge as a UNION —
+      // so after a multi-device merge (or a restore) the cached rungs_cleared /
+      // current_rung_id can disagree with the true union of attempts (a newer
+      // device's lower count can win LWW even though the merged attempts clear
+      // more rungs). Recompute both caches from the merged attempts — the
+      // authoritative source — mirroring _recalcProgressForAttempt. Only tracks
+      // with at least one local counting attempt are touched, so a track whose
+      // attempts didn't restore keeps its synced value rather than zeroing.
+      _recomputeProgressCaches();
     });
 
     // Streak-freeze: union the "frozen days" set both ways. Only frozen_days is
@@ -320,6 +329,47 @@ class SyncService {
     // with, and a stale push can't clobber another device's protected days.
     // 'frozen_days' is the app_meta key set by LocalProgressRepository.
     await _syncFrozenDays(cloudFrozen);
+  }
+
+  /// Rebuilds the cached rungs_cleared / current_rung_id for every track that
+  /// has local counting attempts, from the attempts table (the source of
+  /// truth). Same computation as [_recalcProgressForAttempt] in the attempt
+  /// repository. updated_at is left untouched: this is a derived local
+  /// correction, not a user edit, so it must not trigger a re-push loop —
+  /// every device recomputes the same value from the unioned attempts anyway.
+  void _recomputeProgressCaches() {
+    final tracks = _db.select(
+      "SELECT DISTINCT r.track_id AS track_id FROM attempts a "
+      "JOIN rungs r ON r.id = a.rung_id "
+      "WHERE a.outcome IN ('done','partial') AND a.deleted_at IS NULL;",
+    );
+    for (final row in tracks) {
+      final trackId = row['track_id'] as String;
+      final cleared =
+          _db.select(
+                "SELECT COUNT(DISTINCT a.rung_id) AS n FROM attempts a "
+                "JOIN rungs r ON r.id = a.rung_id "
+                "WHERE r.track_id = ? AND a.outcome IN ('done','partial') "
+                "AND a.deleted_at IS NULL;",
+                [trackId],
+              ).first['n']
+              as int;
+      final nextRows = _db.select(
+        "SELECT id FROM rungs WHERE track_id = ? AND deleted_at IS NULL "
+        "AND id NOT IN (SELECT rung_id FROM attempts "
+        "  WHERE outcome IN ('done','partial') AND deleted_at IS NULL) "
+        "ORDER BY sort_order LIMIT 1;",
+        [trackId],
+      );
+      final nextRungId = nextRows.isEmpty
+          ? null
+          : nextRows.first['id'] as String;
+      _db.run(
+        'UPDATE user_track_progress SET rungs_cleared = ?, current_rung_id = ? '
+        'WHERE track_id = ?;',
+        [cleared, nextRungId, trackId],
+      );
+    }
   }
 
   Future<void> _syncFrozenDays(String? cloudBlob) async {
