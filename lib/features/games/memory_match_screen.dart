@@ -1,7 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:rung/core/haptics.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:rung/core/haptics.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
@@ -9,9 +9,14 @@ import '../../l10n/app_localizations.dart';
 import 'game_confetti.dart';
 import 'game_help.dart';
 import 'game_scores.dart';
+import 'game_ui.dart';
 
-/// Memory match — a calm solo game. Flip cards two at a time and find the
-/// pairs. 4×4 grid (8 pairs). Fully local.
+/// Brand teal — the app's primary colour.
+const _accent = [AppColors.primary, AppColors.primaryDeep];
+
+/// Memory match — flip cards two at a time and find the pairs. Each level adds
+/// more pairs (6 → 8 → 10 → 12): clear the board and tap Next for a bigger one.
+/// Fully local. Best = highest level reached.
 class MemoryMatchScreen extends StatefulWidget {
   const MemoryMatchScreen({super.key});
 
@@ -20,21 +25,41 @@ class MemoryMatchScreen extends StatefulWidget {
 }
 
 class _MemoryMatchState extends State<MemoryMatchScreen> {
-  static const _faces = ['🦊', '🦉', '🌿', '🌙', '⭐', '🌸', '🐢', '🐝'];
+  static const _allFaces = [
+    '🦊',
+    '🦉',
+    '🌿',
+    '🌙',
+    '⭐',
+    '🌸',
+    '🐢',
+    '🐝',
+    '🍄',
+    '🌵',
+    '🐙',
+    '🦋',
+    '🐳',
+    '🌻',
+    '🍀',
+    '🐬',
+  ];
 
+  int _level = 1;
   late List<String> _cards;
   final Set<int> _matched = {};
   final List<int> _flipped = [];
   int _moves = 0;
   bool _busy = false;
-  int? _best; // fewest moves
+  int? _best; // highest level reached
   late final ConfettiController _confetti;
+
+  int get _pairs => (4 + _level * 2).clamp(6, 12); // L1=6 … L4+=12 pairs
 
   @override
   void initState() {
     super.initState();
     _confetti = ConfettiController(duration: const Duration(seconds: 2));
-    GameScores.best('memory').then((v) {
+    GameScores.best('memoryLevel').then((v) {
       if (mounted && v != null) setState(() => _best = v);
     });
     _deal();
@@ -50,8 +75,10 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
       Stack(children: [child, confettiLayer(_confetti)]);
 
   void _deal() {
+    final faces = [..._allFaces]..shuffle();
+    final chosen = faces.take(_pairs).toList();
     setState(() {
-      _cards = [..._faces, ..._faces]..shuffle();
+      _cards = [...chosen, ...chosen]..shuffle();
       _matched.clear();
       _flipped.clear();
       _moves = 0;
@@ -77,8 +104,8 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
       if (_won) {
         Haptics.medium();
         _confetti.play();
-        if (_best == null || _moves < _best!) setState(() => _best = _moves);
-        GameScores.record('memory', _moves, lowerIsBetter: true);
+        if (_best == null || _level > _best!) setState(() => _best = _level);
+        GameScores.record('memoryLevel', _level);
       }
     } else {
       setState(() => _busy = true);
@@ -91,9 +118,16 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
     }
   }
 
+  void _next() {
+    setState(() => _level += 1);
+    _deal();
+  }
+
+  // Keep the grid balanced: 4 columns up to 8 pairs, 5 beyond.
+  int get _cols => _cards.length <= 16 ? 4 : 5;
+
   @override
   Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
     final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -112,24 +146,25 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
             padding: const EdgeInsets.all(Insets.lg),
             child: Column(
               children: [
-                Text(
-                  _won ? l.mmAllMatched(_moves) : l.mmFindPairs(_moves),
-                  style: t.titleMedium,
+                GameHeader(
+                  heading: _won
+                      ? l.gameLevelClear(_level)
+                      : l.gameLevelLabel(_level),
+                  sub: _best != null
+                      ? l.gamesBestLevel(_best!)
+                      : l.gameMovesLabel(_moves),
+                  accent: _accent,
                 ),
-                if (_best != null)
-                  Text(
-                    l.mmBest(_best!),
-                    style: t.bodySmall?.copyWith(color: t.bodyMedium?.color),
-                  ),
                 const SizedBox(height: Insets.lg),
                 Expanded(
                   child: Center(
-                    child: AspectRatio(
-                      aspectRatio: 1,
+                    child: GameBoardFrame(
+                      accent: _accent,
                       child: GridView.count(
-                        crossAxisCount: 4,
+                        crossAxisCount: _cols,
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
+                        shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
                           for (var i = 0; i < _cards.length; i++)
@@ -145,26 +180,10 @@ class _MemoryMatchState extends State<MemoryMatchScreen> {
                   ),
                 ),
                 const SizedBox(height: Insets.lg),
-                GestureDetector(
-                  onTap: _deal,
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: Radii.pill,
-                    ),
-                    child: Text(
-                      _won ? l.gamePlayAgain : l.mmShuffle,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
+                GamePillButton(
+                  label: _won ? l.gameNextLevel : l.mmShuffle,
+                  accent: _accent,
+                  onTap: () => _won ? _next() : _deal(),
                 ),
               ],
             ),
@@ -189,38 +208,54 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child:
-          AnimatedContainer(
-                duration: Motion.fast,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: up
-                      ? (matched
-                            ? AppColors.primary.withValues(alpha: 0.16)
-                            : Theme.of(context).colorScheme.surface)
-                      : AppColors.primary,
-                  borderRadius: Radii.card,
-                  border: Border.all(
-                    color: matched
-                        ? AppColors.primary
-                        : Theme.of(context).colorScheme.outline,
-                    width: matched ? 2 : 1,
-                  ),
-                ),
-                child: up
-                    ? Text(face, style: const TextStyle(fontSize: 30))
-                    : const Icon(
-                        Icons.psychology_alt_rounded,
-                        color: Colors.white,
-                        size: 22,
+    return Semantics(
+      button: true,
+      selected: matched,
+      label: up ? face : null,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child:
+              AnimatedContainer(
+                    duration: Motion.fast,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: up
+                          ? (matched
+                                ? AppColors.primary.withValues(alpha: 0.16)
+                                : Theme.of(context).colorScheme.surface)
+                          : AppColors.primaryDeep,
+                      borderRadius: Radii.card,
+                      border: Border.all(
+                        color: matched
+                            ? AppColors.primary
+                            : Theme.of(context).colorScheme.outline,
+                        width: matched ? 2 : 1,
                       ),
-              )
-              // Flip when the face changes; a soft pop when it's matched.
-              .animate(key: ValueKey('$up-$matched'))
-              .flipH(duration: 260.ms, curve: Curves.easeOut),
+                    ),
+                    child: up
+                        ? FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(
+                                face,
+                                style: const TextStyle(fontSize: 30),
+                              ),
+                            ),
+                          )
+                        : const Icon(
+                            Icons.psychology_alt_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                  )
+                  // Flip when the face changes; a soft pop when it's matched.
+                  .animate(key: ValueKey('$up-$matched'))
+                  .flipH(duration: 260.ms, curve: Curves.easeOut),
+        ),
+      ),
     );
   }
 }

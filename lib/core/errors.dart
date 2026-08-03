@@ -31,6 +31,22 @@ bool isOfflineError(Object? error) {
       s.contains('timeout');
 }
 
+/// True when [error] is Supabase reporting that the stored session is no longer
+/// valid — a rotated, expired, or revoked refresh token. Expected on boot when a
+/// persisted session has aged out or was signed out on another device:
+/// supabase_flutter emits a signed-out state and the user simply logs in again,
+/// so the unhandled async throw from its internal refresh timer is safe to
+/// swallow rather than crash. Not treated as "offline" — the network was fine.
+bool isExpiredSessionError(Object? error) {
+  if (error == null) return false;
+  final s = error.toString().toLowerCase();
+  return s.contains('refresh_token_not_found') ||
+      s.contains('invalid refresh token') ||
+      s.contains('refresh token not found') ||
+      s.contains('session_not_found') ||
+      s.contains('jwt expired');
+}
+
 /// A short, human, localized message for [error] — offline gets its own line,
 /// everything else falls back to a generic "something went wrong". Never
 /// exposes a raw exception to the user.

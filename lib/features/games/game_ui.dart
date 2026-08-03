@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+
+/// A high-contrast foreground colour for text/icons drawn on [accent]. Light
+/// accents (amber) get dark ink; dark accents (teal) get white — both clear
+/// WCAG AA. Pair with [accentFill] so the gradient stays dark enough for white.
+Color onAccent(List<Color> accent) =>
+    accent.last.computeLuminance() < 0.22 ? Colors.white : AppColors.ink;
+
+/// The gradient to paint behind [onAccent] text. A dark accent (teal) is
+/// deepened so white passes AA across the whole fill; a light accent (amber)
+/// keeps its bright look, since dark ink already has ample contrast on it.
+List<Color> accentFill(List<Color> accent) {
+  if (accent.last.computeLuminance() >= 0.22) return accent; // amber + dark ink
+  final deep = accent.last;
+  return [deep, Color.alphaBlend(const Color(0x33000000), deep)]; // deepen teal
+}
 
 /// Shared visual furniture for the leveled mini-games. Each game passes its own
 /// two-stop [accent] gradient so the boards feel distinct yet cohesive.
@@ -25,7 +41,7 @@ class GameHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: accent),
+            gradient: LinearGradient(colors: accentFill(accent)),
             borderRadius: Radii.pill,
             boxShadow: [
               BoxShadow(
@@ -38,7 +54,7 @@ class GameHeader extends StatelessWidget {
           child: Text(
             heading,
             style: t.titleMedium?.copyWith(
-              color: Colors.white,
+              color: onAccent(accent),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -46,7 +62,10 @@ class GameHeader extends StatelessWidget {
         const SizedBox(height: 8),
         SizedBox(
           height: 18,
-          child: Text(sub, style: t.bodySmall?.copyWith(color: t.bodyMedium?.color)),
+          child: Text(
+            sub,
+            style: t.bodySmall?.copyWith(color: t.bodyMedium?.color),
+          ),
         ),
       ],
     );
@@ -87,31 +106,37 @@ class GamePillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: double.infinity,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: accent),
-          borderRadius: Radii.pill,
-          boxShadow: [
-            BoxShadow(
-              color: accent.last.withValues(alpha: 0.35),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
+    return Semantics(
+      button: true,
+      label: label,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: accentFill(accent)),
+              borderRadius: Radii.pill,
+              boxShadow: [
+                BoxShadow(
+                  color: accent.last.withValues(alpha: 0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 15.5,
-            letterSpacing: 0.2,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: onAccent(accent),
+                fontWeight: FontWeight.w800,
+                fontSize: 15.5,
+                letterSpacing: 0.2,
+              ),
+            ),
           ),
         ),
       ),
@@ -131,10 +156,7 @@ class GameProgressBar extends StatelessWidget {
       borderRadius: Radii.pill,
       child: Stack(
         children: [
-          Container(
-            height: 8,
-            color: accent.last.withValues(alpha: 0.14),
-          ),
+          Container(height: 8, color: accent.last.withValues(alpha: 0.14)),
           AnimatedFractionallySizedBox(
             duration: Motion.base,
             curve: Motion.ease,

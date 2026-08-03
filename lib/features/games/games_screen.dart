@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import 'connect_four_screen.dart';
@@ -40,7 +39,7 @@ class _GamesScreenState extends State<GamesScreen> {
     final s = await GameScores.best('sequence');
     final g = await GameScores.best('2048');
     final q = await GameScores.best('quickmath');
-    final m = await GameScores.best('memory');
+    final m = await GameScores.best('memoryLevel');
     final ttt = await GameScores.best('tictactoe');
     final c4 = await GameScores.best('connect4');
     final sl = await GameScores.best('slide');
@@ -79,7 +78,6 @@ class _GamesScreenState extends State<GamesScreen> {
       case 'quickmath':
         return l.gamesBest('$v');
       case 'memory':
-        return l.gamesBestMoves(v);
       case 'slide':
       case 'lights':
       case 'order':
@@ -234,77 +232,82 @@ class _GameCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
     final hasBest = best != null && best!.isNotEmpty;
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.of(context).push(MaterialPageRoute(builder: builder));
-        onPlayed?.call();
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.all(Insets.lg),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Radii.lgAll,
-          border: Border.all(color: Theme.of(context).colorScheme.outline),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: colors,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.last.withValues(alpha: 0.30),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+    return Semantics(
+      button: true,
+      label: title,
+      child: GestureDetector(
+        onTap: () async {
+          await Navigator.of(context).push(MaterialPageRoute(builder: builder));
+          onPlayed?.call();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.all(Insets.lg),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: Radii.lgAll,
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: colors,
                   ),
-                ],
-              ),
-              child: Text(emoji, style: const TextStyle(fontSize: 24)),
-            ),
-            const SizedBox(width: Insets.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: t.titleMedium),
-                  const SizedBox(height: 2),
-                  Text(subtitle, style: t.bodyMedium),
-                  if (hasBest) ...[
-                    const SizedBox(height: 6),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.emoji_events_rounded,
-                          size: 13,
-                          color: AppColors.accentDeep,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          best!,
-                          style: t.bodySmall?.copyWith(
-                            color: AppColors.accentDeep,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.last.withValues(alpha: 0.30),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
                     ),
                   ],
-                ],
+                ),
+                child: Text(emoji, style: const TextStyle(fontSize: 24)),
               ),
-            ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.inkFaint),
-          ],
+              const SizedBox(width: Insets.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: t.titleMedium),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: t.bodyMedium),
+                    if (hasBest) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.emoji_events_rounded,
+                            size: 13,
+                            color: cs.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            best!,
+                            style: t.bodySmall?.copyWith(
+                              color: cs.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant),
+            ],
+          ),
         ),
       ),
     );

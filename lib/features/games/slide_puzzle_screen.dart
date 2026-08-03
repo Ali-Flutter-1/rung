@@ -201,46 +201,57 @@ class _Tile extends StatelessWidget {
         ),
       );
     }
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child:
-          Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: _accent,
-                  ),
-                  borderRadius: Radii.card,
-                  boxShadow: [
-                    BoxShadow(
-                      color: _accent.last.withValues(alpha: 0.32),
-                      blurRadius: 7,
-                      offset: const Offset(0, 3),
+    return Semantics(
+      button: true,
+      label: '$value',
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child:
+              Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: accentFill(_accent),
+                      ),
+                      borderRadius: Radii.card,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _accent.last.withValues(alpha: 0.32),
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Text(
-                      '$value',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 26,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(
+                          '$value',
+                          style: TextStyle(
+                            color: onAccent(_accent),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 26,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              )
-              // Pop when the tile at this slot changes — reads as a slide.
-              .animate(key: ValueKey(value))
-              .scaleXY(begin: 0.86, end: 1, duration: 180.ms, curve: Curves.easeOut)
-              .fadeIn(duration: 140.ms),
+                  )
+                  // Pop when the tile at this slot changes — reads as a slide.
+                  .animate(key: ValueKey(value))
+                  .scaleXY(
+                    begin: 0.86,
+                    end: 1,
+                    duration: 180.ms,
+                    curve: Curves.easeOut,
+                  )
+                  .fadeIn(duration: 140.ms),
+        ),
+      ),
     );
   }
 }

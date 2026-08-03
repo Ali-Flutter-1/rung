@@ -38,6 +38,10 @@ Future<void> main() async {
   // to the platform's default handler so real bugs still surface.
   WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
     if (isOfflineError(error)) return true; // handled — do not crash
+    // A persisted session whose refresh token is dead (expired/rotated/signed
+    // out elsewhere) throws from Supabase's internal refresh timer we never
+    // await. It's expected — the user just re-logs in — so don't crash on it.
+    if (isExpiredSessionError(error)) return true;
     return false; // unknown error → default handling
   };
 

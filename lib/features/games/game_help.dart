@@ -83,23 +83,29 @@ Future<void> showGameRules(
                   ),
                 ),
               const SizedBox(height: Insets.xl),
-              GestureDetector(
-                onTap: () => Navigator.of(sheetCtx).pop(),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: Radii.pill,
-                  ),
-                  child: Text(
-                    l.gameGotIt,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
+              Semantics(
+                button: true,
+                label: l.gameGotIt,
+                child: ExcludeSemantics(
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(sheetCtx).pop(),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryDeep,
+                        borderRadius: Radii.pill,
+                      ),
+                      child: Text(
+                        l.gameGotIt,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
                 ),

@@ -192,11 +192,15 @@ class CloudRepository {
   /// Registers this device's FCM token for the signed-in user (upsert by token,
   /// so switching accounts on one device reassigns it).
   Future<void> upsertDeviceToken(String token, String platform) async {
-    final uid = _uid;
-    if (uid == null) return;
+    // Needs a *valid* session, not just a persisted user: on boot a stale
+    // session whose refresh failed still exposes currentUser, but its JWT is
+    // dead — so the insert would trip the device_tokens RLS policy (42501).
+    // Skip until auth is genuinely live; the shell re-runs this on sign-in.
+    final session = supabase.auth.currentSession;
+    if (session == null || session.isExpired) return;
     await supabase.from('device_tokens').upsert({
       'token': token,
-      'user_id': uid,
+      'user_id': session.user.id,
       'platform': platform,
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     }, onConflict: 'token');

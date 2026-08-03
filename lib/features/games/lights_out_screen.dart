@@ -175,43 +175,49 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: Motion.fast,
-        decoration: BoxDecoration(
-          gradient: on
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: _accent,
-                )
-              : null,
-          color: on ? null : Theme.of(context).colorScheme.surface,
-          borderRadius: Radii.card,
-          border: Border.all(
-            color: on
-                ? _accent.last
-                : Theme.of(context).colorScheme.outline,
+    return Semantics(
+      button: true,
+      toggled: on,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: Motion.fast,
+          decoration: BoxDecoration(
+            gradient: on
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: _accent,
+                  )
+                : null,
+            color: on ? null : Theme.of(context).colorScheme.surface,
+            borderRadius: Radii.card,
+            border: Border.all(
+              color: on ? _accent.last : Theme.of(context).colorScheme.outline,
+            ),
+            boxShadow: on
+                ? [
+                    BoxShadow(
+                      color: _accent.last.withValues(alpha: 0.45),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
           ),
-          boxShadow: on
-              ? [
-                  BoxShadow(
-                    color: _accent.last.withValues(alpha: 0.45),
-                    blurRadius: 12,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : null,
+          child: on
+              ? Icon(
+                  Icons.lightbulb_rounded,
+                  color: onAccent(_accent),
+                  size: 22,
+                )
+              : Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: Theme.of(context).colorScheme.outline,
+                  size: 22,
+                ),
         ),
-        child: on
-            ? const Icon(Icons.lightbulb_rounded, color: Colors.white, size: 22)
-            : Icon(
-                Icons.lightbulb_outline_rounded,
-                color: Theme.of(context).colorScheme.outline,
-                size: 22,
-              ),
       ),
     );
   }

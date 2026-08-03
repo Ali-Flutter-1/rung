@@ -173,38 +173,43 @@ class _NumCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: Motion.fast,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: done
-              ? _accent.last.withValues(alpha: 0.12)
-              : (wrong ? cs.error : cs.surface),
-          borderRadius: Radii.card,
-          border: Border.all(
-            color: done ? _accent.first : cs.outline,
-            width: done ? 2 : 1,
+    return Semantics(
+      button: true,
+      enabled: !done,
+      label: '$value',
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: Motion.fast,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: done
+                ? _accent.last.withValues(alpha: 0.12)
+                : (wrong ? cs.error : cs.surface),
+            borderRadius: Radii.card,
+            border: Border.all(
+              color: done ? _accent.first : cs.outline,
+              width: done ? 2 : 1,
+            ),
           ),
-        ),
-        child: done
-            ? Icon(Icons.check_rounded, color: _accent.last, size: 20)
-            : FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: Text(
-                    '$value',
-                    style: TextStyle(
-                      color: wrong ? Colors.white : cs.onSurface,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 22,
+          child: done
+              ? Icon(Icons.check_rounded, color: _accent.last, size: 20)
+              : FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Text(
+                      '$value',
+                      style: TextStyle(
+                        color: wrong ? Colors.white : cs.onSurface,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                      ),
                     ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }

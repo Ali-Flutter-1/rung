@@ -199,21 +199,30 @@ class _QuickMathState extends State<QuickMathScreen> {
             style: t.bodyMedium,
           ),
           const SizedBox(height: Insets.xl),
-          GestureDetector(
-            onTap: _start,
-            behavior: HitTestBehavior.opaque,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: Radii.pill,
-              ),
-              child: Text(
-                _phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
+          Semantics(
+            button: true,
+            label: _phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
+            child: ExcludeSemantics(
+              child: GestureDetector(
+                onTap: _start,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryDeep,
+                    borderRadius: Radii.pill,
+                  ),
+                  child: Text(
+                    _phase == _Phase.over ? l.gamePlayAgain : l.gameStart,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ),
             ),
