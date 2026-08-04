@@ -612,5 +612,6 @@
   "gameSubOrder": "concentration · touche les chiffres dans l’ordre",
   "orderRule1": "Touche les chiffres dans l’ordre : 1, 2, 3…",
   "orderRule2": "Vide toute la grille pour avancer — chaque niveau ajoute des chiffres.",
-  "orderNextLabel": "Suivant : {next}"
+  "orderNextLabel": "Suivant : {next}",
+  "coachBusy": "Le coach fait une petite pause — réessaie dans un instant."
 }

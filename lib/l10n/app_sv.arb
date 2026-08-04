@@ -612,5 +612,6 @@
   "gameSubOrder": "fokus · tryck på siffrorna i ordning",
   "orderRule1": "Tryck på siffrorna i ordning: 1, 2, 3 …",
   "orderRule2": "Töm hela rutnätet för att gå vidare — varje nivå lägger till fler siffror.",
-  "orderNextLabel": "Nästa: {next}"
+  "orderNextLabel": "Nästa: {next}",
+  "coachBusy": "Coachen vilar en stund – försök igen snart."
 }

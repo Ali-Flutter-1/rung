@@ -612,5 +612,6 @@
   "gameSubOrder": "fokus · ketuk angka secara berurutan",
   "orderRule1": "Ketuk angka secara berurutan: 1, 2, 3 …",
   "orderRule2": "Bersihkan seluruh kotak untuk lanjut — tiap level menambah angka.",
-  "orderNextLabel": "Berikutnya: {next}"
+  "orderNextLabel": "Berikutnya: {next}",
+  "coachBusy": "Coach sedang beristirahat sejenak — coba lagi sebentar lagi."
 }

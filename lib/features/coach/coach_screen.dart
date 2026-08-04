@@ -162,6 +162,8 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
         context.go(Routes.subscription);
       case 'daily_limit':
         snack(l.coachDailyLimit);
+      case 'coach_busy':
+        snack(l.coachBusy);
       case 'coach_unconfigured':
         snack(l.coachUnconfigured);
       default:

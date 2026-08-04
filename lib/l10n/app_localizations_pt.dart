@@ -2131,6 +2131,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String orderNextLabel(int next) {
     return 'Próximo: $next';
   }
+
+  @override
+  String get coachBusy =>
+      'O coach está descansando um momento — tente novamente em breve.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -4260,4 +4264,8 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String orderNextLabel(int next) {
     return 'Seguinte: $next';
   }
+
+  @override
+  String get coachBusy =>
+      'O coach está a descansar um momento — tenta novamente daqui a pouco.';
 }

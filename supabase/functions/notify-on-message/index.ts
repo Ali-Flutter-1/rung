@@ -14,7 +14,7 @@
 // Then add a Database Webhook (Dashboard → Database → Webhooks) on
 // `messages` INSERT that POSTs to this function's URL.
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 interface MessageRow {
   id: string;

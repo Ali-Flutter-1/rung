@@ -2120,4 +2120,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String orderNextLabel(int next) {
     return 'Nästa: $next';
   }
+
+  @override
+  String get coachBusy => 'Coachen vilar en stund – försök igen snart.';
 }

@@ -612,5 +612,6 @@
   "gameSubOrder": "skupienie · dotykaj liczb po kolei",
   "orderRule1": "Dotykaj liczb po kolei: 1, 2, 3…",
   "orderRule2": "Wyczyść całą planszę, aby przejść dalej — każdy poziom dodaje liczby.",
-  "orderNextLabel": "Następna: {next}"
+  "orderNextLabel": "Następna: {next}",
+  "coachBusy": "Trener robi sobie chwilę przerwy — spróbuj ponownie za moment."
 }

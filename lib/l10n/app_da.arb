@@ -612,5 +612,6 @@
   "gameSubOrder": "fokus · tryk på tallene i rækkefølge",
   "orderRule1": "Tryk på tallene i rækkefølge: 1, 2, 3 …",
   "orderRule2": "Ryd hele gitteret for at komme videre — hvert niveau tilføjer flere tal.",
-  "orderNextLabel": "Næste: {next}"
+  "orderNextLabel": "Næste: {next}",
+  "coachBusy": "Coachen holder en lille pause – prøv igen om lidt."
 }

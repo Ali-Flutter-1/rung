@@ -612,5 +612,6 @@
   "gameSubOrder": "fokus · trykk på tallene i rekkefølge",
   "orderRule1": "Trykk på tallene i rekkefølge: 1, 2, 3 …",
   "orderRule2": "Tøm hele rutenettet for å gå videre — hvert nivå gir flere tall.",
-  "orderNextLabel": "Neste: {next}"
+  "orderNextLabel": "Neste: {next}",
+  "coachBusy": "Coachen tar en liten pause – prøv igjen om litt."
 }

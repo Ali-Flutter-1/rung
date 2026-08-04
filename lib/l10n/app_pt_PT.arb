@@ -612,5 +612,6 @@
   "gameSubOrder": "foco · toca nos números por ordem",
   "orderRule1": "Toca nos números por ordem: 1, 2, 3…",
   "orderRule2": "Limpa toda a grelha para avançar — cada nível acrescenta mais números.",
-  "orderNextLabel": "Seguinte: {next}"
+  "orderNextLabel": "Seguinte: {next}",
+  "coachBusy": "O coach está a descansar um momento — tenta novamente daqui a pouco."
 }

@@ -2142,4 +2142,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String orderNextLabel(int next) {
     return 'Suivant : $next';
   }
+
+  @override
+  String get coachBusy =>
+      'Le coach fait une petite pause — réessaie dans un instant.';
 }

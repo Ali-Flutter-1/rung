@@ -612,5 +612,6 @@
   "gameSubOrder": "Fokus · Zahlen der Reihe nach antippen",
   "orderRule1": "Tippe die Zahlen der Reihe nach an: 1, 2, 3 …",
   "orderRule2": "Räume das ganze Feld, um weiterzukommen — jedes Level bringt mehr Zahlen.",
-  "orderNextLabel": "Nächste: {next}"
+  "orderNextLabel": "Nächste: {next}",
+  "coachBusy": "Der Coach macht kurz Pause – bitte versuche es gleich noch einmal."
 }

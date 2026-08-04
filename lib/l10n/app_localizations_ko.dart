@@ -2033,4 +2033,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String orderNextLabel(int next) {
     return '다음: $next';
   }
+
+  @override
+  String get coachBusy => '코치가 잠시 쉬고 있어요. 잠시 후 다시 시도해 주세요.';
 }

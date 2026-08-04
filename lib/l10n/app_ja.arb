@@ -612,5 +612,6 @@
   "gameSubOrder": "集中 · 数字を順番にタップ",
   "orderRule1": "数字を順番にタップ：1、2、3 …",
   "orderRule2": "盤面をすべて消して次へ。レベルごとに数字が増えます。",
-  "orderNextLabel": "次：{next}"
+  "orderNextLabel": "次：{next}",
+  "coachBusy": "コーチは少し休憩中です。少し時間をおいてもう一度お試しください。"
 }

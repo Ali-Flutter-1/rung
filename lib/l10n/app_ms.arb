@@ -612,5 +612,6 @@
   "gameSubOrder": "fokus · ketik nombor mengikut urutan",
   "orderRule1": "Ketik nombor mengikut urutan: 1, 2, 3 …",
   "orderRule2": "Bersihkan seluruh grid untuk teruskan — setiap tahap menambah nombor.",
-  "orderNextLabel": "Seterusnya: {next}"
+  "orderNextLabel": "Seterusnya: {next}",
+  "coachBusy": "Jurulatih sedang berehat sebentar — cuba lagi sebentar lagi."
 }

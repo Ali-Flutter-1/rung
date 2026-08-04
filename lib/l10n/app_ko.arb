@@ -612,5 +612,6 @@
   "gameSubOrder": "집중 · 숫자를 순서대로 누르기",
   "orderRule1": "숫자를 순서대로 누르세요: 1, 2, 3 …",
   "orderRule2": "판을 모두 지워 다음으로. 레벨마다 숫자가 늘어납니다.",
-  "orderNextLabel": "다음: {next}"
+  "orderNextLabel": "다음: {next}",
+  "coachBusy": "코치가 잠시 쉬고 있어요. 잠시 후 다시 시도해 주세요."
 }

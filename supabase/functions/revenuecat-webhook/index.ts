@@ -21,7 +21,7 @@
 // Then in RevenueCat → Project → Integrations → Webhooks, point the URL at this
 // function and set the Authorization header to the same REVENUECAT_WEBHOOK_SECRET.
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 type Tier = "free" | "monthly" | "yearly";
 

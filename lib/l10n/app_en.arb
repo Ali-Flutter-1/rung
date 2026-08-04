@@ -1015,5 +1015,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "coachBusy": "The coach is resting for a moment — please try again shortly."
 }

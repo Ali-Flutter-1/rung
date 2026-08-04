@@ -2027,4 +2027,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String orderNextLabel(int next) {
     return '次：$next';
   }
+
+  @override
+  String get coachBusy => 'コーチは少し休憩中です。少し時間をおいてもう一度お試しください。';
 }

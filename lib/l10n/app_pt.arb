@@ -612,5 +612,6 @@
   "gameSubOrder": "foco · toque nos números em ordem",
   "orderRule1": "Toque nos números em ordem: 1, 2, 3…",
   "orderRule2": "Limpe toda a grade para avançar — cada nível adiciona mais números.",
-  "orderNextLabel": "Próximo: {next}"
+  "orderNextLabel": "Próximo: {next}",
+  "coachBusy": "O coach está descansando um momento — tente novamente em breve."
 }

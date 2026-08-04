@@ -612,5 +612,6 @@
   "gameSubOrder": "focus · tik de cijfers op volgorde",
   "orderRule1": "Tik de cijfers op volgorde aan: 1, 2, 3…",
   "orderRule2": "Maak het hele rooster leeg om verder te gaan — elk niveau voegt cijfers toe.",
-  "orderNextLabel": "Volgende: {next}"
+  "orderNextLabel": "Volgende: {next}",
+  "coachBusy": "De coach rust even — probeer het zo opnieuw."
 }

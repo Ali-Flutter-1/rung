@@ -3804,6 +3804,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next: {next}'**
   String orderNextLabel(int next);
+
+  /// No description provided for @coachBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'The coach is resting for a moment — please try again shortly.'**
+  String get coachBusy;
 }
 
 class _AppLocalizationsDelegate
