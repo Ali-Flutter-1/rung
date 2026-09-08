@@ -6,10 +6,12 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/entities/attempt.dart';
-import '../../domain/entities/subscription.dart';
+// COACH: only used by the hidden _CoachCard — restore in build 2.
+// import '../../domain/entities/subscription.dart';
 import '../../shared/gap_insight.dart';
 import '../../shared/help_now.dart';
-import '../coach/coach_screen.dart';
+// COACH: hidden for build 1, ships in build 2.
+// import '../coach/coach_screen.dart';
 import '../games/games_screen.dart';
 import '../share/share_progress.dart';
 import 'daily_check_in.dart';
@@ -104,8 +106,9 @@ class DashboardScreen extends ConsumerWidget {
                   : TodayStepCard(suggestion: s),
             ),
             const SizedBox(height: Insets.lg),
-            const _CoachCard(),
-            const SizedBox(height: Insets.lg),
+            // COACH: hidden for build 1, ships in build 2.
+            // const _CoachCard(),
+            // const SizedBox(height: Insets.lg),
             Container(
               padding: const EdgeInsets.all(Insets.md),
               decoration: BoxDecoration(
@@ -200,105 +203,107 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-/// The headline Premium entry: a warm, always-there coach. Shown to everyone —
-/// for free users it teases and routes to the paywall; for Premium it opens the
-/// coach chat. Valuable on day one, no community required.
-class _CoachCard extends ConsumerWidget {
-  const _CoachCard();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = Theme.of(context).textTheme;
-    final l = AppLocalizations.of(context);
-    final premium = ref
-        .watch(settingsRepositoryProvider)
-        .subscriptionTier
-        .isPremium;
-    return GestureDetector(
-      onTap: () => openCoach(context, ref),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.all(Insets.lg),
-        decoration: BoxDecoration(
-          borderRadius: Radii.lgAll,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primary, AppColors.primaryDeep],
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.18),
-              ),
-              child: const Icon(
-                Icons.spa_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: Insets.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        l.dashCoachTitle,
-                        style: t.titleMedium?.copyWith(color: Colors.white),
-                      ),
-                      if (!premium) ...[
-                        const SizedBox(width: Insets.sm),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: Radii.pill,
-                          ),
-                          child: Text(
-                            l.profilePremium,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    l.dashCoachSub,
-                    style: t.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.85),
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// COACH: hidden for build 1, ships in build 2. Restore this widget and its
+// call site above together.
+// /// The headline Premium entry: a warm, always-there coach. Shown to everyone —
+// /// for free users it teases and routes to the paywall; for Premium it opens the
+// /// coach chat. Valuable on day one, no community required.
+// class _CoachCard extends ConsumerWidget {
+//   const _CoachCard();
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final t = Theme.of(context).textTheme;
+//     final l = AppLocalizations.of(context);
+//     final premium = ref
+//         .watch(settingsRepositoryProvider)
+//         .subscriptionTier
+//         .isPremium;
+//     return GestureDetector(
+//       onTap: () => openCoach(context, ref),
+//       behavior: HitTestBehavior.opaque,
+//       child: Container(
+//         padding: const EdgeInsets.all(Insets.lg),
+//         decoration: BoxDecoration(
+//           borderRadius: Radii.lgAll,
+//           gradient: const LinearGradient(
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//             colors: [AppColors.primary, AppColors.primaryDeep],
+//           ),
+//         ),
+//         child: Row(
+//           children: [
+//             Container(
+//               width: 44,
+//               height: 44,
+//               alignment: Alignment.center,
+//               decoration: BoxDecoration(
+//                 shape: BoxShape.circle,
+//                 color: Colors.white.withValues(alpha: 0.18),
+//               ),
+//               child: const Icon(
+//                 Icons.spa_rounded,
+//                 color: Colors.white,
+//                 size: 22,
+//               ),
+//             ),
+//             const SizedBox(width: Insets.md),
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Row(
+//                     children: [
+//                       Text(
+//                         l.dashCoachTitle,
+//                         style: t.titleMedium?.copyWith(color: Colors.white),
+//                       ),
+//                       if (!premium) ...[
+//                         const SizedBox(width: Insets.sm),
+//                         Container(
+//                           padding: const EdgeInsets.symmetric(
+//                             horizontal: 8,
+//                             vertical: 2,
+//                           ),
+//                           decoration: BoxDecoration(
+//                             color: AppColors.accent,
+//                             borderRadius: Radii.pill,
+//                           ),
+//                           child: Text(
+//                             l.profilePremium,
+//                             style: const TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 10,
+//                               fontWeight: FontWeight.w700,
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ],
+//                   ),
+//                   const SizedBox(height: 2),
+//                   Text(
+//                     l.dashCoachSub,
+//                     style: t.bodyMedium?.copyWith(
+//                       color: Colors.white.withValues(alpha: 0.85),
+//                     ),
+//                     maxLines: 2,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Icon(
+//               Icons.chevron_right_rounded,
+//               color: Colors.white.withValues(alpha: 0.8),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 /// A small, low-key entry to the offline games — a calm break, not a headline.
 class _TakeABreakCard extends StatelessWidget {

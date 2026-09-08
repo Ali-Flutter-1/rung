@@ -141,7 +141,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   // for. Every line is really enforced. Lead with belonging (pods), then the
   // "make it yours" levers (unlimited ladders, deeper steps).
   List<(IconData, String)> _headlineBenefits(AppLocalizations l) => [
-    (Icons.spa_rounded, l.paywallBenefitCoach),
+    // COACH: hidden for build 1, ships in build 2.
+    // (Icons.spa_rounded, l.paywallBenefitCoach),
     (Icons.diversity_3_rounded, l.paywallBenefitPods),
     (Icons.edit_note_rounded, l.paywallBenefitCustom),
     (Icons.stairs_rounded, l.paywallBenefitDepth),
@@ -209,13 +210,16 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   l.paywallHeroTitle,
                   style: t.headlineSmall?.copyWith(color: Colors.white),
                 ),
-                const SizedBox(height: Insets.xs),
-                Text(
-                  l.paywallHeroBody,
-                  style: t.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                ),
+                // COACH: paywallHeroBody promises a private coach, so it is
+                // hidden for build 1 alongside the coach itself. Restore in
+                // build 2.
+                // const SizedBox(height: Insets.xs),
+                // Text(
+                //   l.paywallHeroBody,
+                //   style: t.bodyLarge?.copyWith(
+                //     color: Colors.white.withValues(alpha: 0.9),
+                //   ),
+                // ),
               ],
             ),
           ),
