@@ -25,7 +25,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyATphoRpdAZUUZiSS8Bu4T8uUd4T-8_Od8',
-    appId: '1:679728768976:android:a646661334b1a717e37bd5',
+    appId: '1:679728768976:android:fda735715f05d074e37bd5',
     messagingSenderId: '679728768976',
     projectId: 'rung-1c1b1',
     storageBucket: 'rung-1c1b1.firebasestorage.app',
@@ -33,10 +33,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD1jDYe4wiTQ6BfNaIpAApim4ItrCgePtk',
-    appId: '1:679728768976:ios:bfc5fe762bcb9154e37bd5',
+    appId: '1:679728768976:ios:4d801b64df64a4b7e37bd5',
     messagingSenderId: '679728768976',
     projectId: 'rung-1c1b1',
     storageBucket: 'rung-1c1b1.firebasestorage.app',
-    iosBundleId: 'com.rung.app',
+    iosBundleId: 'com.rungintrovert.app',
   );
 }

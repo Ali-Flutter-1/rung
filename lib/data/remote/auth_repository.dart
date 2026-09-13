@@ -8,7 +8,7 @@ import 'supabase_bootstrap.dart';
 /// the app. Tapping it hands the app a short-lived recovery session and fires
 /// an `AuthChangeEvent.passwordRecovery` (see RungApp), which routes the user to
 /// the "set a new password" screen.
-const passwordResetRedirect = 'com.rung.app://reset-password';
+const passwordResetRedirect = 'com.rungintrovert.app://reset-password';
 
 /// Thin wrapper over Supabase Auth. Identity is only needed for Groups — the
 /// core loop stays account-free (§1.4).

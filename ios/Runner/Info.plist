@@ -19,10 +19,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.rung.app</string>
+			<string>com.rungintrovert.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.rung.app</string>
+				<string>com.rungintrovert.app</string>
 			</array>
 		</dict>
 	</array>

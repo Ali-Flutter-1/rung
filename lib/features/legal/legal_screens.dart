@@ -8,7 +8,7 @@ import '../../l10n/app_localizations.dart';
 /// reviewed by a lawyer and also hosted at a public URL before store submission
 /// (App Store / Play both require a privacy-policy URL in the listing).
 
-const _kContact = 'hello@rung.app'; // ← replace with your real support address
+const _kContact = 'alijutt12208025@gmail.com';
 
 class _Section {
   const _Section(this.heading, this.body);

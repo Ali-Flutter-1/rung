@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.rung.app</string>
+	<string>com.rungintrovert.app</string>
 	<key>PROJECT_ID</key>
 	<string>rung-1c1b1</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:679728768976:ios:bfc5fe762bcb9154e37bd5</string>
+	<string>1:679728768976:ios:4d801b64df64a4b7e37bd5</string>
 </dict>
 </plist>

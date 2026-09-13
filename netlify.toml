@@ -1,0 +1,30 @@
+# Publishes the static legal pages in docs/ (privacy policy + terms).
+#
+# App Store Connect and Google Play both require a publicly reachable privacy
+# policy URL, and the in-app screens (lib/features/legal/) don't satisfy that —
+# the reviewer needs a link they can open in a browser.
+#
+# Netlify → Add new site → Import from Git → pick this repo. It reads this file,
+# so there is nothing to configure in the UI. No build step: the pages are plain
+# HTML with inline CSS and no dependencies.
+[build]
+  publish = "docs"
+  command = ""
+
+# Pretty URLs: /privacy instead of /privacy.html. The .html paths keep working,
+# so a link already filed with Apple or Google never breaks.
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
