@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,6 +59,12 @@ Future<void> main() async {
   // pins the user to the change-password screen. See [passwordRecoveryActive].
   if (cloudReady) {
     supabase.auth.onAuthStateChange.listen((s) {
+      // Debug-only trace: the reset deep link is hard to diagnose on a device
+      // (it fails silently — the app opens on the dashboard and nothing says
+      // why), so surface every auth event while debugging.
+      if (kDebugMode) {
+        debugPrint('[auth] event=${s.event} session=${s.session != null}');
+      }
       if (s.event == AuthChangeEvent.passwordRecovery) {
         passwordRecoveryActive.value = true;
       }

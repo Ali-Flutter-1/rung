@@ -1,0 +1,5 @@
+# Pretty URLs, duplicated from netlify.toml so that a drag-and-drop deploy of
+# this folder alone behaves the same as a Git-connected deploy (netlify.toml
+# lives at the repo root and is not uploaded in that case).
+/privacy  /privacy.html  200
+/terms    /terms.html    200

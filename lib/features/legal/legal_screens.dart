@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -9,6 +11,30 @@ import '../../l10n/app_localizations.dart';
 /// (App Store / Play both require a privacy-policy URL in the listing).
 
 const _kContact = 'alijutt12208025@gmail.com';
+
+/// Opens the hosted policy in the device browser, falling back to the in-app
+/// screen when no browser can take it (offline, or a locked-down device) — the
+/// documents have to stay reachable either way for store review.
+Future<void> openPrivacyPolicy(BuildContext context) =>
+    _openLegal(context, AppConfig.privacyUrl, const PrivacyPolicyScreen());
+
+Future<void> openTerms(BuildContext context) =>
+    _openLegal(context, AppConfig.termsUrl, const TermsScreen());
+
+Future<void> _openLegal(BuildContext context, String url, Widget fallback) async {
+  final navigator = Navigator.of(context);
+  var launched = false;
+  try {
+    launched = await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (_) {
+    launched = false;
+  }
+  if (launched) return;
+  navigator.push(MaterialPageRoute(builder: (_) => fallback));
+}
 
 class _Section {
   const _Section(this.heading, this.body);

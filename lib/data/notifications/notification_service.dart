@@ -18,10 +18,23 @@ class NotificationService {
   static const _comebackId = 1103;
 
   Future<void> init() async {
+    // Timezone lookup is the fragile step (it can throw on an OEM ROM with an
+    // unrecognised zone id). It must NOT take the whole service down with it:
+    // failing here used to leave _ready false, which silently no-ops every
+    // reminder for the life of the session. Fall back to UTC and carry on —
+    // a reminder an hour off beats no reminder at all.
     try {
       tzdata.initializeTimeZones();
       final info = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(info.identifier));
+    } catch (_) {
+      try {
+        tz.setLocalLocation(tz.getLocation('UTC'));
+      } catch (_) {
+        /* timezone db unavailable — scheduling will fail loudly below */
+      }
+    }
+    try {
       const settings = InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
         iOS: DarwinInitializationSettings(
@@ -31,13 +44,48 @@ class NotificationService {
         ),
       );
       await _plugin.initialize(settings: settings);
+      await _createAndroidChannels();
       _ready = true;
     } catch (_) {
       _ready = false;
     }
   }
 
+  /// Creates the notification channels up front. Android caches a channel's
+  /// importance at creation, so these must exist before the first notification
+  /// — including `rung_push`, which FCM names in the manifest for
+  /// background/terminated messages.
+  Future<void> _createAndroidChannels() async {
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) return;
+    await android.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'daily_reminder',
+        'Daily reminder',
+        description: 'A gentle nudge to take one small step.',
+      ),
+    );
+    await android.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'rung_push',
+        'Messages and updates',
+        description: 'Pod messages and account notifications.',
+        importance: Importance.high,
+      ),
+    );
+  }
+
   /// Asks the OS for permission. Returns whether granted (best-effort true).
+  ///
+  /// Checks the CURRENT state before asking. The OS only runs the request
+  /// callback when it actually shows a dialog, so re-requesting an
+  /// already-granted permission — which is the normal case here, since push
+  /// setup (FirebaseMessaging.requestPermission) usually prompts first — can
+  /// resolve false and wrongly tell the user to go enable notifications in
+  /// Settings. Asking "are they on?" first avoids that entirely.
   Future<bool> requestPermission() async {
     if (!_ready) return false;
     try {
@@ -46,6 +94,8 @@ class NotificationService {
             IOSFlutterLocalNotificationsPlugin
           >();
       if (ios != null) {
+        final current = await ios.checkPermissions();
+        if (current?.isEnabled ?? false) return true;
         final ok = await ios.requestPermissions(
           alert: true,
           badge: true,
@@ -58,8 +108,13 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin
           >();
       if (android != null) {
+        if (await android.areNotificationsEnabled() ?? false) return true;
         final ok = await android.requestNotificationsPermission();
-        return ok ?? true;
+        if (ok ?? false) return true;
+        // The request can resolve false/null even when the permission is in
+        // fact granted (no dialog shown → no callback). Re-read the real state
+        // rather than trusting that result.
+        return await android.areNotificationsEnabled() ?? false;
       }
       return true;
     } catch (_) {

@@ -483,8 +483,6 @@ class _LegalFooter extends StatelessWidget {
       color: AppColors.primaryDeep,
       fontWeight: FontWeight.w600,
     );
-    void open(Widget page) =>
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
     return Text.rich(
       TextSpan(
         style: muted,
@@ -496,14 +494,14 @@ class _LegalFooter extends StatelessWidget {
             text: l.authTerms,
             style: link,
             recognizer: TapGestureRecognizer()
-              ..onTap = () => open(const TermsScreen()),
+              ..onTap = () => openTerms(context),
           ),
           TextSpan(text: l.authAnd),
           TextSpan(
             text: l.profilePrivacyTitle,
             style: link,
             recognizer: TapGestureRecognizer()
-              ..onTap = () => open(const PrivacyPolicyScreen()),
+              ..onTap = () => openPrivacyPolicy(context),
           ),
           const TextSpan(text: '.'),
         ],

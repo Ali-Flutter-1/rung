@@ -64,6 +64,8 @@ dependencies:
   share_plus: ^13.2.0
   confetti: ^0.8.0
   in_app_review: ^2.0.12
+  # Opens the hosted privacy policy / terms in the device browser.
+  url_launcher: ^6.3.2
 
 # path_provider_foundation 2.6.0 migrated to Dart native code-assets (the
 # `objective_c` FFI package). Our toolchain doesn't pass SdkRoot to that native

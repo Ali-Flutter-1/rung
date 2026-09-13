@@ -294,18 +294,13 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.privacy_tip_outlined,
             title: l.profilePrivacyTitle,
             subtitle: l.profilePrivacySub,
-            onTap: () => Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
-            ),
+            onTap: () => openPrivacyPolicy(context),
           ),
           _Tile(
             icon: Icons.description_outlined,
             title: l.profileTermsTitle,
             subtitle: l.profileTermsSub,
-            onTap: () => Navigator.of(
-              context,
-              rootNavigator: true,
-            ).push(MaterialPageRoute(builder: (_) => const TermsScreen())),
+            onTap: () => openTerms(context),
           ),
           if (ref.watch(cloudEnabledProvider))
             _Tile(

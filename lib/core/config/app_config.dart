@@ -52,4 +52,11 @@ class AppConfig {
       _envRcAndroid.isNotEmpty ? _envRcAndroid : _inlineRcAndroid;
   static bool get hasRevenueCat =>
       revenueCatIosKey.isNotEmpty || revenueCatAndroidKey.isNotEmpty;
+
+  // ── Legal (hosted on Netlify from docs/) ──────────────────────────────────
+  // Apple and Google require a publicly reachable policy URL for the store
+  // listing; these are the same documents rendered by features/legal/ in-app,
+  // so edit docs/*.html and the Dart screens together.
+  static const privacyUrl = 'https://rungintrovert-app.netlify.app/privacy';
+  static const termsUrl = 'https://rungintrovert-app.netlify.app/terms';
 }
