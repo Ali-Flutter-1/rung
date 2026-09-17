@@ -594,7 +594,12 @@ class _NotificationControls extends ConsumerWidget {
 class _ReminderControl extends ConsumerWidget {
   const _ReminderControl();
 
+  /// Evening is when the day's chances have passed and there is still time to
+  /// act on one — a far better default than the morning for a practice app.
+  static const _defaultReminder = TimeOfDay(hour: 21, minute: 0);
+
   Future<void> _enable(BuildContext context, WidgetRef ref) async {
+    final existing = ref.read(settingsRepositoryProvider).reminderTime;
     final granted = await NotificationService.instance.requestPermission();
     if (!context.mounted) return;
     final l = AppLocalizations.of(context);
@@ -609,7 +614,7 @@ class _ReminderControl extends ConsumerWidget {
     }
     final picked = await showTimePicker(
       context: context,
-      initialTime: const TimeOfDay(hour: 9, minute: 0),
+      initialTime: existing ?? _defaultReminder,
       helpText: l.profileReminderHelp,
     );
     if (picked == null) return;
