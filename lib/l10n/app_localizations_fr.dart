@@ -868,6 +868,15 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'Jour $count — aujourd\'hui compte, avec ou sans étape.';
+  }
+
+  @override
+  String get checkInDayBanked =>
+      'Aujourd\'hui compte. Être là, c\'est l\'essentiel.';
+
+  @override
   String get checkInAckGentle =>
       'Merci pour ta franchise. Restons doux aujourd\'hui — une petite chose bienveillante suffit.';
 

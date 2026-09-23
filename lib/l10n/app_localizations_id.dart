@@ -857,6 +857,14 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'Hari $count — hari ini dihitung, dengan atau tanpa langkah.';
+  }
+
+  @override
+  String get checkInDayBanked => 'Hari ini dihitung. Hadir itu yang penting.';
+
+  @override
   String get checkInAckGentle =>
       'Terima kasih atas kejujuranmu. Mari jaga hari ini tetap lembut — satu hal kecil yang baik sudah cukup.';
 

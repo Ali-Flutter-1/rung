@@ -224,6 +224,8 @@
   "progressCategoryBreakdown": "Pecahan mengikut kategori",
   "insightsHistory": "Sejarah",
   "checkInAckTitle": "Direkodkan — anda berasa {mood}",
+  "checkInStreakBanked": "Hari {count} — hari ini dikira, dengan atau tanpa langkah.",
+  "checkInDayBanked": "Hari ini dikira. Hadir itu yang penting.",
   "checkInAckGentle": "Terima kasih atas kejujuran anda. Mari kekalkan hari ini lembut — satu perkara kecil yang baik sudah memadai.",
   "checkInAckStep": "Sukanya. Apabila anda bersedia, satu langkah kecil mengekalkan momentum.",
   "sharePremiumPerk": "✨ Lebih banyak gaya kad ialah faedah Premium.",

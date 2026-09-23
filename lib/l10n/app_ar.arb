@@ -224,6 +224,8 @@
   "progressCategoryBreakdown": "التفصيل حسب الفئة",
   "insightsHistory": "السجل",
   "checkInAckTitle": "تم التسجيل — تشعر بأنك {mood}",
+  "checkInStreakBanked": "اليوم {count} — تم احتساب يومك، بخطوة أو بدونها.",
+  "checkInDayBanked": "تم احتساب يومك. الحضور هو المهم.",
   "checkInAckGentle": "شكراً على صدقك. لنجعل اليوم لطيفاً — شيء صغير ولطيف يكفي.",
   "checkInAckStep": "أحب ذلك. عندما تكون مستعداً، خطوة صغيرة تُبقي الزخم.",
   "sharePremiumPerk": "✨ المزيد من أنماط البطاقات ميزة في بريميوم.",

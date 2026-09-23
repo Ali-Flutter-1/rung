@@ -28,7 +28,25 @@ class GapInsightCard extends StatelessWidget {
             .length /
         exposures.length;
 
-    final takeaway = gap > 0.5
+    // How many of the MOST RECENT steps in a row came in easier than predicted.
+    // `exposures` is oldest-first, so count backwards from the newest. A run is
+    // more visceral than an average — "wrong 7 times running" is evidence you
+    // can feel, and it accrues without any extra effort from the user.
+    var run = 0;
+    for (var i = exposures.length - 1; i >= 0; i--) {
+      final e = exposures[i];
+      if ((e.actualSuds ?? e.predictedSuds) < e.predictedSuds) {
+        run++;
+      } else {
+        break;
+      }
+    }
+
+    final takeaway = run >= 3
+        ? 'Your fear has overshot $run times in a row — by '
+              '${gap.toStringAsFixed(1)} points on average. It keeps being '
+              'wrong in the same direction.'
+        : gap > 0.5
         ? 'On average your fear runs ${gap.toStringAsFixed(1)} points hotter than '
               'reality. ${(overestimateRate * 100).round()}% of the time, it was '
               'easier than you predicted.'

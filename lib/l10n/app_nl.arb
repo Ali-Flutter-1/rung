@@ -250,6 +250,8 @@
   "progressCategoryBreakdown": "Uitsplitsing per categorie",
   "insightsHistory": "Geschiedenis",
   "checkInAckTitle": "Ingecheckt — je voelt je {mood}",
+  "checkInStreakBanked": "Dag {count} — vandaag telt, met of zonder stap.",
+  "checkInDayBanked": "Vandaag telt. Er zijn is het punt.",
   "checkInAckGentle": "Bedankt voor je eerlijkheid. Laten we vandaag zacht houden — één kleine, vriendelijke daad is genoeg.",
   "checkInAckStep": "Mooi. Wanneer je klaar bent, houdt één kleine stap het momentum vast.",
   "sharePremiumPerk": "✨ Meer kaartstijlen zijn een Premium-voordeel.",

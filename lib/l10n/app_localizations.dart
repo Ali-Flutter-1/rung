@@ -1627,6 +1627,18 @@ abstract class AppLocalizations {
   /// **'Checked in — feeling {mood}'**
   String checkInAckTitle(String mood);
 
+  /// No description provided for @checkInStreakBanked.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {count} — today\'s counted, step or no step.'**
+  String checkInStreakBanked(int count);
+
+  /// No description provided for @checkInDayBanked.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s counted. Showing up is the point.'**
+  String get checkInDayBanked;
+
   /// No description provided for @checkInAckGentle.
   ///
   /// In en, this message translates to:

@@ -89,6 +89,13 @@ class LocalProgressRepository implements ProgressRepository {
   }
 
   // ── Streak (global headline, §8.2) ────────────────────────────────────
+  //
+  // A day counts when the user SHOWED UP — a check-in is enough. Requiring a
+  // completed exposure step made the streak conditional on the single hardest
+  // thing the app asks for, which nobody can do daily and an anxious user can
+  // do least of all on a bad day. Breaking that streak reads as one more
+  // failure, which is precisely the opposite of the point. Steps still matter;
+  // they are counted separately as depth (`totalRungsCleared`).
   Set<String> _activeDayKeys() {
     final days = _db
         .select(
@@ -102,9 +109,36 @@ class LocalProgressRepository implements ProgressRepository {
           ),
         )
         .toSet();
+    days.addAll(_checkInDayKeys());
     days.addAll(_frozenDays());
     return days;
   }
+
+  @override
+  Future<void> recordCheckIn(String mood) async {
+    final today = dayKey(DateTime.now());
+    // One row per day — re-checking in doesn't create duplicates, and the first
+    // mood of the day is the one kept.
+    _db.run(
+      'INSERT OR IGNORE INTO check_ins (day, mood, created_at) VALUES (?, ?, ?);',
+      [today, mood, DateTime.now().millisecondsSinceEpoch],
+    );
+    _db.notifyChanged(); // streak + week strip recompute immediately
+  }
+
+  @override
+  Future<bool> hasCheckedInToday() async => _db
+      .select('SELECT 1 FROM check_ins WHERE day = ? LIMIT 1;', [
+        dayKey(DateTime.now()),
+      ])
+      .isNotEmpty;
+
+  /// Days with a check-in. Stored as local 'yyyy-MM-dd' at write time, which is
+  /// the same shape [dayKey] produces, so they merge directly.
+  Set<String> _checkInDayKeys() => _db
+      .select('SELECT day FROM check_ins;')
+      .map((r) => r['day'] as String)
+      .toSet();
 
   int _streakFrom(Set<String> days, DateTime now) {
     // Date-only stepping happens in UTC. The components come from the user's

@@ -23,7 +23,7 @@ void main() {
       ).isNotEmpty;
 
   test('a freshly opened database is fully migrated', () {
-    expect(AppDatabase.schemaVersion, 4);
+    expect(AppDatabase.schemaVersion, 5);
     expect(userVersion(), AppDatabase.schemaVersion);
   });
 
@@ -78,8 +78,15 @@ void main() {
   test('the custom-rung blanking migration is idempotent', () {
     // Re-opening an already-migrated database must not throw or re-blank.
     final again = AppDatabase.openInMemory();
-    expect(again.select('PRAGMA user_version;').first.values.first, 4);
+    expect(
+      again.select('PRAGMA user_version;').first.values.first,
+      AppDatabase.schemaVersion,
+    );
     again.close();
+  });
+
+  test('the check-ins table exists', () {
+    expect(exists('table', 'check_ins'), isTrue);
   });
 
   test('a custom rung may legitimately store empty copy', () {

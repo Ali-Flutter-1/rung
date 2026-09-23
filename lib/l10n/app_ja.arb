@@ -250,6 +250,8 @@
   "progressCategoryBreakdown": "カテゴリ別の内訳",
   "insightsHistory": "履歴",
   "checkInAckTitle": "記録しました — 気分は「{mood}」",
+  "checkInStreakBanked": "{count}日目 — ステップがなくても今日はカウントされます。",
+  "checkInDayBanked": "今日はカウントされました。来ることが大切です。",
   "checkInAckGentle": "正直に話してくれてありがとう。今日はやさしくいきましょう — 小さくてやさしいこと一つで十分です。",
   "checkInAckStep": "いいですね。準備ができたら、小さな一歩が勢いを保ってくれます。",
   "sharePremiumPerk": "✨ カードのスタイルが増えるのはプレミアム特典です。",

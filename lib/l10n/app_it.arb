@@ -250,6 +250,8 @@
   "progressCategoryBreakdown": "Suddivisione per categoria",
   "insightsHistory": "Cronologia",
   "checkInAckTitle": "Registrato — ti senti {mood}",
+  "checkInStreakBanked": "Giorno {count} — oggi conta, con o senza un passo.",
+  "checkInDayBanked": "Oggi conta. Esserci è ciò che conta.",
   "checkInAckGentle": "Grazie per la sincerità. Manteniamo oggi delicato — una piccola cosa gentile è sufficiente.",
   "checkInAckStep": "Bellissimo. Quando sei pronto, un piccolo passo mantiene lo slancio.",
   "sharePremiumPerk": "✨ Altri stili di card sono un vantaggio Premium.",

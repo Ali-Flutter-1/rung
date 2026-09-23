@@ -858,6 +858,14 @@ class AppLocalizationsNb extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'Dag $count — i dag teller, med eller uten et steg.';
+  }
+
+  @override
+  String get checkInDayBanked => 'I dag teller. Å møte opp er poenget.';
+
+  @override
   String get checkInAckGentle =>
       'Takk for ærligheten. La oss holde i dag mildt — én liten, vennlig ting er nok.';
 

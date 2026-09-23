@@ -212,6 +212,25 @@ class SyncService {
         )
         .toList();
     await _cloud.pushBackupProgress(progress);
+
+    // Check-ins drive the streak, so they have to survive a reinstall. The
+    // local table has no updated_at (rows are write-once per day), so
+    // created_at doubles as the cursor value.
+    final checkIns = _db
+        .select(
+          'SELECT day, mood, created_at FROM check_ins WHERE created_at > ?;',
+          [since],
+        )
+        .map(
+          (r) => {
+            'day': r['day'],
+            'mood': r['mood'],
+            'created_at': r['created_at'],
+            'updated_at': r['created_at'],
+          },
+        )
+        .toList();
+    await _cloud.pushCheckIns(checkIns);
   }
 
   // ── pull cloud deltas → local (merge, preserve local notes) ─────────────
@@ -220,8 +239,20 @@ class SyncService {
     final attempts = await _cloud.fetchBackupAttempts(since);
     final progress = await _cloud.fetchBackupProgress(since);
     final cloudFrozen = await _cloud.fetchStreakFreeze();
+    final checkIns = await _cloud.fetchCheckIns(since);
 
     _db.transaction(() {
+      // Check-in days merge by day. OR IGNORE keeps whatever this device
+      // already recorded for that day — the first mood of a day is the one the
+      // app shows, and a restore must not rewrite the user's own history.
+      for (final r in checkIns) {
+        _db.run(
+          'INSERT OR IGNORE INTO check_ins (day, mood, created_at) '
+          'VALUES (?, ?, ?);',
+          [r['day'], r['mood'], r['created_at'] ?? 0],
+        );
+      }
+
       // Custom rungs FIRST — attempts reference rung ids via FK.
       for (final r in customRungs) {
         _db.run(

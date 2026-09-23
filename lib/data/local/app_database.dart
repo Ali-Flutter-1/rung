@@ -23,7 +23,7 @@ class AppDatabase {
   /// v4 supersedes the short-lived v2/v3 (a per-locale content cache that was
   /// reverted — rung/track copy is English-only). It drops those objects if a
   /// dev build created them, and un-freezes the custom-rung default copy.
-  static const int schemaVersion = 4;
+  static const int schemaVersion = 5;
 
   /// The English default that older builds froze into `what_to_do` when the
   /// user left the field blank. Only English ever shipped, so this is the only
@@ -87,6 +87,10 @@ class AppDatabase {
       _migrateV4();
       v = 4;
     }
+    if (v < 5) {
+      _migrateV5();
+      v = 5;
+    }
     if (v != version) {
       _db.execute('PRAGMA user_version = $v;');
     }
@@ -129,6 +133,21 @@ class AppDatabase {
       'UPDATE rungs SET what_to_do = ?, updated_at = ? '
       'WHERE is_custom = 1 AND what_to_do = ?;',
       ['', now, _legacyDefaultWhatToDo],
+    );
+  }
+
+  /// v5 — daily check-ins get their own table.
+  ///
+  /// The check-in is the one thing a user can always do, on their worst day, in
+  /// five seconds — so it, not a completed exposure step, is what the streak
+  /// counts. Settings only ever held the LAST check-in date, which is enough to
+  /// hide the card but useless for a streak, so the history lives here.
+  void _migrateV5() {
+    _db.execute(
+      'CREATE TABLE IF NOT EXISTS check_ins ('
+      'day TEXT PRIMARY KEY, '          // 'yyyy-MM-dd', local
+      'mood TEXT NOT NULL, '            // stable English label
+      'created_at INTEGER NOT NULL);',
     );
   }
 
@@ -193,6 +212,13 @@ class AppDatabase {
     ''');
     // Global key/value scratch for app-wide counters (e.g. streak freezes).
     _db.execute('CREATE TABLE app_meta (key TEXT PRIMARY KEY, value TEXT);');
+    // See _migrateV5 — the check-in is the streak's daily unit.
+    _db.execute(
+      'CREATE TABLE check_ins ('
+      'day TEXT PRIMARY KEY, '
+      'mood TEXT NOT NULL, '
+      'created_at INTEGER NOT NULL);',
+    );
   }
 
   /// Upserts seed content so app updates can add/adjust global tracks & rungs
@@ -354,6 +380,7 @@ class AppDatabase {
     transaction(() {
       _db.execute('DELETE FROM attempts;');
       _db.execute('DELETE FROM app_meta;');
+      _db.execute('DELETE FROM check_ins;');
       // Custom rungs are per-user content — drop them so the next account never
       // inherits them. They are restored from the cloud for that account.
       _db.execute('DELETE FROM rungs WHERE is_custom = 1;');

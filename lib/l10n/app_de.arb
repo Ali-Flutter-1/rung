@@ -224,6 +224,8 @@
   "progressCategoryBreakdown": "Aufschlüsselung nach Kategorie",
   "insightsHistory": "Verlauf",
   "checkInAckTitle": "Eingecheckt — du fühlst dich {mood}",
+  "checkInStreakBanked": "Tag {count} — heute zählt, mit oder ohne Schritt.",
+  "checkInDayBanked": "Heute zählt. Da zu sein ist der Punkt.",
   "checkInAckGentle": "Danke für deine Ehrlichkeit. Lass uns heute sanft bleiben – eine kleine, freundliche Sache reicht.",
   "checkInAckStep": "Schön. Wenn du bereit bist, hält ein kleiner Schritt den Schwung.",
   "sharePremiumPerk": "✨ Weitere Kartendesigns sind ein Premium-Vorteil.",

@@ -566,6 +566,30 @@ class CloudRepository {
     return rows.cast<Map<String, dynamic>>();
   }
 
+  /// Check-in days (see migration 0028). The streak counts these, so they have
+  /// to survive a reinstall or the user loses the number they care about most.
+  Future<void> pushCheckIns(List<Map<String, dynamic>> rows) async {
+    final uid = _uid;
+    if (uid == null || rows.isEmpty) return;
+    final withUser = [
+      for (final r in rows) {...r, 'user_id': uid},
+    ];
+    await supabase
+        .from('backup_check_ins')
+        .upsert(withUser, onConflict: 'user_id,day');
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCheckIns(int sinceMs) async {
+    final uid = _uid;
+    if (uid == null) return [];
+    final rows = await supabase
+        .from('backup_check_ins')
+        .select()
+        .eq('user_id', uid)
+        .gt('updated_at', sinceMs);
+    return rows.cast<Map<String, dynamic>>();
+  }
+
   /// Whether this account has any backed-up progress (→ restore is possible).
   Future<bool> hasBackup() async {
     final uid = _uid;
@@ -581,7 +605,14 @@ class CloudRepository {
         .select('track_id')
         .eq('user_id', uid)
         .limit(1);
-    return p.isNotEmpty;
+    if (p.isNotEmpty) return true;
+    // A user who has only ever checked in still has a streak worth restoring.
+    final c = await supabase
+        .from('backup_check_ins')
+        .select('day')
+        .eq('user_id', uid)
+        .limit(1);
+    return c.isNotEmpty;
   }
 }
 

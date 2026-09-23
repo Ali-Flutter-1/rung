@@ -414,6 +414,11 @@
       }
     }
   },
+  "checkInStreakBanked": "Day {count} — today's counted, step or no step.",
+  "@checkInStreakBanked": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "checkInDayBanked": "Today's counted. Showing up is the point.",
   "checkInAckGentle": "Thanks for being honest. Let's keep today gentle — one small, kind thing is enough.",
   "checkInAckStep": "Love that. When you're ready, one small step keeps the momentum going.",
   "sharePremiumPerk": "✨ More card styles are a Premium perk.",

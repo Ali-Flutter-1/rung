@@ -817,6 +817,14 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return '$count日目 — ステップがなくても今日はカウントされます。';
+  }
+
+  @override
+  String get checkInDayBanked => '今日はカウントされました。来ることが大切です。';
+
+  @override
   String get checkInAckGentle =>
       '正直に話してくれてありがとう。今日はやさしくいきましょう — 小さくてやさしいこと一つで十分です。';
 

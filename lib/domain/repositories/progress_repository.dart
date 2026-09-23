@@ -19,8 +19,16 @@ abstract interface class ProgressRepository {
   Future<int> bestStreak();
   Stream<int> watchBestStreak();
 
-  /// Day-keys (yyyy-mm-dd) with a counting attempt — drives the week strip.
+  /// Day-keys (yyyy-mm-dd) that count toward the streak — a check-in, a
+  /// completed step, or a freeze. Drives the week strip.
   Stream<Set<String>> watchActiveDays();
+
+  /// Records today's check-in (idempotent per day). This is the streak's daily
+  /// unit: showing up counts, even on a day with no step.
+  Future<void> recordCheckIn(String mood);
+
+  /// Whether the user has checked in today.
+  Future<bool> hasCheckedInToday();
 
   /// Selects the single best rung for the Today card (§2.5 GetTodaysRung).
   Future<TodaySuggestion?> getTodaysRung();

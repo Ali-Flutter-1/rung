@@ -819,6 +819,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return '$count일째 — 오늘은 인정됩니다, 단계를 밟지 않아도요.';
+  }
+
+  @override
+  String get checkInDayBanked => '오늘은 인정됩니다. 찾아온 것만으로 충분해요.';
+
+  @override
   String get checkInAckGentle =>
       '솔직하게 말해 줘서 고마워요. 오늘은 부드럽게 가요 — 작고 다정한 일 하나면 충분해요.';
 

@@ -841,6 +841,14 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'اليوم $count — تم احتساب يومك، بخطوة أو بدونها.';
+  }
+
+  @override
+  String get checkInDayBanked => 'تم احتساب يومك. الحضور هو المهم.';
+
+  @override
   String get checkInAckGentle =>
       'شكراً على صدقك. لنجعل اليوم لطيفاً — شيء صغير ولطيف يكفي.';
 

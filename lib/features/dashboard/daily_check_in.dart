@@ -62,6 +62,11 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
     Haptics.selection();
     final settings = ref.read(settingsRepositoryProvider);
     await settings.setLastCheckInDate(_todayYmd);
+    // The check-in is what the streak counts — showing up is the daily unit,
+    // not a completed step. See LocalProgressRepository._activeDayKeys.
+    await ref.read(progressRepositoryProvider).recordCheckIn(mood.label);
+    // Back the day up (debounced) so the streak survives a reinstall.
+    ref.read(syncServiceProvider).scheduleBackup();
     ref.read(analyticsProvider).capture(Ev.checkInCompleted, {
       'mood': mood.label,
     });
@@ -154,6 +159,10 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
         const SizedBox(height: Insets.xs),
         Text(message, style: t.bodyMedium),
         const SizedBox(height: Insets.md),
+        // The payoff for showing up. On a bad day this is the whole reward:
+        // the day is already banked, with nothing else required.
+        _StreakBanked(streak: ref.watch(streakProvider).asData?.value ?? 0),
+        const SizedBox(height: Insets.md),
         Align(
           alignment: Alignment.centerLeft,
           child: FilledButton.tonalIcon(
@@ -172,6 +181,42 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// "Today is counted" — shown the moment a check-in lands, so opening the app
+/// on a hard day still ends in something good rather than an unmet demand.
+class _StreakBanked extends StatelessWidget {
+  const _StreakBanked({required this.streak});
+  final int streak;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Insets.md,
+        vertical: Insets.sm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.12),
+        borderRadius: Radii.pill,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🔥', style: TextStyle(fontSize: 15)),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              streak > 0 ? l.checkInStreakBanked(streak) : l.checkInDayBanked,
+              style: t.labelLarge?.copyWith(color: AppColors.primaryDeep),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

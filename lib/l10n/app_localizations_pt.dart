@@ -860,6 +860,14 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'Dia $count — hoje conta, com ou sem um passo.';
+  }
+
+  @override
+  String get checkInDayBanked => 'Hoje conta. Aparecer é o que importa.';
+
+  @override
   String get checkInAckGentle =>
       'Obrigado pela sinceridade. Vamos manter o dia leve — uma pequena coisa gentil já basta.';
 
@@ -3007,6 +3015,14 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String checkInAckTitle(String mood) {
     return 'Registado — sentes-te $mood';
   }
+
+  @override
+  String checkInStreakBanked(int count) {
+    return 'Dia $count — hoje conta, com ou sem um passo.';
+  }
+
+  @override
+  String get checkInDayBanked => 'Hoje conta. Apareceres é o que importa.';
 
   @override
   String get checkInAckGentle =>

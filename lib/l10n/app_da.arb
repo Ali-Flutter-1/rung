@@ -250,6 +250,8 @@
   "progressCategoryBreakdown": "Fordeling pr. kategori",
   "insightsHistory": "Historik",
   "checkInAckTitle": "Tjekket ind — du føler dig {mood}",
+  "checkInStreakBanked": "Dag {count} — i dag tæller, med eller uden et skridt.",
+  "checkInDayBanked": "I dag tæller. Det at møde op er pointen.",
   "checkInAckGentle": "Tak for ærligheden. Lad os holde i dag blidt — én lille, venlig ting er nok.",
   "checkInAckStep": "Skønt. Når du er klar, holder ét lille skridt farten oppe.",
   "sharePremiumPerk": "✨ Flere kortstilarter er en Premium-fordel.",

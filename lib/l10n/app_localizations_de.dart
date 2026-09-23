@@ -867,6 +867,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String checkInStreakBanked(int count) {
+    return 'Tag $count — heute zählt, mit oder ohne Schritt.';
+  }
+
+  @override
+  String get checkInDayBanked => 'Heute zählt. Da zu sein ist der Punkt.';
+
+  @override
   String get checkInAckGentle =>
       'Danke für deine Ehrlichkeit. Lass uns heute sanft bleiben – eine kleine, freundliche Sache reicht.';
 
