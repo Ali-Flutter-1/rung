@@ -86,6 +86,12 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
   CloudMessage? _replyingTo;
   CloudMessage? _editing;
 
+  // Message ids that have already been rendered. Anything not in here is new
+  // and animates in; the first batch is seeded silently so opening a pod does
+  // not replay every old message as an animation.
+  final Set<String> _seen = {};
+  bool _seeded = false;
+
   // The realtime message stream is cached and only rebuilt when the page size
   // changes — otherwise every setState (e.g. opening a member sheet) would
   // recreate it and flash the StreamBuilder back to its loading spinner.
@@ -764,6 +770,10 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                 }
                 // reverse: true → newest at the bottom; the list stays pinned to
                 // the newest message and scrolling up reveals older ones.
+                if (!_seeded) {
+                  _seen.addAll(messages.map((m) => m.id));
+                  _seeded = true;
+                }
                 return ListView.builder(
                   controller: _scroll,
                   reverse: true,
@@ -813,10 +823,17 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                     // WhatsApp-style: swipe a message right to reply. Long-press
                     // still opens the full actions menu. Deleted messages don't
                     // swipe (nothing to reply to).
-                    if (m.isDeleted) return bubble;
-                    return _SwipeToReply(
-                      onReply: () => _startReply(m),
-                      child: bubble,
+                    // New arrivals (yours and theirs) slide up into place the
+                    // way a chat app should; `_seen` guarantees it plays once
+                    // and never again as the list recycles rows.
+                    final fresh = _seen.add(m.id);
+                    if (m.isDeleted) return _Arrive(animate: fresh, child: bubble);
+                    return _Arrive(
+                      animate: fresh,
+                      child: _SwipeToReply(
+                        onReply: () => _startReply(m),
+                        child: bubble,
+                      ),
                     );
                   },
                 );
@@ -885,13 +902,7 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
                         ),
                       ),
                       const SizedBox(width: Insets.sm),
-                      IconButton.filled(
-                        style: IconButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                        ),
-                        onPressed: _send,
-                        icon: const Icon(Icons.arrow_upward_rounded),
-                      ),
+                      _SendButton(onSend: _send),
                     ],
                   ),
                 ],
@@ -899,6 +910,90 @@ class _CloudChatScreenState extends ConsumerState<CloudChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Plays a message's arrival: a short rise, fade and settle, the way a chat app
+/// acknowledges that something just landed. Runs once per message — [animate]
+/// is false for history loaded before the screen opened, so entering a pod
+/// never replays the whole backlog.
+class _Arrive extends StatelessWidget {
+  const _Arrive({required this.animate, required this.child});
+  final bool animate;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!animate) return child;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(
+          offset: Offset(0, 14 * (1 - t)),
+          // Settles from a touch under full size — enough to register as
+          // movement, never enough to feel bouncy in a calm app.
+          child: Transform.scale(scale: 0.96 + 0.04 * t, child: child),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Send button with a press animation: it dips under the finger and springs
+/// back as the message leaves, so the tap feels acknowledged even when the
+/// network is slow.
+class _SendButton extends StatefulWidget {
+  const _SendButton({required this.onSend});
+  final VoidCallback onSend;
+
+  @override
+  State<_SendButton> createState() => _SendButtonState();
+}
+
+class _SendButtonState extends State<_SendButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 180),
+    lowerBound: 0,
+    upperBound: 1,
+  );
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fire() async {
+    Haptics.light();
+    widget.onSend();
+    // Dip, then spring back past rest and settle.
+    await _c.forward(from: 0);
+    if (mounted) _c.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) {
+        final t = _c.value;
+        return Transform.scale(
+          scale: 1 - 0.18 * t,
+          child: Transform.translate(offset: Offset(2 * t, -4 * t), child: child),
+        );
+      },
+      child: IconButton.filled(
+        style: IconButton.styleFrom(backgroundColor: AppColors.primary),
+        onPressed: _fire,
+        icon: const Icon(Icons.arrow_upward_rounded),
       ),
     );
   }

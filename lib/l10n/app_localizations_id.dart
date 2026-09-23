@@ -757,6 +757,21 @@ class AppLocalizationsId extends AppLocalizations {
       'Aktifkan notifikasi di Pengaturan untuk menerima pengingat.';
 
   @override
+  String get profileOpenSettings => 'Buka pengaturan';
+
+  @override
+  String get profileReminderFailed =>
+      'Tidak bisa menyetel pengingat. Pastikan notifikasi diizinkan untuk Rung di pengaturan ponselmu.';
+
+  @override
+  String get profileReminderSetTitle => 'Pengingat disetel 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Kami akan mengingatkanmu dengan lembut pukul $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Kapan kami harus mengingatkanmu?';
 
   @override

@@ -758,6 +758,21 @@ class AppLocalizationsNb extends AppLocalizations {
       'Slå på varsler i Innstillinger for å få påminnelser.';
 
   @override
+  String get profileOpenSettings => 'Åpne innstillinger';
+
+  @override
+  String get profileReminderFailed =>
+      'Kunne ikke angi påminnelsen. Sjekk at varsler er tillatt for Rung i telefoninnstillingene.';
+
+  @override
+  String get profileReminderSetTitle => 'Påminnelse angitt 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Vi gir deg et vennlig dytt kl. $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Når skal vi dytte deg litt?';
 
   @override

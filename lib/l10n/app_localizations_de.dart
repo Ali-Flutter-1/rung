@@ -767,6 +767,21 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aktiviere Benachrichtigungen in den Einstellungen, um Erinnerungen zu erhalten.';
 
   @override
+  String get profileOpenSettings => 'Einstellungen öffnen';
+
+  @override
+  String get profileReminderFailed =>
+      'Die Erinnerung konnte nicht gesetzt werden. Prüfe, ob Benachrichtigungen für Rung in den Telefoneinstellungen erlaubt sind.';
+
+  @override
+  String get profileReminderSetTitle => 'Erinnerung eingestellt 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Wir stupsen dich sanft um $time an.';
+  }
+
+  @override
   String get profileReminderHelp => 'Wann sollen wir dich anstupsen?';
 
   @override

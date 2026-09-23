@@ -761,6 +761,21 @@ class AppLocalizationsPl extends AppLocalizations {
       'Włącz powiadomienia w Ustawieniach, aby otrzymywać przypomnienia.';
 
   @override
+  String get profileOpenSettings => 'Otwórz ustawienia';
+
+  @override
+  String get profileReminderFailed =>
+      'Nie udało się ustawić przypomnienia. Sprawdź, czy powiadomienia dla Rung są dozwolone w ustawieniach telefonu.';
+
+  @override
+  String get profileReminderSetTitle => 'Przypomnienie ustawione 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Delikatnie przypomnimy o $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Kiedy mamy ci przypomnieć?';
 
   @override

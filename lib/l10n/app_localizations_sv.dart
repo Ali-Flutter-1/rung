@@ -756,6 +756,21 @@ class AppLocalizationsSv extends AppLocalizations {
       'Aktivera aviseringar i Inställningar för att få påminnelser.';
 
   @override
+  String get profileOpenSettings => 'Öppna inställningar';
+
+  @override
+  String get profileReminderFailed =>
+      'Det gick inte att ställa in påminnelsen. Kontrollera att aviseringar är tillåtna för Rung i telefonens inställningar.';
+
+  @override
+  String get profileReminderSetTitle => 'Påminnelse inställd 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Vi puffar dig varsamt kl. $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'När ska vi puffa på dig?';
 
   @override

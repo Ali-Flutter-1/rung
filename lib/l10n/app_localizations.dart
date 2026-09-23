@@ -1447,6 +1447,30 @@ abstract class AppLocalizations {
   /// **'Enable notifications in Settings to get reminders.'**
   String get profileEnableNotifs;
 
+  /// No description provided for @profileOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get profileOpenSettings;
+
+  /// No description provided for @profileReminderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t set the reminder. Check that notifications are allowed for Rung in your phone\'s settings.'**
+  String get profileReminderFailed;
+
+  /// No description provided for @profileReminderSetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set 🪜'**
+  String get profileReminderSetTitle;
+
+  /// No description provided for @profileReminderSetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll nudge you gently at {time}.'**
+  String profileReminderSetBody(String time);
+
   /// No description provided for @profileReminderHelp.
   ///
   /// In en, this message translates to:

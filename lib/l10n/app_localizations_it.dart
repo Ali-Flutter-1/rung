@@ -760,6 +760,21 @@ class AppLocalizationsIt extends AppLocalizations {
       'Abilita le notifiche nelle Impostazioni per ricevere i promemoria.';
 
   @override
+  String get profileOpenSettings => 'Apri impostazioni';
+
+  @override
+  String get profileReminderFailed =>
+      'Non è stato possibile impostare il promemoria. Controlla che le notifiche siano consentite per Rung nelle impostazioni del telefono.';
+
+  @override
+  String get profileReminderSetTitle => 'Promemoria impostato 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Ti daremo una gentile spinta alle $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Quando dovremmo darti una spinta?';
 
   @override

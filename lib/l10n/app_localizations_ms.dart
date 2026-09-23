@@ -764,6 +764,21 @@ class AppLocalizationsMs extends AppLocalizations {
       'Aktifkan pemberitahuan dalam Tetapan untuk menerima peringatan.';
 
   @override
+  String get profileOpenSettings => 'Buka tetapan';
+
+  @override
+  String get profileReminderFailed =>
+      'Tidak dapat menetapkan peringatan. Pastikan pemberitahuan dibenarkan untuk Rung dalam tetapan telefon anda.';
+
+  @override
+  String get profileReminderSetTitle => 'Peringatan ditetapkan 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Kami akan mengingatkan anda dengan lembut pada $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Bila kami patut ingatkan anda?';
 
   @override

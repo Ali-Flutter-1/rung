@@ -760,6 +760,21 @@ class AppLocalizationsPt extends AppLocalizations {
       'Ative as notificações nos Ajustes para receber lembretes.';
 
   @override
+  String get profileOpenSettings => 'Abrir configurações';
+
+  @override
+  String get profileReminderFailed =>
+      'Não foi possível definir o lembrete. Verifique se as notificações estão permitidas para o Rung nas configurações do telefone.';
+
+  @override
+  String get profileReminderSetTitle => 'Lembrete definido 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Vamos te lembrar com delicadeza às $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Quando devemos te lembrar?';
 
   @override
@@ -2892,6 +2907,21 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get profileEnableNotifs =>
       'Ativa as notificações nas Definições para receberes lembretes.';
+
+  @override
+  String get profileOpenSettings => 'Abrir definições';
+
+  @override
+  String get profileReminderFailed =>
+      'Não foi possível definir o lembrete. Verifica se as notificações estão permitidas para o Rung nas definições do telemóvel.';
+
+  @override
+  String get profileReminderSetTitle => 'Lembrete definido 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Vamos lembrar-te com delicadeza às $time.';
+  }
 
   @override
   String get profileReminderHelp => 'Quando devemos dar-te um empurrãozinho?';

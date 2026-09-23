@@ -768,6 +768,21 @@ class AppLocalizationsFr extends AppLocalizations {
       'Active les notifications dans les Réglages pour recevoir des rappels.';
 
   @override
+  String get profileOpenSettings => 'Ouvrir les réglages';
+
+  @override
+  String get profileReminderFailed =>
+      'Impossible de définir le rappel. Vérifie que les notifications sont autorisées pour Rung dans les réglages de ton téléphone.';
+
+  @override
+  String get profileReminderSetTitle => 'Rappel enregistré 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'On te fera un petit signe à $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'Quand devons-nous t\'encourager ?';
 
   @override

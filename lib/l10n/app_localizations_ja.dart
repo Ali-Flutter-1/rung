@@ -719,6 +719,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get profileEnableNotifs => 'リマインダーを受け取るには、設定で通知を有効にしてください。';
 
   @override
+  String get profileOpenSettings => '設定を開く';
+
+  @override
+  String get profileReminderFailed =>
+      'リマインダーを設定できませんでした。端末の設定で Rung の通知が許可されているか確認してください。';
+
+  @override
+  String get profileReminderSetTitle => 'リマインダーを設定しました 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return '$time にそっとお知らせします。';
+  }
+
+  @override
   String get profileReminderHelp => 'いつ声をかけましょうか？';
 
   @override

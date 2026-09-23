@@ -721,6 +721,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get profileEnableNotifs => '알림을 받으려면 설정에서 알림을 켜 주세요.';
 
   @override
+  String get profileOpenSettings => '설정 열기';
+
+  @override
+  String get profileReminderFailed =>
+      '알림을 설정하지 못했습니다. 휴대폰 설정에서 Rung의 알림이 허용되어 있는지 확인해 주세요.';
+
+  @override
+  String get profileReminderSetTitle => '리마인더 설정 완료 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return '$time에 부드럽게 알려 드릴게요.';
+  }
+
+  @override
   String get profileReminderHelp => '언제 알려 드릴까요?';
 
   @override

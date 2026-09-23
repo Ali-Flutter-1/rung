@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -134,8 +135,13 @@ class NotificationService {
   );
 
   /// Schedules (or reschedules) a daily reminder at [time], local.
-  Future<void> scheduleDaily(TimeOfDay time) async {
-    if (!_ready) return;
+  ///
+  /// Returns null on success, or a human-readable reason on failure. It used to
+  /// swallow every error, which made an Android device that silently refused to
+  /// schedule indistinguishable from one that worked — the toggle flipped on and
+  /// nothing ever arrived. Callers surface what comes back.
+  Future<String?> scheduleDaily(TimeOfDay time) async {
+    if (!_ready) return 'Notifications are unavailable on this device.';
     try {
       await _plugin.cancel(id: _reminderId);
       await _plugin.zonedSchedule(
@@ -144,11 +150,48 @@ class NotificationService {
         body: 'A couple of calm minutes is all it takes. 🪜',
         scheduledDate: _nextInstanceOf(time),
         notificationDetails: _details,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        androidScheduleMode: await _scheduleMode(),
         matchDateTimeComponents: DateTimeComponents.time, // repeat daily
       );
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[notif] scheduleDaily failed: $e');
+      return '$e';
+    }
+  }
+
+  /// Exact alarms survive Doze and OEM battery managers far better, but the OS
+  /// only grants them when the user has allowed it. Ask, then fall back — an
+  /// inexact reminder that arrives late beats one that never arrives.
+  Future<AndroidScheduleMode> _scheduleMode() async {
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) return AndroidScheduleMode.exactAllowWhileIdle;
+    try {
+      if (await android.canScheduleExactNotifications() ?? false) {
+        return AndroidScheduleMode.exactAllowWhileIdle;
+      }
     } catch (_) {
-      /* never block the UI */
+      /* fall through to inexact */
+    }
+    return AndroidScheduleMode.inexactAllowWhileIdle;
+  }
+
+  /// Posts a notification right now. Used to confirm the reminder was set — and
+  /// doubles as proof that delivery works at all on this device.
+  Future<void> showNow({required String title, required String body}) async {
+    if (!_ready) return;
+    try {
+      await _plugin.show(
+        id: _reminderId + 900,
+        title: title,
+        body: body,
+        notificationDetails: _details,
+      );
+    } catch (e) {
+      if (kDebugMode) debugPrint('[notif] showNow failed: $e');
     }
   }
 

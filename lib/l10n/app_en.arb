@@ -367,6 +367,13 @@
   "profilePodAlerts": "Pod message alerts",
   "profilePodAlertsSub": "Tell me when someone posts in my pods",
   "profileEnableNotifs": "Enable notifications in Settings to get reminders.",
+  "profileOpenSettings": "Open settings",
+  "profileReminderFailed": "Couldn't set the reminder. Check that notifications are allowed for Rung in your phone's settings.",
+  "profileReminderSetTitle": "Reminder set \ud83e\ude9c",
+  "profileReminderSetBody": "We'll nudge you gently at {time}.",
+  "@profileReminderSetBody": {
+    "placeholders": { "time": { "type": "String" } }
+  },
   "profileReminderHelp": "When should we nudge you?",
   "profileReminderTitle": "Gentle daily reminder",
   "profileReminderOn": "Every day at {time} · tap the switch to turn off",

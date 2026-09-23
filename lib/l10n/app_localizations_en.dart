@@ -751,6 +751,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enable notifications in Settings to get reminders.';
 
   @override
+  String get profileOpenSettings => 'Open settings';
+
+  @override
+  String get profileReminderFailed =>
+      'Couldn\'t set the reminder. Check that notifications are allowed for Rung in your phone\'s settings.';
+
+  @override
+  String get profileReminderSetTitle => 'Reminder set 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'We\'ll nudge you gently at $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'When should we nudge you?';
 
   @override

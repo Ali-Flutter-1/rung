@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:rung/core/haptics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -604,10 +605,18 @@ class _ReminderControl extends ConsumerWidget {
     if (!context.mounted) return;
     final l = AppLocalizations.of(context);
     if (!granted) {
+      // Android 13+ stops showing the permission dialog after a single refusal,
+      // so telling the user to "go to settings" without taking them there is a
+      // dead end they can never escape from inside the app.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text(l.profileEnableNotifs),
+          action: SnackBarAction(
+            label: l.profileOpenSettings,
+            onPressed: () =>
+                AppSettings.openAppSettings(type: AppSettingsType.notification),
+          ),
         ),
       );
       return;
@@ -617,9 +626,28 @@ class _ReminderControl extends ConsumerWidget {
       initialTime: existing ?? _defaultReminder,
       helpText: l.profileReminderHelp,
     );
-    if (picked == null) return;
-    await NotificationService.instance.scheduleDaily(picked);
+    if (picked == null || !context.mounted) return;
+    // Format while the context is certainly alive — it is used after the await.
+    final pickedLabel = picked.format(context);
+    final error = await NotificationService.instance.scheduleDaily(picked);
+    if (!context.mounted) return;
+    if (error != null) {
+      // Don't flip the toggle on for a reminder that was never scheduled.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(l.profileReminderFailed),
+        ),
+      );
+      return;
+    }
     await ref.read(settingsRepositoryProvider).setReminderTime(picked);
+    // Immediate confirmation: tells the user it worked, and proves on the spot
+    // that notifications actually reach this device.
+    await NotificationService.instance.showNow(
+      title: l.profileReminderSetTitle,
+      body: l.profileReminderSetBody(pickedLabel),
+    );
     ref.read(analyticsProvider).capture(Ev.reminderEnabled, {
       'hour': picked.hour,
     });

@@ -741,6 +741,21 @@ class AppLocalizationsAr extends AppLocalizations {
       'فعّل الإشعارات في الإعدادات لتصلك التذكيرات.';
 
   @override
+  String get profileOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get profileReminderFailed =>
+      'تعذّر ضبط التذكير. تأكّد من السماح بالإشعارات لتطبيق Rung في إعدادات هاتفك.';
+
+  @override
+  String get profileReminderSetTitle => 'تم ضبط التذكير 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'سنذكّرك بلطف في $time.';
+  }
+
+  @override
   String get profileReminderHelp => 'متى تريد أن نذكّرك؟';
 
   @override

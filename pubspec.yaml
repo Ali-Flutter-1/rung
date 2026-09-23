@@ -66,6 +66,10 @@ dependencies:
   in_app_review: ^2.0.12
   # Opens the hosted privacy policy / terms in the device browser.
   url_launcher: ^6.3.2
+  # Deep-links to this app's OS notification settings. Android 13+ silently
+  # auto-denies POST_NOTIFICATIONS after one refusal, so the in-app prompt can
+  # never reappear — without this the user has no way back.
+  app_settings: ^6.1.1
 
 # path_provider_foundation 2.6.0 migrated to Dart native code-assets (the
 # `objective_c` FFI package). Our toolchain doesn't pass SdkRoot to that native

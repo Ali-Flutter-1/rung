@@ -758,6 +758,21 @@ class AppLocalizationsEs extends AppLocalizations {
       'Activa las notificaciones en Ajustes para recibir recordatorios.';
 
   @override
+  String get profileOpenSettings => 'Abrir ajustes';
+
+  @override
+  String get profileReminderFailed =>
+      'No se pudo configurar el recordatorio. Comprueba que las notificaciones estén permitidas para Rung en los ajustes del teléfono.';
+
+  @override
+  String get profileReminderSetTitle => 'Recordatorio configurado 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'Te avisaremos con suavidad a las $time.';
+  }
+
+  @override
   String get profileReminderHelp =>
       '¿Cuándo quieres que te demos un empujoncito?';
 

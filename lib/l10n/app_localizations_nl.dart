@@ -761,6 +761,21 @@ class AppLocalizationsNl extends AppLocalizations {
       'Schakel meldingen in bij Instellingen om herinneringen te krijgen.';
 
   @override
+  String get profileOpenSettings => 'Instellingen openen';
+
+  @override
+  String get profileReminderFailed =>
+      'De herinnering kon niet worden ingesteld. Controleer of meldingen voor Rung zijn toegestaan in je telefooninstellingen.';
+
+  @override
+  String get profileReminderSetTitle => 'Herinnering ingesteld 🪜';
+
+  @override
+  String profileReminderSetBody(String time) {
+    return 'We geven je om $time een zacht zetje.';
+  }
+
+  @override
   String get profileReminderHelp => 'Wanneer zullen we je een zetje geven?';
 
   @override
