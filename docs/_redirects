@@ -3,3 +3,4 @@
 # lives at the repo root and is not uploaded in that case).
 /privacy  /privacy.html  200
 /terms    /terms.html    200
+/delete  /delete-account.html  200

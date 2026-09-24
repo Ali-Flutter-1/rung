@@ -23,6 +23,12 @@
   to = "/terms.html"
   status = 200
 
+# Google Play requires a public account-deletion URL, separate from the policy.
+[[redirects]]
+  from = "/delete"
+  to = "/delete-account.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
