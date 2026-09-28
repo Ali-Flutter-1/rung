@@ -437,6 +437,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get customAddToLadder => 'Adicionar à escada';
 
   @override
+  String get paywallManage => 'Gerenciar assinatura';
+
+  @override
   String get paywallSwitchToFree => 'Mudar para Gratuito';
 
   @override
@@ -532,6 +535,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get paywallPlanUnavailable =>
       'Esse plano não está disponível agora. Tente novamente em breve.';
+
+  @override
+  String get paywallNotActivated =>
+      'O pagamento foi concluído, mas o Premium não foi ativado. Toque em Restaurar ou escreva para nós e resolvemos.';
 
   @override
   String get paywallThankYou => 'Premium ativo — obrigado. 🌱';
@@ -2594,6 +2601,9 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get customAddToLadder => 'Adicionar à escada';
 
   @override
+  String get paywallManage => 'Gerir subscrição';
+
+  @override
   String get paywallSwitchToFree => 'Mudar para Gratuito';
 
   @override
@@ -2689,6 +2699,10 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get paywallPlanUnavailable =>
       'Esse plano não está disponível de momento. Tenta novamente daqui a pouco.';
+
+  @override
+  String get paywallNotActivated =>
+      'O pagamento foi concluído, mas o Premium não foi ativado. Toca em Restaurar ou escreve-nos e resolvemos.';
 
   @override
   String get paywallThankYou => 'Premium ativo — obrigado. 🌱';

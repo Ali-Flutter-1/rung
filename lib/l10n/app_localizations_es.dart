@@ -437,6 +437,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get customAddToLadder => 'Añadir a la escalera';
 
   @override
+  String get paywallManage => 'Gestionar suscripción';
+
+  @override
   String get paywallSwitchToFree => 'Cambiar a Gratis';
 
   @override
@@ -532,6 +535,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get paywallPlanUnavailable =>
       'Ese plan no está disponible ahora. Inténtalo de nuevo en breve.';
+
+  @override
+  String get paywallNotActivated =>
+      'El pago se realizó, pero Premium no se activó. Pulsa Restaurar o escríbenos y lo solucionamos.';
 
   @override
   String get paywallThankYou => 'Premium activo — gracias. 🌱';

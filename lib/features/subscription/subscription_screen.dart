@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -88,10 +90,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       final tier = await ref.read(purchaseServiceProvider).buy(pkg);
       await settings.setSubscriptionTier(tier);
       await pushIdentityToCloud(ref);
+      // A completed purchase that grants nothing is the worst outcome there is:
+      // the user paid and silently got nothing. It happens when the purchased
+      // product isn't attached to the `premium` entitlement in RevenueCat, so
+      // say so plainly instead of thanking them for a subscription they don't
+      // have — and point at Restore, which re-reads entitlements once the
+      // dashboard is fixed.
       messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text(l.paywallThankYou),
+          content: Text(
+            tier.isPremium ? l.paywallThankYou : l.paywallNotActivated,
+          ),
         ),
       );
     } on PurchaseCancelled {
@@ -105,6 +115,27 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       );
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Opens the store's own subscription management page — the only place a
+  /// real subscription can actually be changed or cancelled.
+  Future<void> _openStoreSubscriptions() async {
+    // Deep-link straight to THIS subscription where we can. Play takes a `sku`
+    // (the subscription id without its base-plan suffix) plus the package name;
+    // without them the user lands on a list of every subscription they own.
+    final pkg = _selectedPackage ?? _offering?.annual ?? _offering?.monthly;
+    final sku = pkg?.storeProduct.identifier.split(':').first;
+    final url = defaultTargetPlatform == TargetPlatform.iOS
+        ? 'https://apps.apple.com/account/subscriptions'
+        : (sku == null || sku.isEmpty)
+              ? 'https://play.google.com/store/account/subscriptions'
+              : 'https://play.google.com/store/account/subscriptions'
+                    '?sku=$sku&package=com.rungintrovert.app';
+    try {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (_) {
+      /* nothing useful to say if no browser/store app exists */
     }
   }
 
@@ -168,7 +199,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       appBar: AppBar(
         title: const Text('Rung Premium'),
         actions: [
-          if (tier.isPremium)
+          // Simulated tiers only. With real billing, the app must never claim a
+          // paying subscriber is free — cancelling belongs to the store, which
+          // is the only thing that can actually stop the charges.
+          if (tier.isPremium && !purchasesReady)
             TextButton(
               onPressed: () async {
                 await settings.setSubscriptionTier(SubscriptionTier.free);
@@ -327,27 +361,36 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ],
           ),
           const SizedBox(height: Insets.lg),
-          FilledButton(
-            onPressed: _busy ? null : _onSubscribe,
-            child: _busy
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
+          if (tier.isPremium && purchasesReady)
+            // Plan changes and cancellation happen in the store. Calling buy()
+            // again would start a SECOND subscription — we pass no old product
+            // or proration mode, so the outcome is undefined.
+            FilledButton(
+              onPressed: _openStoreSubscriptions,
+              child: Text(l.paywallManage),
+            )
+          else
+            FilledButton(
+              onPressed: _busy ? null : _onSubscribe,
+              child: _busy
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      tier.isPremium
+                          ? (_yearly
+                                ? l.paywallSwitchYearly
+                                : l.paywallSwitchMonthly)
+                          : (_yearly
+                                ? l.paywallStartYearly(_priceLabel(true))
+                                : l.paywallStartMonthly(_priceLabel(false))),
                     ),
-                  )
-                : Text(
-                    tier.isPremium
-                        ? (_yearly
-                              ? l.paywallSwitchYearly
-                              : l.paywallSwitchMonthly)
-                        : (_yearly
-                              ? l.paywallStartYearly(_priceLabel(true))
-                              : l.paywallStartMonthly(_priceLabel(false))),
-                  ),
-          ),
+            ),
           if (purchasesReady) ...[
             const SizedBox(height: Insets.xs),
             Center(

@@ -423,6 +423,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get customAddToLadder => '사다리에 추가';
 
   @override
+  String get paywallManage => '구독 관리';
+
+  @override
   String get paywallSwitchToFree => '무료로 전환';
 
   @override
@@ -512,6 +515,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get paywallPlanUnavailable => '해당 요금제를 지금 이용할 수 없어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get paywallNotActivated =>
+      '결제는 완료됐지만 Premium이 활성화되지 않았습니다. 복원을 누르거나 문의해 주시면 처리해 드릴게요.';
 
   @override
   String get paywallThankYou => '프리미엄 활성화 — 감사합니다. 🌱';

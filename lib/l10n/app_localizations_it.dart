@@ -438,6 +438,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get customAddToLadder => 'Aggiungi alla scala';
 
   @override
+  String get paywallManage => 'Gestisci abbonamento';
+
+  @override
   String get paywallSwitchToFree => 'Passa a Gratuito';
 
   @override
@@ -533,6 +536,10 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get paywallPlanUnavailable =>
       'Quel piano non è disponibile al momento. Riprova tra poco.';
+
+  @override
+  String get paywallNotActivated =>
+      'Il pagamento è andato a buon fine, ma Premium non si è attivato. Tocca Ripristina o scrivici e lo sistemiamo.';
 
   @override
   String get paywallThankYou => 'Premium attivo — grazie. 🌱';

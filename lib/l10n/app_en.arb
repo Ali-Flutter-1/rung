@@ -245,6 +245,7 @@
     }
   },
   "customAddToLadder": "Add to ladder",
+  "paywallManage": "Manage subscription",
   "paywallSwitchToFree": "Switch to Free",
   "paywallHeroTitle": "You don't have to face it alone.",
   "paywallHeroBody": "The daily practice is always free. Premium adds a private coach in your corner — and a bigger community beside you — for when you're ready to go further.",
@@ -293,6 +294,7 @@
   "paywallCancelAnytime": "Cancel anytime. The core loop stays free forever.",
   "paywallSimulated": "Premium active (simulated — add RevenueCat keys for real purchases).",
   "paywallPlanUnavailable": "That plan isn't available right now. Try again shortly.",
+  "paywallNotActivated": "Payment went through, but Premium didn't switch on. Tap Restore, or email us and we'll fix it.",
   "paywallThankYou": "Premium active — thank you. 🌱",
   "paywallPurchaseFailed": "The purchase didn't complete. You haven't been charged.",
   "paywallRestored": "Purchases restored.",

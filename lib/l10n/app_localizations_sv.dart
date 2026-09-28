@@ -438,6 +438,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get customAddToLadder => 'Lägg till i stegen';
 
   @override
+  String get paywallManage => 'Hantera prenumeration';
+
+  @override
   String get paywallSwitchToFree => 'Byt till Gratis';
 
   @override
@@ -533,6 +536,10 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get paywallPlanUnavailable =>
       'Den planen är inte tillgänglig just nu. Försök igen strax.';
+
+  @override
+  String get paywallNotActivated =>
+      'Betalningen gick igenom, men Premium aktiverades inte. Tryck på Återställ, eller mejla oss så fixar vi det.';
 
   @override
   String get paywallThankYou => 'Premium aktivt — tack. 🌱';

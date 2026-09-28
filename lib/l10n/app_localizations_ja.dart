@@ -421,6 +421,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get customAddToLadder => 'はしごに追加';
 
   @override
+  String get paywallManage => 'サブスクリプションを管理';
+
+  @override
   String get paywallSwitchToFree => '無料プランに切り替え';
 
   @override
@@ -510,6 +513,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get paywallPlanUnavailable => 'そのプランは現在ご利用いただけません。しばらくしてからお試しください。';
+
+  @override
+  String get paywallNotActivated =>
+      '支払いは完了しましたが、Premium が有効になりませんでした。「復元」をタップするか、ご連絡ください。対応します。';
 
   @override
   String get paywallThankYou => 'プレミアム有効 — ありがとうございます。🌱';

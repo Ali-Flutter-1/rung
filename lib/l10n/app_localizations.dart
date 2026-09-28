@@ -883,6 +883,12 @@ abstract class AppLocalizations {
   /// **'Add to ladder'**
   String get customAddToLadder;
 
+  /// No description provided for @paywallManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get paywallManage;
+
   /// No description provided for @paywallSwitchToFree.
   ///
   /// In en, this message translates to:
@@ -1044,6 +1050,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That plan isn\'t available right now. Try again shortly.'**
   String get paywallPlanUnavailable;
+
+  /// No description provided for @paywallNotActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment went through, but Premium didn\'t switch on. Tap Restore, or email us and we\'ll fix it.'**
+  String get paywallNotActivated;
 
   /// No description provided for @paywallThankYou.
   ///
