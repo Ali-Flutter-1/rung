@@ -37,7 +37,10 @@ class PurchaseCancelled implements Exception {
 /// and exposes offerings / purchase / restore. All methods no-op safely when
 /// [purchasesReady] is false.
 class PurchaseService {
-  const PurchaseService();
+  PurchaseService();
+
+  /// Only ever attach one entitlement listener, however often sync re-runs.
+  bool _listening = false;
 
   /// Maps the active RevenueCat entitlement to our tier (monthly vs yearly is
   /// read from the product identifier, so name your products with month/year).
@@ -54,23 +57,29 @@ class PurchaseService {
 
   /// Ties purchases to the signed-in user so the webhook knows who bought.
   /// Returns their current entitlement tier.
-  Future<SubscriptionTier> syncUser(String uid) async {
-    if (!purchasesReady) return SubscriptionTier.free;
+  /// Returns null when the entitlement state is UNKNOWN — offline, RevenueCat
+  /// unreachable, or purchases not configured. That is emphatically not the
+  /// same as "free": returning free on a failed lookup silently downgrades a
+  /// paying subscriber every time the network hiccups on launch. Callers must
+  /// keep the stored tier when this is null.
+  Future<SubscriptionTier?> syncUser(String uid) async {
+    if (!purchasesReady) return null;
     try {
       final res = await Purchases.logIn(uid);
       return tierFrom(res.customerInfo);
     } catch (e) {
       if (kDebugMode) debugPrint('[iap] logIn failed: $e');
-      return SubscriptionTier.free;
+      return null;
     }
   }
 
-  Future<SubscriptionTier> currentTier() async {
-    if (!purchasesReady) return SubscriptionTier.free;
+  /// Null on failure — see [syncUser].
+  Future<SubscriptionTier?> currentTier() async {
+    if (!purchasesReady) return null;
     try {
       return tierFrom(await Purchases.getCustomerInfo());
     } catch (_) {
-      return SubscriptionTier.free;
+      return null;
     }
   }
 
@@ -116,7 +125,8 @@ class PurchaseService {
   /// Fires whenever entitlements change (renewal, expiry, restore, another
   /// device). Returns the subscription so it can be cancelled.
   void addTierListener(void Function(SubscriptionTier) onTier) {
-    if (!purchasesReady) return;
+    if (!purchasesReady || _listening) return;
+    _listening = true;
     Purchases.addCustomerInfoUpdateListener((info) => onTier(tierFrom(info)));
   }
 }

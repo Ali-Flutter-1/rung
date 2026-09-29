@@ -75,7 +75,7 @@ final syncServiceProvider = Provider<SyncService>(
 
 /// RevenueCat purchases. No-ops until a RevenueCat key is configured.
 final purchaseServiceProvider = Provider<PurchaseService>(
-  (_) => const PurchaseService(),
+  (_) => PurchaseService(),
 );
 
 /// On sign-in: tie purchases to the user and sync their entitlement tier into
@@ -87,8 +87,18 @@ final purchaseSyncProvider = FutureProvider<void>((ref) async {
   final user = ref.watch(authUserProvider).asData?.value;
   if (user == null) return;
   final settings = ref.read(settingsRepositoryProvider);
-  final tier = await ref.read(purchaseServiceProvider).syncUser(user.id);
-  if (settings.subscriptionTier != tier) {
+  final purchases = ref.read(purchaseServiceProvider);
+  // Renewals, expiries, refunds and purchases made on another device arrive
+  // here while the app is open; without this the tier only refreshes on a cold
+  // start, so an expired subscription keeps its access for the whole session.
+  purchases.addTierListener((t) async {
+    if (settings.subscriptionTier == t) return;
+    await settings.setSubscriptionTier(t);
+  });
+  final tier = await purchases.syncUser(user.id);
+  // null = entitlement state unknown (offline / RevenueCat unreachable). Keep
+  // whatever is stored rather than downgrading a paying user on a bad network.
+  if (tier != null && settings.subscriptionTier != tier) {
     await settings.setSubscriptionTier(tier);
     try {
       await ref
