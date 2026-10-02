@@ -78,6 +78,26 @@ Future<void> main() async {
   final db = await AppDatabase.open();
   final settings = await PrefsSettingsRepository.create();
   Haptics.enabled = settings.hapticsEnabled; // gate all haptics from here on
+
+  // Re-arm the daily reminder every launch.
+  //
+  // Android cancels a package's alarms when it is REPLACED, but the stored
+  // reminder time survives the update. Scheduling only ever happened in the
+  // Profile time picker, so after any app update the toggle kept reading "on"
+  // while no alarm existed and the user silently stopped being reminded —
+  // indistinguishable, from the inside, from the feature just dying. Reboots
+  // were already covered by the plugin's BOOT_COMPLETED receiver; updates were
+  // not. scheduleDaily cancels before scheduling, so re-running it each launch
+  // is idempotent.
+  final reminder = settings.reminderTime;
+  if (reminder != null) {
+    final reminderError = await NotificationService.instance.scheduleDaily(
+      reminder,
+    );
+    if (kDebugMode && reminderError != null) {
+      debugPrint('[notif] startup re-arm failed: $reminderError');
+    }
+  }
   // Analytics is opt-in (GDPR): with the default (off) the PostHog SDK is never
   // even initialized. Runs after settings load so it can read the stored choice.
   await initAnalytics(consent: settings.analyticsEnabled);
