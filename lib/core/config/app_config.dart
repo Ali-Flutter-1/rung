@@ -42,7 +42,8 @@ class AppConfig {
   static const _envRcIos = String.fromEnvironment('REVENUECAT_IOS_KEY');
   static const _envRcAndroid = String.fromEnvironment('REVENUECAT_ANDROID_KEY');
   static const _inlineRcIos = ''; // appl_…  (RevenueCat → Project → API keys)
-  static const _inlineRcAndroid = ''; // goog_…
+  static const _inlineRcAndroid =
+      'goog_lRDtSgWxrzXFyOJWnxpSoaEqzyn'; // RevenueCat → Project → API keys
   /// The RevenueCat entitlement that unlocks Premium.
   static const revenueCatEntitlement = 'premium';
 
