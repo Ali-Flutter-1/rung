@@ -820,6 +820,15 @@ class AppLocalizationsNb extends AppLocalizations {
   String get checkInMoodTense => 'Anspent';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Ett trykk beholder rekken din på $count dager. Ingen steg nødvendig.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Ett trykk starter rekken din. Ingen steg nødvendig.';
+
+  @override
   String get checkInTitle => 'Hvordan ankommer du i dag?';
 
   @override

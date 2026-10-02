@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "不安",
   "checkInMoodLow": "落ち込み",
   "checkInMoodTense": "緊張",
+  "checkInKeepsStreak": "タップするだけで{count}日連続を維持できます。ステップは不要です。",
+  "checkInStartsStreak": "タップするだけで連続記録が始まります。ステップは不要です。",
   "checkInTitle": "今日はどんな気分で来ましたか？",
   "checkInDismiss": "閉じる",
   "checkInCalmCta": "穏やかなひとときを試す",

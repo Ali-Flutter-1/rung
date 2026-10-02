@@ -212,6 +212,8 @@
   "checkInMoodAnxious": "Cemas",
   "checkInMoodLow": "Sedih",
   "checkInMoodTense": "Tegang",
+  "checkInKeepsStreak": "Satu ketuk menjaga rentetan {count} harimu. Tanpa perlu langkah.",
+  "checkInStartsStreak": "Satu ketuk memulai rentetanmu. Tanpa perlu langkah.",
   "checkInTitle": "Bagaimana keadaanmu hari ini?",
   "checkInDismiss": "Tutup",
   "checkInCalmCta": "Coba momen tenang",

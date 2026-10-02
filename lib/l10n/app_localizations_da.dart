@@ -821,6 +821,15 @@ class AppLocalizationsDa extends AppLocalizations {
   String get checkInMoodTense => 'Anspændt';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Et tryk bevarer din $count-dages stime. Intet skridt nødvendigt.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Et tryk starter din stime. Intet skridt nødvendigt.';
+
+  @override
   String get checkInTitle => 'Hvordan ankommer du i dag?';
 
   @override

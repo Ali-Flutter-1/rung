@@ -212,6 +212,8 @@
   "checkInMoodAnxious": "Anxieux",
   "checkInMoodLow": "Au plus bas",
   "checkInMoodTense": "Tendu",
+  "checkInKeepsStreak": "Un geste conserve ta série de {count} jours. Aucune étape requise.",
+  "checkInStartsStreak": "Un geste lance ta série. Aucune étape requise.",
   "checkInTitle": "Comment arrives-tu aujourd'hui ?",
   "checkInDismiss": "Ignorer",
   "checkInCalmCta": "Essayer un moment de calme",

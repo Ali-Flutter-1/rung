@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Niespokojnie",
   "checkInMoodLow": "Przygnębienie",
   "checkInMoodTense": "Napięcie",
+  "checkInKeepsStreak": "Jedno dotknięcie utrzymuje twoją {count}-dniową passę. Krok nie jest potrzebny.",
+  "checkInStartsStreak": "Jedno dotknięcie zaczyna twoją passę. Krok nie jest potrzebny.",
   "checkInTitle": "Z czym dziś przychodzisz?",
   "checkInDismiss": "Odrzuć",
   "checkInCalmCta": "Spróbuj chwili spokoju",

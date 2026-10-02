@@ -781,6 +781,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get checkInMoodTense => '긴장';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return '한 번만 누르면 $count일 연속 기록이 유지돼요. 단계는 필요 없어요.';
+  }
+
+  @override
+  String get checkInStartsStreak => '한 번만 누르면 연속 기록이 시작돼요. 단계는 필요 없어요.';
+
+  @override
   String get checkInTitle => '오늘은 어떤 마음으로 오셨나요?';
 
   @override

@@ -395,6 +395,11 @@
   "checkInMoodAnxious": "Anxious",
   "checkInMoodLow": "Low",
   "checkInMoodTense": "Tense",
+  "checkInKeepsStreak": "One tap keeps your {count}-day streak. No step needed.",
+  "@checkInKeepsStreak": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "checkInStartsStreak": "One tap starts your streak. No step needed.",
   "checkInTitle": "How are you arriving today?",
   "checkInDismiss": "Dismiss",
   "checkInCalmCta": "Try a calm moment",

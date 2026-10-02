@@ -779,6 +779,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get checkInMoodTense => '緊張';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'タップするだけで$count日連続を維持できます。ステップは不要です。';
+  }
+
+  @override
+  String get checkInStartsStreak => 'タップするだけで連続記録が始まります。ステップは不要です。';
+
+  @override
   String get checkInTitle => '今日はどんな気分で来ましたか？';
 
   @override

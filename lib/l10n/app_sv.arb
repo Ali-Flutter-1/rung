@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Ängslig",
   "checkInMoodLow": "Nedstämd",
   "checkInMoodTense": "Spänd",
+  "checkInKeepsStreak": "En knapptryckning behåller din {count}-dagarssvit. Inget steg behövs.",
+  "checkInStartsStreak": "En knapptryckning startar din svit. Inget steg behövs.",
   "checkInTitle": "Hur anländer du idag?",
   "checkInDismiss": "Avfärda",
   "checkInCalmCta": "Prova en lugn stund",

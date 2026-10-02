@@ -212,6 +212,8 @@
   "checkInMoodAnxious": "Ängstlich",
   "checkInMoodLow": "Niedergeschlagen",
   "checkInMoodTense": "Angespannt",
+  "checkInKeepsStreak": "Ein Tippen sichert deine {count}-Tage-Serie. Kein Schritt nötig.",
+  "checkInStartsStreak": "Ein Tippen startet deine Serie. Kein Schritt nötig.",
   "checkInTitle": "Wie kommst du heute an?",
   "checkInDismiss": "Ausblenden",
   "checkInCalmCta": "Einen ruhigen Moment versuchen",

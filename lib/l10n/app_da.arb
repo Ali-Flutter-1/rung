@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Ængstelig",
   "checkInMoodLow": "Nedtrykt",
   "checkInMoodTense": "Anspændt",
+  "checkInKeepsStreak": "Et tryk bevarer din {count}-dages stime. Intet skridt nødvendigt.",
+  "checkInStartsStreak": "Et tryk starter din stime. Intet skridt nødvendigt.",
   "checkInTitle": "Hvordan ankommer du i dag?",
   "checkInDismiss": "Afvis",
   "checkInCalmCta": "Prøv et roligt øjeblik",

@@ -821,6 +821,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get checkInMoodTense => 'Tenso';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Un toque mantiene tu racha de $count días. No hace falta ningún paso.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Un toque inicia tu racha. No hace falta ningún paso.';
+
+  @override
   String get checkInTitle => '¿Cómo llegas hoy?';
 
   @override

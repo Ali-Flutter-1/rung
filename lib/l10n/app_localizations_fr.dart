@@ -830,6 +830,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get checkInMoodTense => 'Tendu';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Un geste conserve ta série de $count jours. Aucune étape requise.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Un geste lance ta série. Aucune étape requise.';
+
+  @override
   String get checkInTitle => 'Comment arrives-tu aujourd\'hui ?';
 
   @override

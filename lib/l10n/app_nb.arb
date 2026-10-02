@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Engstelig",
   "checkInMoodLow": "Nedfor",
   "checkInMoodTense": "Anspent",
+  "checkInKeepsStreak": "Ett trykk beholder rekken din på {count} dager. Ingen steg nødvendig.",
+  "checkInStartsStreak": "Ett trykk starter rekken din. Ingen steg nødvendig.",
   "checkInTitle": "Hvordan ankommer du i dag?",
   "checkInDismiss": "Avvis",
   "checkInCalmCta": "Prøv et rolig øyeblikk",

@@ -212,6 +212,8 @@
   "checkInMoodAnxious": "قلق",
   "checkInMoodLow": "محبط",
   "checkInMoodTense": "متوتر",
+  "checkInKeepsStreak": "نقرة واحدة تحافظ على سلسلتك البالغة {count} يوم. لا حاجة لخطوة.",
+  "checkInStartsStreak": "نقرة واحدة تبدأ سلسلتك. لا حاجة لخطوة.",
   "checkInTitle": "كيف حالك اليوم؟",
   "checkInDismiss": "تجاهل",
   "checkInCalmCta": "جرّب لحظة هدوء",

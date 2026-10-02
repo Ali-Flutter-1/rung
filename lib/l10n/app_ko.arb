@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "불안",
   "checkInMoodLow": "가라앉음",
   "checkInMoodTense": "긴장",
+  "checkInKeepsStreak": "한 번만 누르면 {count}일 연속 기록이 유지돼요. 단계는 필요 없어요.",
+  "checkInStartsStreak": "한 번만 누르면 연속 기록이 시작돼요. 단계는 필요 없어요.",
   "checkInTitle": "오늘은 어떤 마음으로 오셨나요?",
   "checkInDismiss": "닫기",
   "checkInCalmCta": "차분한 순간 가져보기",

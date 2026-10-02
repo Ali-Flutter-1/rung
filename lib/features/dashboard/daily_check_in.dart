@@ -105,6 +105,7 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
 
   Widget _prompt(TextTheme t) {
     final l = AppLocalizations.of(context);
+    final streak = ref.watch(streakProvider).asData?.value ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,8 +117,17 @@ class _DailyCheckInState extends ConsumerState<DailyCheckIn> {
               color: AppColors.primaryDeep,
             ),
             const SizedBox(width: Insets.sm),
-            Text(l.checkInTitle, style: t.titleMedium),
+            Expanded(child: Text(l.checkInTitle, style: t.titleMedium)),
           ],
+        ),
+        const SizedBox(height: Insets.xs),
+        // Say what the tap is FOR. The check-in is what the streak counts, but
+        // nothing here showed that until after tapping — so a user could ignore
+        // these chips and lose a streak without ever learning the two were
+        // connected.
+        Text(
+          streak > 0 ? l.checkInKeepsStreak(streak) : l.checkInStartsStreak,
+          style: t.bodyMedium?.copyWith(color: AppColors.primaryDeep),
         ),
         const SizedBox(height: Insets.md),
         Wrap(

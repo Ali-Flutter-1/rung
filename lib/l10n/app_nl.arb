@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Angstig",
   "checkInMoodLow": "Somber",
   "checkInMoodTense": "Gespannen",
+  "checkInKeepsStreak": "Eén tik behoudt je reeks van {count} dagen. Geen stap nodig.",
+  "checkInStartsStreak": "Eén tik start je reeks. Geen stap nodig.",
   "checkInTitle": "Hoe kom je vandaag aan?",
   "checkInDismiss": "Sluiten",
   "checkInCalmCta": "Probeer een kalm moment",

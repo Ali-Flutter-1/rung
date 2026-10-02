@@ -813,6 +813,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInMoodTense => 'Tense';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'One tap keeps your $count-day streak. No step needed.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'One tap starts your streak. No step needed.';
+
+  @override
   String get checkInTitle => 'How are you arriving today?';
 
   @override

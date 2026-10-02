@@ -33,15 +33,32 @@ class PushService {
   }
 
   /// Call after sign-in: grab this device's token and register it.
+  ///
+  /// Retried, because `getToken()` throws `IOException: FCM Registration
+  /// failed!` fairly reliably in one specific situation: signing out deletes the
+  /// token, and asking for a new one moments later (a sign-out → sign-in cycle)
+  /// races FCM's own registration. Observed on a real device. Without a retry
+  /// that device silently receives no push at all until the next cold start,
+  /// and nothing tells the user.
   Future<void> registerForUser() async {
     if (!firebaseReady) return;
-    try {
-      await _init();
-      final token = await _fm.getToken();
-      if (token != null) await _save(token);
-    } catch (e) {
-      if (kDebugMode) debugPrint('[push] register failed: $e');
+    const delays = [Duration.zero, Duration(seconds: 2), Duration(seconds: 6)];
+    for (var attempt = 0; attempt < delays.length; attempt++) {
+      if (delays[attempt] != Duration.zero) await Future<void>.delayed(delays[attempt]);
+      try {
+        await _init();
+        final token = await _fm.getToken();
+        if (token != null) {
+          await _save(token);
+          return;
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('[push] register attempt ${attempt + 1} failed: $e');
+        }
+      }
     }
+    if (kDebugMode) debugPrint('[push] register gave up after ${delays.length} tries');
   }
 
   Future<void> _save(String token) async {

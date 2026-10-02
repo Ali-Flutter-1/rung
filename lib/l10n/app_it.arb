@@ -238,6 +238,8 @@
   "checkInMoodAnxious": "Ansioso",
   "checkInMoodLow": "Giù",
   "checkInMoodTense": "Teso",
+  "checkInKeepsStreak": "Un tocco mantiene la tua serie di {count} giorni. Nessun passo richiesto.",
+  "checkInStartsStreak": "Un tocco avvia la tua serie. Nessun passo richiesto.",
   "checkInTitle": "Come arrivi oggi?",
   "checkInDismiss": "Ignora",
   "checkInCalmCta": "Prova un momento di calma",

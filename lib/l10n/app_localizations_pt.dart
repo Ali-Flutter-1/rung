@@ -822,6 +822,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get checkInMoodTense => 'Tenso';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Um toque mantém sua sequência de $count dias. Sem precisar de um passo.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Um toque começa sua sequência. Sem precisar de um passo.';
+
+  @override
   String get checkInTitle => 'Como você está chegando hoje?';
 
   @override
@@ -2984,6 +2993,15 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get checkInMoodTense => 'Tenso';
+
+  @override
+  String checkInKeepsStreak(int count) {
+    return 'Um toque mantém a tua sequência de $count dias. Sem precisares de um passo.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Um toque começa a tua sequência. Sem precisares de um passo.';
 
   @override
   String get checkInTitle => 'Como chegas hoje?';

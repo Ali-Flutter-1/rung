@@ -818,6 +818,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get checkInMoodTense => 'Spänd';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'En knapptryckning behåller din $count-dagarssvit. Inget steg behövs.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'En knapptryckning startar din svit. Inget steg behövs.';
+
+  @override
   String get checkInTitle => 'Hur anländer du idag?';
 
   @override

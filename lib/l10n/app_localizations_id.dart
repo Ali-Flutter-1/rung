@@ -819,6 +819,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get checkInMoodTense => 'Tegang';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Satu ketuk menjaga rentetan $count harimu. Tanpa perlu langkah.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Satu ketuk memulai rentetanmu. Tanpa perlu langkah.';
+
+  @override
   String get checkInTitle => 'Bagaimana keadaanmu hari ini?';
 
   @override

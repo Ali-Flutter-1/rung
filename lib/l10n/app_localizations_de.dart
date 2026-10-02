@@ -829,6 +829,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get checkInMoodTense => 'Angespannt';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Ein Tippen sichert deine $count-Tage-Serie. Kein Schritt nötig.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Ein Tippen startet deine Serie. Kein Schritt nötig.';
+
+  @override
   String get checkInTitle => 'Wie kommst du heute an?';
 
   @override

@@ -823,6 +823,15 @@ class AppLocalizationsPl extends AppLocalizations {
   String get checkInMoodTense => 'Napięcie';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Jedno dotknięcie utrzymuje twoją $count-dniową passę. Krok nie jest potrzebny.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Jedno dotknięcie zaczyna twoją passę. Krok nie jest potrzebny.';
+
+  @override
   String get checkInTitle => 'Z czym dziś przychodzisz?';
 
   @override

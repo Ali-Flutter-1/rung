@@ -212,6 +212,8 @@
   "checkInMoodAnxious": "Ansioso",
   "checkInMoodLow": "Decaído",
   "checkInMoodTense": "Tenso",
+  "checkInKeepsStreak": "Un toque mantiene tu racha de {count} días. No hace falta ningún paso.",
+  "checkInStartsStreak": "Un toque inicia tu racha. No hace falta ningún paso.",
   "checkInTitle": "¿Cómo llegas hoy?",
   "checkInDismiss": "Descartar",
   "checkInCalmCta": "Prueba un momento de calma",

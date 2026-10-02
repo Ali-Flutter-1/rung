@@ -823,6 +823,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get checkInMoodTense => 'Gespannen';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Eén tik behoudt je reeks van $count dagen. Geen stap nodig.';
+  }
+
+  @override
+  String get checkInStartsStreak => 'Eén tik start je reeks. Geen stap nodig.';
+
+  @override
   String get checkInTitle => 'Hoe kom je vandaag aan?';
 
   @override

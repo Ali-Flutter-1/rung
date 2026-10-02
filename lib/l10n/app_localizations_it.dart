@@ -822,6 +822,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get checkInMoodTense => 'Teso';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'Un tocco mantiene la tua serie di $count giorni. Nessun passo richiesto.';
+  }
+
+  @override
+  String get checkInStartsStreak =>
+      'Un tocco avvia la tua serie. Nessun passo richiesto.';
+
+  @override
   String get checkInTitle => 'Come arrivi oggi?';
 
   @override

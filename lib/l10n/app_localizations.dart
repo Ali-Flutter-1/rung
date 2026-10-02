@@ -1555,6 +1555,18 @@ abstract class AppLocalizations {
   /// **'Tense'**
   String get checkInMoodTense;
 
+  /// No description provided for @checkInKeepsStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'One tap keeps your {count}-day streak. No step needed.'**
+  String checkInKeepsStreak(int count);
+
+  /// No description provided for @checkInStartsStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'One tap starts your streak. No step needed.'**
+  String get checkInStartsStreak;
+
   /// No description provided for @checkInTitle.
   ///
   /// In en, this message translates to:

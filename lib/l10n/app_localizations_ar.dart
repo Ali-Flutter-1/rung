@@ -803,6 +803,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkInMoodTense => 'متوتر';
 
   @override
+  String checkInKeepsStreak(int count) {
+    return 'نقرة واحدة تحافظ على سلسلتك البالغة $count يوم. لا حاجة لخطوة.';
+  }
+
+  @override
+  String get checkInStartsStreak => 'نقرة واحدة تبدأ سلسلتك. لا حاجة لخطوة.';
+
+  @override
   String get checkInTitle => 'كيف حالك اليوم؟';
 
   @override
